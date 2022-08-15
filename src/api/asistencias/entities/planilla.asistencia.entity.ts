@@ -1,5 +1,4 @@
 import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
-import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,34 +8,23 @@ import {
   DeleteDateColumn,
   OneToMany,
   ManyToOne,
-  OneToOne,
+  PrimaryColumn,
 } from 'typeorm';
-import { Cuota } from './cuota.entity';
+import { Asistente } from './asistente.entity';
+
 @Entity()
-export class Pago {
+export class PlanillaAsistencia {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  monto: number;
-
-  @Column()
-  fechaPago: Date;
-
-  @Column()
-  numeroComprobante: string;
-
-  @Column()
-  medioDePago: MedioDePago;
+  @PrimaryColumn()
+  fecha: Date;
 
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.asistencias)
   organizacion: Organizacion;
 
-  @OneToMany(() => Cuota, (cuota) => cuota.pago)
-  cuotas: Cuota[];
-
-  @ManyToOne(() => Usuario, (usuario) => usuario.pagos)
-  usuario: Usuario;
+  @OneToMany(() => Asistente, (asistente) => asistente.planilla)
+  asistentes: Asistente[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
@@ -45,10 +33,4 @@ export class Pago {
 
   @Column({ default: true })
   isActive: boolean;
-}
-
-enum MedioDePago {
-  EFECTIVO = 'Efectivo',
-  TRANSFERENCIA = 'Transferencia Bancaria',
-  PASARELADEPAGOS = 'MercadoPago',
 }

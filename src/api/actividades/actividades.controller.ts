@@ -9,13 +9,30 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ActividadesService } from './actividades.service';
+import { BajaActividadDto } from './dto/baja.actividad.dto';
 import { CreateActividadeDto } from './dto/create-actividade.dto';
+import { InscribirActividadDto } from './dto/inscribir.actividad.dto';
 import { UpdateActividadeDto } from './dto/update-actividade.dto';
 
 @ApiTags('Actividades')
 @Controller({ path: 'actividades', version: '1' })
 export class ActividadesController {
   constructor(private readonly actividadesService: ActividadesService) {}
+
+  // Inscribir a una actividad
+  @Post()
+  inscribir(@Body() inscribirActividadDto: InscribirActividadDto) {
+    return 'Inscribir a actividad';
+  }
+
+  // Dar de baja de una actividad
+  @Delete()
+  solicitarBaja(@Body() bajaActividadDto: BajaActividadDto) {
+    return 'Solicitar baja actividad';
+  }
+
+  // Consultar actividades por organización
+  // Consultar activdades por tipo
 
   @Post()
   create(@Body() createActividadeDto: CreateActividadeDto) {

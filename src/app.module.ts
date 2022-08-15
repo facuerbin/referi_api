@@ -14,6 +14,7 @@ import { AsistenciasModule } from './api/asistencias/asistencias.module';
 import { config } from './config/config';
 import { Usuario } from './api/usuarios/entities/usuario.entity';
 import { Domicilio } from './api/usuarios/entities/domicilio.entity';
+import { Pago } from './api/pagos/entities/pago.entity';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { Domicilio } from './api/usuarios/entities/domicilio.entity';
       username: config.DB_USER_NAME,
       password: config.DB_USER_PASSWORD,
       database: config.DB_NAME,
-      entities: [Usuario, Domicilio],
+      entities: [],
       synchronize: config.NODE_ENV === 'development' ? true : false,
     }),
     SeguridadModule,

@@ -11,11 +11,24 @@ import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('Usuarios')
 @Controller({ path: 'usuarios', version: '1' })
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
+
+  @Post('auth')
+  login(@Body() loginDto: LoginDto) {
+    return 'Login method';
+  }
+
+  @Get('auth')
+  logout() {
+    return 'Logged out';
+  }
+
+  // Recuperar contraseña
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {

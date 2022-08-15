@@ -1,4 +1,6 @@
+import { ActividadOrganizacion } from 'src/api/actividades/entities/actividad.organizacion.entity';
 import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
+import { Cuota } from 'src/api/pagos/entities/cuota.entity';
 import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import {
   Entity,
@@ -7,36 +9,35 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
   ManyToOne,
-  OneToOne,
+  OneToMany,
 } from 'typeorm';
-import { Cuota } from './cuota.entity';
+
 @Entity()
-export class Pago {
+export class Inscripcion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  monto: number;
+  legajo: number;
 
   @Column()
-  fechaPago: Date;
+  fechaDesde: Date;
 
   @Column()
-  numeroComprobante: string;
+  fechaHasta: Date;
 
-  @Column()
-  medioDePago: MedioDePago;
+  @ManyToOne(() => Usuario, (usuario) => usuario.inscripciones)
+  usuario: Usuario;
 
-  @ManyToOne(() => Organizacion, (organizacion) => organizacion.asistencias)
+  @ManyToOne(() => Organizacion, (organizacion) => organizacion.socios)
   organizacion: Organizacion;
 
-  @OneToMany(() => Cuota, (cuota) => cuota.pago)
-  cuotas: Cuota[];
+  @ManyToOne(() => ActividadOrganizacion, (actividad) => actividad.inscriptos)
+  actividad: ActividadOrganizacion;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.pagos)
-  usuario: Usuario;
+  @OneToMany(() => Cuota, (cuota) => cuota.inscripcion)
+  cuotas: Cuota[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
@@ -45,10 +46,4 @@ export class Pago {
 
   @Column({ default: true })
   isActive: boolean;
-}
-
-enum MedioDePago {
-  EFECTIVO = 'Efectivo',
-  TRANSFERENCIA = 'Transferencia Bancaria',
-  PASARELADEPAGOS = 'MercadoPago',
 }

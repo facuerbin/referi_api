@@ -1,3 +1,7 @@
+import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
+import { PersonalOrganizacion } from 'src/api/organizaciones/entities/personal.organizacion.entity';
+import { Pago } from 'src/api/pagos/entities/pago.entity';
+import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -34,6 +38,18 @@ export class Usuario {
 
   @OneToMany(() => Domicilio, (domicilio) => domicilio.usuario)
   domicilios: Domicilio[];
+
+  @OneToMany(() => Pago, (pago) => pago.usuario)
+  pagos: Pago[];
+
+  @OneToMany(() => Inscripcion, (inscripcion) => inscripcion.usuario)
+  inscripciones: Inscripcion[];
+
+  @OneToMany(
+    () => PersonalOrganizacion,
+    (organizaciones) => organizaciones.personal,
+  )
+  organizaciones: PersonalOrganizacion[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

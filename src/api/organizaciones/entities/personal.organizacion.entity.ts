@@ -1,4 +1,4 @@
-import { ActividadOrganizacion } from 'src/api/actividades/entities/actividad.organizacion.entity';
+import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,22 +6,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { Frecuencia } from './frecuencia.entity';
-import { TarifaActividad } from './tarifa.actividad.entity';
+import { Organizacion } from './organizacion.entity';
+import { Rol } from './rol.entity';
+
+// Enum
 
 @Entity()
-export class Tarifa {
+export class PersonalOrganizacion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  nombre: string;
-
-  @Column()
-  monto: number;
 
   @Column()
   fechaDesde: Date;
@@ -29,11 +24,14 @@ export class Tarifa {
   @Column()
   fechaHasta: Date;
 
-  @ManyToOne(() => Frecuencia, (frecuencia) => frecuencia.tarifas)
-  frecuencia: Frecuencia;
+  @ManyToOne(() => Organizacion, (organizacion) => organizacion.empleados)
+  organizacion: Organizacion;
 
-  @OneToMany(() => TarifaActividad, (tarifaActividad) => tarifaActividad.tarifa)
-  actividades: TarifaActividad[];
+  @ManyToOne(() => Usuario, (usuario) => usuario.organizaciones)
+  personal: Usuario;
+
+  @ManyToOne(() => Rol, (rol) => rol.empleados)
+  rol: Rol;
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

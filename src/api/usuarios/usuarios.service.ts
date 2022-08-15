@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { Usuario } from './entities/usuario.entity';
 
 @Injectable()
 export class UsuariosService {
-  create(createUsuarioDto: CreateUsuarioDto) {
-    return 'This action adds a new usuario';
+  constructor(private dataSource: DataSource) {}
+
+  async create(createUsuarioDto: CreateUsuarioDto) {
+    const userRepository = this.dataSource.getRepository(Usuario);
+    return userRepository.save(createUsuarioDto);
   }
 
   findAll() {

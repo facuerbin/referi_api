@@ -3,19 +3,25 @@ import { Domicilio } from '../entities/domicilio.entity';
 
 export class CreateUsuarioDto {
   @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  password: string;
+
+  @ApiProperty()
   nombre: string;
 
   @ApiProperty()
   apellido: string;
 
   @ApiProperty()
-  dni: string;
+  dni: number;
 
   @ApiProperty({ required: false })
   telefono: string;
 
   @ApiProperty()
-  fechaNacimiento: string;
+  fechaNacimiento: Date;
 
   @ApiProperty({ required: false })
   fotoPerfil: string;

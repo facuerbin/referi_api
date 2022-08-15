@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
@@ -28,11 +29,21 @@ export class UsuariosController {
     return 'Logged out';
   }
 
-  // Recuperar contraseña
+  @Post('auth/recover')
+  recuperarContrasenia() {
+    return 'Recuperar contraseña';
+  }
 
   @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto) {
-    return this.usuariosService.create(createUsuarioDto);
+  create(@Body() createUsuarioDto: CreateUsuarioDto, @Res() res) {
+    this.usuariosService
+      .create(createUsuarioDto)
+      .then((result) => {
+        res.status(200).send({ data: result });
+      })
+      .catch((error) => {
+        res.status(400).send({ error: error });
+      });
   }
 
   @Get()

@@ -18,21 +18,27 @@ export class Usuario {
   id: string;
 
   @Column()
+  email: string;
+
+  @Column()
+  password: string;
+
+  @Column()
   nombre: string;
 
   @Column()
   apellido: string;
 
   @Column()
-  dni: string;
+  dni: number;
 
-  @Column()
+  @Column({ nullable: true })
   telefono: string;
 
   @Column()
-  fechaNacimiento: string;
+  fechaNacimiento: Date;
 
-  @Column()
+  @Column({ nullable: true })
   fotoPerfil: string;
 
   @OneToMany(() => Domicilio, (domicilio) => domicilio.usuario)

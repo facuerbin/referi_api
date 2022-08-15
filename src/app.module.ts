@@ -34,11 +34,15 @@ import { InscriptoEstado } from './api/socios/entities/inscripto.estado.entity';
 import { Frecuencia } from './api/tarifas/entities/frecuencia.entity';
 import { TarifaActividad } from './api/tarifas/entities/tarifa.actividad.entity';
 import { Tarifa } from './api/tarifas/entities/tarifa.entity';
+import { NegocioModule } from './api/negocio/negocio.module';
+import { Notificacion } from './api/notificaciones/entities/notificacion.entity';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
+      namingStrategy: new SnakeNamingStrategy(),
       host: config.DB_HOST,
       port: config.DB_PORT,
       username: config.DB_USER_NAME,
@@ -67,6 +71,7 @@ import { Tarifa } from './api/tarifas/entities/tarifa.entity';
         Tarifa,
         Domicilio,
         Usuario,
+        Notificacion,
       ],
       synchronize: config.NODE_ENV === 'development' ? true : false,
     }),
@@ -79,6 +84,7 @@ import { Tarifa } from './api/tarifas/entities/tarifa.entity';
     PagosModule,
     NotificacionesModule,
     AsistenciasModule,
+    NegocioModule,
   ],
   controllers: [AppController],
   providers: [AppService],

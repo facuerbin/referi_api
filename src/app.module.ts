@@ -15,6 +15,25 @@ import { config } from './config/config';
 import { Usuario } from './api/usuarios/entities/usuario.entity';
 import { Domicilio } from './api/usuarios/entities/domicilio.entity';
 import { Pago } from './api/pagos/entities/pago.entity';
+import { Actividad } from './api/actividades/entities/actividad.entity';
+import { ActividadOrganizacion } from './api/actividades/entities/actividad.organizacion.entity';
+import { Horario } from './api/actividades/entities/horario.entity';
+import { Asistente } from './api/asistencias/entities/asistente.entity';
+import { PlanillaAsistencia } from './api/asistencias/entities/planilla.asistencia.entity';
+import { Espacio } from './api/organizaciones/entities/espacio.entity';
+import { InformacionPago } from './api/organizaciones/entities/informacion.pago.entity';
+import { Organizacion } from './api/organizaciones/entities/organizacion.entity';
+import { Permiso } from './api/organizaciones/entities/permiso.entity';
+import { PersonalOrganizacion } from './api/organizaciones/entities/personal.organizacion.entity';
+import { Rol } from './api/organizaciones/entities/rol.entity';
+import { TipoOrganizacion } from './api/organizaciones/entities/tipo.organizacion.entity';
+import { Cuota } from './api/pagos/entities/cuota.entity';
+import { EstadoInscripto } from './api/socios/entities/estado.inscripto.entity';
+import { Inscripcion } from './api/socios/entities/inscripcion.entity';
+import { InscriptoEstado } from './api/socios/entities/inscripto.estado.entity';
+import { Frecuencia } from './api/tarifas/entities/frecuencia.entity';
+import { TarifaActividad } from './api/tarifas/entities/tarifa.actividad.entity';
+import { Tarifa } from './api/tarifas/entities/tarifa.entity';
 
 @Module({
   imports: [
@@ -25,7 +44,30 @@ import { Pago } from './api/pagos/entities/pago.entity';
       username: config.DB_USER_NAME,
       password: config.DB_USER_PASSWORD,
       database: config.DB_NAME,
-      entities: [],
+      entities: [
+        Actividad,
+        ActividadOrganizacion,
+        Horario,
+        Asistente,
+        PlanillaAsistencia,
+        Espacio,
+        InformacionPago,
+        Organizacion,
+        Permiso,
+        PersonalOrganizacion,
+        Rol,
+        TipoOrganizacion,
+        Cuota,
+        Pago,
+        EstadoInscripto,
+        Inscripcion,
+        InscriptoEstado,
+        Frecuencia,
+        TarifaActividad,
+        Tarifa,
+        Domicilio,
+        Usuario,
+      ],
       synchronize: config.NODE_ENV === 'development' ? true : false,
     }),
     SeguridadModule,

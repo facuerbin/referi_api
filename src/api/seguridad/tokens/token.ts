@@ -1,4 +1,4 @@
-import { Usuario } from '../entities/usuario.entity';
+import { Usuario } from '../../usuarios/entities/usuario.entity';
 
 export interface Session {
   token: string;

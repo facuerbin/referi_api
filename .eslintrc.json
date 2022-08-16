@@ -11,5 +11,6 @@
         "sourceType": "module"
     },
     "rules": {
+        "unused-imports/no-unused-imports-ts": 2
     }
 }

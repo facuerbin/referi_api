@@ -8,24 +8,44 @@ import { Usuario } from './entities/usuario.entity';
 export class UsuariosService {
   constructor(private dataSource: DataSource) {}
 
-  async create(createUsuarioDto: CreateUsuarioDto) {
+  create(createUsuarioDto: CreateUsuarioDto) {
     const userRepository = this.dataSource.getRepository(Usuario);
     return userRepository.save(createUsuarioDto);
   }
 
   findAll() {
-    return `This action returns all usuarios`;
+    const userRepository = this.dataSource.getRepository(Usuario);
+    return userRepository.find({
+      relations: { domicilios: true },
+      where: { isActive: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} usuario`;
+  findOne(id: string) {
+    const userRepository = this.dataSource.getRepository(Usuario);
+    return userRepository.findOne({
+      relations: { domicilios: true },
+      where: { id: id, isActive: true },
+    });
   }
 
-  update(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    return `This action updates a #${id} usuario`;
+  async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
+    const userRepository = this.dataSource.getRepository(Usuario);
+    const user = await userRepository.findOne({
+      where: { id: id, isActive: true },
+    });
+
+    for (const property in updateUsuarioDto) {
+      if (user[property] && property !== 'isActive') {
+        user[property] = updateUsuarioDto[property];
+      }
+    }
+
+    return userRepository.save(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} usuario`;
+  remove(id: string) {
+    const userRepository = this.dataSource.getRepository(Usuario);
+    return userRepository.softDelete(id);
   }
 }

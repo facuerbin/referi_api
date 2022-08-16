@@ -3,22 +3,22 @@ import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { SeguridadService } from './seguridad.service';
 
-@ApiTags('Usuarios')
-@Controller({ path: 'usuarios', version: '1' })
+@ApiTags('Seguridad')
+@Controller({ path: 'auth', version: '1' })
 export class SeguridadController {
   constructor(private readonly seguridadService: SeguridadService) {}
 
-  @Post('auth')
+  @Post()
   login(@Body() loginDto: LoginDto) {
     return 'Login method';
   }
 
-  @Get('auth')
+  @Get()
   logout() {
     return 'Logged out';
   }
 
-  @Post('auth/recover')
+  @Post('recover')
   recuperarContrasenia() {
     return 'Recuperar contraseña';
   }

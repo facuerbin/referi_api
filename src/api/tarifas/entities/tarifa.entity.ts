@@ -23,13 +23,15 @@ export class Tarifa {
   @Column()
   monto: number;
 
-  @Column()
+  @Column({ nullable: true })
   fechaDesde: Date;
 
-  @Column()
+  @Column({ nullable: true })
   fechaHasta: Date;
 
-  @ManyToOne(() => Frecuencia, (frecuencia) => frecuencia.tarifas)
+  @ManyToOne(() => Frecuencia, (frecuencia) => frecuencia.tarifas, {
+    nullable: false,
+  })
   frecuencia: Frecuencia;
 
   @OneToMany(() => TarifaActividad, (tarifaActividad) => tarifaActividad.tarifa)

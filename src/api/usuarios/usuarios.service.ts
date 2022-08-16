@@ -1,51 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { Domicilio } from './entities/domicilio.entity';
 import { Usuario } from './entities/usuario.entity';
 
 @Injectable()
 export class UsuariosService {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(Usuario) private usuarioRepository: Repository<Usuario>,
+    @InjectRepository(Domicilio)
+    private domicilioRepository: Repository<Domicilio>,
+  ) {}
 
-  create(createUsuarioDto: CreateUsuarioDto) {
-    const userRepository = this.dataSource.getRepository(Usuario);
-    return userRepository.save(createUsuarioDto);
+  async create(createUsuarioDto: CreateUsuarioDto) {
+    const usuario = await this.usuarioRepository.save(createUsuarioDto);
+    const domicilio = { ...createUsuarioDto.domicilio, usuarioId: usuario.id };
+
+    return this.domicilioRepository.save(domicilio);
   }
 
   findAll() {
-    const userRepository = this.dataSource.getRepository(Usuario);
-    return userRepository.find({
-      relations: { domicilios: true },
+    return this.usuarioRepository.find({
       where: { isActive: true },
     });
   }
 
   findOne(id: string) {
-    const userRepository = this.dataSource.getRepository(Usuario);
-    return userRepository.findOne({
+    return this.usuarioRepository.findOne({
       relations: { domicilios: true },
       where: { id: id, isActive: true },
     });
   }
 
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
-    const userRepository = this.dataSource.getRepository(Usuario);
-    const user = await userRepository.findOne({
+    const user = await this.usuarioRepository.findOne({
       where: { id: id, isActive: true },
     });
 
     for (const property in updateUsuarioDto) {
-      if (user[property] && property !== 'isActive') {
+      if (user[property] && !['isActive', 'id'].includes(property)) {
         user[property] = updateUsuarioDto[property];
       }
     }
 
-    return userRepository.save(user);
+    return this.usuarioRepository.save(user);
   }
 
   remove(id: string) {
-    const userRepository = this.dataSource.getRepository(Usuario);
-    return userRepository.softDelete(id);
+    return this.usuarioRepository.softDelete(id);
   }
 }

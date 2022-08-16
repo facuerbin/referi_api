@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateTarifaDto {
+export class CreateFrecuenciaDto {
   @ApiProperty()
   nombre: string;
 
   @ApiProperty()
-  monto: number;
-
-  @ApiProperty()
-  frecuencia: string;
+  cantDias: number;
 }

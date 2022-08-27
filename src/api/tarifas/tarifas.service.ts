@@ -35,19 +35,39 @@ export class TarifasService {
     return this.frecuenciaRepository.save(frecuencia);
   }
 
+  findAllFrecuencias() {
+    return this.frecuenciaRepository.find({
+      where: { isActive: true },
+    });
+  }
+
   findAll() {
-    return `This action returns all tarifas`;
+    return this.tarifaRepository.find({
+      where: { isActive: true },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tarifa`;
+  findOne(id: string) {
+    return this.tarifaRepository.findOne({
+      where: { id: id, isActive: true },
+    });
   }
 
-  update(id: number, updateTarifaDto: UpdateTarifaDto) {
-    return `This action updates a #${id} tarifa`;
+  async update(id: string, updateTarifaDto: UpdateTarifaDto) {
+    const tarifa = await this.tarifaRepository.findOne({
+      where: { id: id, isActive: true },
+    });
+
+    for (const property in tarifa) {
+      if (tarifa[property] && !['isActive', 'id'].includes(property)) {
+        tarifa[property] = updateTarifaDto[property];
+      }
+    }
+
+    return this.tarifaRepository.save(tarifa);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tarifa`;
+  remove(id: string) {
+    return this.tarifaRepository.softDelete(id);
   }
 }

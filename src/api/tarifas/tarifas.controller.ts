@@ -38,23 +38,47 @@ export class TarifasController {
       .catch((error) => res.status(400).send({ error }));
   }
 
+  @Get('frecuencia')
+  findAllFrecuencias(@Res() res) {
+    this.tarifasService
+      .findAllFrecuencias()
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
   @Get()
-  findAll() {
-    return this.tarifasService.findAll();
+  findAll(@Res() res) {
+    this.tarifasService
+      .findAll()
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tarifasService.findOne(+id);
+  findOne(@Param('id') id: string, @Res() res) {
+    this.tarifasService
+      .findOne(id)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTarifaDto: UpdateTarifaDto) {
-    return this.tarifasService.update(+id, updateTarifaDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateTarifaDto: UpdateTarifaDto,
+    @Res() res,
+  ) {
+    return this.tarifasService
+      .update(id, updateTarifaDto)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tarifasService.remove(+id);
+  remove(@Param('id') id: string, @Res() res) {
+    return this.tarifasService
+      .remove(id)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 }

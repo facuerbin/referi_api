@@ -37,7 +37,6 @@ import { Tarifa } from './api/tarifas/entities/tarifa.entity';
 import { NegocioModule } from './api/negocio/negocio.module';
 import { Notificacion } from './api/notificaciones/entities/notificacion.entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-
 @Module({
   imports: [
     TypeOrmModule.forRoot({

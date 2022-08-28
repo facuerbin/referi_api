@@ -15,10 +15,23 @@ export class UsuariosService {
   ) {}
 
   async create(createUsuarioDto: CreateUsuarioDto) {
-    const usuario = await this.usuarioRepository.save(createUsuarioDto);
-    const domicilio = { ...createUsuarioDto.domicilio, usuarioId: usuario.id };
-
-    return this.domicilioRepository.save(domicilio);
+    const domicilio = await this.domicilioRepository.save({
+      calle: createUsuarioDto.domicilio.calle,
+      numero: createUsuarioDto.domicilio.numero,
+      ciudad: createUsuarioDto.domicilio.ciudad,
+      provincia: createUsuarioDto.domicilio.provincia,
+    });
+    return this.usuarioRepository.save({
+      nombre: createUsuarioDto.nombre,
+      apellido: createUsuarioDto.apellido,
+      email: createUsuarioDto.email,
+      password: createUsuarioDto.password,
+      dni: createUsuarioDto.dni,
+      telefono: createUsuarioDto.telefono,
+      fechaNacimiento: createUsuarioDto.fechaNacimiento,
+      fotoPerfil: createUsuarioDto.fotoPerfil,
+      domicilio: domicilio,
+    });
   }
 
   findAll() {
@@ -29,8 +42,14 @@ export class UsuariosService {
 
   findOne(id: string) {
     return this.usuarioRepository.findOne({
-      relations: { domicilios: true },
+      relations: { domicilio: true },
       where: { id: id, isActive: true },
+    });
+  }
+
+  findByEmail(email: string) {
+    return this.usuarioRepository.findOne({
+      where: { email: email, isActive: true },
     });
   }
 

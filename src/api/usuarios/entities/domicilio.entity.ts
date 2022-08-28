@@ -1,13 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  ManyToOne,
-} from 'typeorm';
-import { Usuario } from './usuario.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Domicilio {
@@ -25,7 +16,4 @@ export class Domicilio {
 
   @Column()
   provincia: string;
-
-  @ManyToOne(() => Usuario, (usuario) => usuario.domicilios)
-  usuario: Usuario;
 }

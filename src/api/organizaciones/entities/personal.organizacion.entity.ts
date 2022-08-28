@@ -18,12 +18,6 @@ export class PersonalOrganizacion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  fechaDesde: Date;
-
-  @Column()
-  fechaHasta: Date;
-
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.empleados)
   organizacion: Organizacion;
 

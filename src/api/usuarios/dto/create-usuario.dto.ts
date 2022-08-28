@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsInt, IsDate, MaxDate } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsInt,
+  IsDate,
+  IsDateString,
+} from 'class-validator';
 import { Domicilio } from '../entities/domicilio.entity';
 
 export class CreateUsuarioDto {
@@ -27,7 +33,7 @@ export class CreateUsuarioDto {
   telefono: string;
 
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   fechaNacimiento: Date;
 
   @ApiProperty({ required: false })

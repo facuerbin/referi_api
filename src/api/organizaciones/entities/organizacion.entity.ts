@@ -2,6 +2,7 @@ import { Actividad } from 'src/api/actividades/entities/actividad.entity';
 import { PlanillaAsistencia } from 'src/api/asistencias/entities/planilla.asistencia.entity';
 import { Pago } from 'src/api/pagos/entities/pago.entity';
 import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
+import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,6 +12,8 @@ import {
   DeleteDateColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Espacio } from './espacio.entity';
 import { InformacionPago } from './informacion.pago.entity';
@@ -26,9 +29,6 @@ export class Organizacion {
   nombre: string;
 
   @Column()
-  direccion: string;
-
-  @Column()
   logo: string; // url
 
   @Column()
@@ -39,6 +39,10 @@ export class Organizacion {
 
   @Column()
   email: string;
+
+  @OneToOne(() => Domicilio)
+  @JoinColumn()
+  direccion: Domicilio;
 
   @ManyToOne(
     () => InformacionPago,

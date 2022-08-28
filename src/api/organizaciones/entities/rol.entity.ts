@@ -17,6 +17,12 @@ export class Rol {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ unique: true })
+  nombre: string;
+
+  @Column()
+  descripcion: string;
+
   @OneToMany(
     () => PersonalOrganizacion,
     (personalOrganizacion) => personalOrganizacion.rol,

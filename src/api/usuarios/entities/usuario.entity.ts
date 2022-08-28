@@ -9,6 +9,8 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Domicilio } from './domicilio.entity';
 
@@ -41,8 +43,9 @@ export class Usuario {
   @Column({ nullable: true })
   fotoPerfil: string;
 
-  @OneToMany(() => Domicilio, (domicilio) => domicilio.usuario)
-  domicilios: Domicilio[];
+  @OneToOne(() => Domicilio)
+  @JoinColumn()
+  domicilio: Domicilio;
 
   @OneToMany(() => Pago, (pago) => pago.usuario)
   pagos: Pago[];

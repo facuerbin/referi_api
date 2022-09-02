@@ -62,19 +62,26 @@ export class OrganizacionesController {
   }
 
   @Post(':id/espacio')
-  createEspacio(@Param('id') id: string, @Res() res, @Body() createEspacioDto: CreateEspacioDto,) {
+  createEspacio(
+    @Param('id') id: string,
+    @Res() res,
+    @Body() createEspacioDto: CreateEspacioDto,
+  ) {
     this.organizacionesService
-    .createEspacio(id, createEspacioDto)
-    .then((result) => res.status(200).send({ data: result }))
-    .catch((error) => res.status(400).send({ error }));
+      .createEspacio(id, createEspacioDto)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
   @Post(':id/personal')
-  createPersonal(@Param('id') id: string, @Res() res, @Body() createPersonalDto: CreatePersonalDto,) {
+  createPersonal(
+    @Param('id') id: string,
+    @Res() res,
+    @Body() createPersonalDto: CreatePersonalDto,
+  ) {
     this.organizacionesService
-    .createPersonal(id, createPersonalDto)
-    .then((result) => res.status(200).send({ data: result }))
-    .catch((error) => res.status(400).send({ error }));
+      .createPersonal(id, createPersonalDto)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
-
 }

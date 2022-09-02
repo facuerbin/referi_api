@@ -1,47 +1,39 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Res, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AsistenciasService } from './asistencias.service';
 import { CreateAsistenciaDto } from './dto/create-asistencia.dto';
-import { UpdateAsistenciaDto } from './dto/update-asistencia.dto';
+import { ListPlanillaDto } from './dto/list.planilla.dto';
 
 @ApiTags('Asistencias')
 @Controller({ path: 'asistencias', version: '1' })
 export class AsistenciasController {
   constructor(private readonly asistenciasService: AsistenciasService) {}
 
-  @Post()
-  create(@Body() createAsistenciaDto: CreateAsistenciaDto) {
-    return this.asistenciasService.create(createAsistenciaDto);
+  @Post('crear')
+  create(@Body() createAsistenciaDto: CreateAsistenciaDto, @Res() res) {
+    this.asistenciasService
+      .create(createAsistenciaDto)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
-  @Get()
-  findAll() {
-    return this.asistenciasService.findAll();
+  @Post()
+  findAll(@Body() listPlanillaDto: ListPlanillaDto, @Res() res) {
+    this.asistenciasService
+      .findAll(listPlanillaDto)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.asistenciasService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateAsistenciaDto: UpdateAsistenciaDto,
+  findOne(
+    @Param('id') idOrg: string,
+    @Query('idPlanilla') idPlanilla: string,
+    @Res() res,
   ) {
-    return this.asistenciasService.update(+id, updateAsistenciaDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.asistenciasService.remove(+id);
+    this.asistenciasService
+      .findOne(idPlanilla, idOrg)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 }

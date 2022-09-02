@@ -14,8 +14,16 @@ import { Rol } from './entities/rol.entity';
   controllers: [OrganizacionesController],
   providers: [OrganizacionesService],
   imports: [
-    TypeOrmModule.forFeature([Organizacion, Domicilio, TipoOrganizacion, Espacio, PersonalOrganizacion, Rol]),
-    UsuariosModule
+    TypeOrmModule.forFeature([
+      Organizacion,
+      Domicilio,
+      TipoOrganizacion,
+      Espacio,
+      PersonalOrganizacion,
+      Rol,
+    ]),
+    UsuariosModule,
   ],
+  exports: [OrganizacionesService],
 })
 export class OrganizacionesModule {}

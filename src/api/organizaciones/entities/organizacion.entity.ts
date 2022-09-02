@@ -62,7 +62,10 @@ export class Organizacion {
   @OneToMany(() => Actividad, (actividad) => actividad.organizacion)
   actividades: Actividad[];
 
-  @OneToMany(() => PlanillaAsistencia, (asistencia) => asistencia.organizacion)
+  @OneToMany(
+    () => PlanillaAsistencia,
+    (asistencias) => asistencias.organizacion,
+  )
   asistencias: PlanillaAsistencia[];
 
   @OneToMany(() => Pago, (pago) => pago.organizacion)

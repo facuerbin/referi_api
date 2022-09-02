@@ -93,7 +93,7 @@ export class OrganizacionesService {
     const organizacion = await this.findOne(orgId);
 
     return this.espacioRepository.save({
-      nombre : createEspacioDto.nombre,
+      nombre: createEspacioDto.nombre,
       capacidad: createEspacioDto.capacidad,
       organizacion: organizacion,
     });
@@ -101,18 +101,19 @@ export class OrganizacionesService {
 
   async createPersonal(orgId: string, createPersonalDto: CreatePersonalDto) {
     const organizacion = this.findOne(orgId);
-    const usuario = this.usuariosService.findByEmail(createPersonalDto.emailUsuario);
+    const usuario = this.usuariosService.findByEmail(
+      createPersonalDto.emailUsuario,
+    );
     const rol = this.rolRepository.findOne({
       where: { nombre: createPersonalDto.rol.toUpperCase(), isActive: true },
     });
 
-    Promise.all([organizacion, usuario, rol])
-    .then( results => {
+    Promise.all([organizacion, usuario, rol]).then((results) => {
       return this.personalRepository.save({
         personal: results[1],
         organizacion: results[0],
         rol: results[2],
-      })
-    })
+      });
+    });
   }
 }

@@ -29,7 +29,7 @@ export class Pago {
   @Column()
   medioDePago: MedioDePago;
 
-  @ManyToOne(() => Organizacion, (organizacion) => organizacion.asistencias)
+  @ManyToOne(() => Organizacion, (organizacion) => organizacion.pagos)
   organizacion: Organizacion;
 
   @OneToMany(() => Cuota, (cuota) => cuota.pago)

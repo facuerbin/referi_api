@@ -2,35 +2,27 @@ import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entit
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
   OneToMany,
   ManyToOne,
-  PrimaryColumn,
+  Unique,
+  Column,
+  JoinColumn,
 } from 'typeorm';
 import { Asistente } from './asistente.entity';
 
 @Entity()
+@Unique('fechaOrganizacion', ['fecha', 'organizacion'])
 export class PlanillaAsistencia {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @PrimaryColumn()
+  @Column()
   fecha: Date;
 
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.asistencias)
+  @JoinColumn()
   organizacion: Organizacion;
 
   @OneToMany(() => Asistente, (asistente) => asistente.planilla)
   asistentes: Asistente[];
-
-  // Timestamps
-  @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
-  @UpdateDateColumn({ name: 'fecha_actualizacion' }) 'fechaActualizacion': Date;
-  @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
-
-  @Column({ default: true })
-  isActive: boolean;
 }

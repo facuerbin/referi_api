@@ -10,6 +10,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { ActividadOrganizacion } from './actividad.organizacion.entity';
+import { TipoActividad } from './tipo.actividad.entity';
 
 @Entity()
 export class Actividad {
@@ -23,13 +24,16 @@ export class Actividad {
   descripcion: string;
 
   @Column()
-  idOrganizacion: string;
-
-  @OneToMany(() => ActividadOrganizacion, (turno) => turno.actividad)
-  turnos: ActividadOrganizacion[];
+  imgUrl: string;
 
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.actividades)
   organizacion: Organizacion;
+
+  @ManyToOne(() => TipoActividad, (tipo) => tipo.actividades)
+  tipo: TipoActividad;
+
+  @OneToMany(() => ActividadOrganizacion, (turnos) => turnos.actividad)
+  turnos: ActividadOrganizacion[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

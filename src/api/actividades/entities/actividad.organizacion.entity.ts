@@ -1,3 +1,4 @@
+import { Espacio } from 'src/api/organizaciones/entities/espacio.entity';
 import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
 import { TarifaActividad } from 'src/api/tarifas/entities/tarifa.actividad.entity';
 import {
@@ -13,6 +14,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Actividad } from './actividad.entity';
+import { EstadoActividad } from './estado.actividad.entity';
 import { Horario } from './horario.entity';
 
 @Entity()
@@ -26,11 +28,14 @@ export class ActividadOrganizacion {
   @Column()
   descripcion: string;
 
-  @Column()
-  idOrganizacion: string;
-
   @ManyToOne(() => Actividad, (actividad) => actividad.turnos)
   actividad: Actividad;
+
+  @ManyToOne(() => Espacio, (espacio) => espacio.actividades)
+  espacio: Espacio;
+
+  @ManyToOne(() => EstadoActividad, (estado) => estado.actividades)
+  estado: EstadoActividad;
 
   @ManyToMany(() => Horario)
   @JoinTable({ name: 'horario_actividad' })
@@ -42,7 +47,7 @@ export class ActividadOrganizacion {
   )
   tarifas: TarifaActividad[];
 
-  @OneToMany(() => Inscripcion, (inscripcion) => inscripcion.organizacion)
+  @OneToMany(() => Inscripcion, (inscriptos) => inscriptos.organizacion)
   inscriptos: Inscripcion[];
 
   // Timestamps

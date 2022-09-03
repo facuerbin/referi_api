@@ -37,6 +37,8 @@ import { Tarifa } from './api/tarifas/entities/tarifa.entity';
 import { NegocioModule } from './api/negocio/negocio.module';
 import { Notificacion } from './api/notificaciones/entities/notificacion.entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { TipoActividad } from './api/actividades/entities/tipo.actividad.entity';
+import { EstadoActividad } from './api/actividades/entities/estado.actividad.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -47,9 +49,12 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       username: config.DB_USER_NAME,
       password: config.DB_USER_PASSWORD,
       database: config.DB_NAME,
+      logging: true,
       entities: [
         Actividad,
         ActividadOrganizacion,
+        EstadoActividad,
+        TipoActividad,
         Horario,
         Asistente,
         PlanillaAsistencia,

@@ -99,6 +99,13 @@ export class OrganizacionesService {
     });
   }
 
+  findOneEspacio(id: string) {
+    return this.espacioRepository.findOne({
+      relations: { organizacion: true },
+      where: { id: id, isActive: true },
+    });
+  }
+
   async createPersonal(orgId: string, createPersonalDto: CreatePersonalDto) {
     const organizacion = this.findOne(orgId);
     const usuario = this.usuariosService.findByEmail(

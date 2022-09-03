@@ -1,3 +1,4 @@
+import { ActividadOrganizacion } from 'src/api/actividades/entities/actividad.organizacion.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -24,6 +25,8 @@ export class Espacio {
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.espacios)
   organizacion: Organizacion;
 
+  @OneToMany(() => ActividadOrganizacion, (actividades) => actividades.espacio)
+  actividades: ActividadOrganizacion;
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
   @UpdateDateColumn({ name: 'fecha_actualizacion' }) 'fechaActualizacion': Date;

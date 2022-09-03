@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
+import { TarifasService } from '../tarifas/tarifas.service';
 import { CreateActividadDto } from './dto/create.actividad.dto';
 import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
 import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
@@ -27,6 +28,7 @@ export class ActividadesService {
     @InjectRepository(Horario)
     private horarioRepository: Repository<Horario>,
     private organizacionesService: OrganizacionesService,
+    private tarifasService: TarifasService,
   ) {}
 
   async createActividad(createActividadDto: CreateActividadDto) {
@@ -125,18 +127,30 @@ export class ActividadesService {
       );
     });
 
-    return Promise.all([actividad, espacio, estadoActividad, ...horarios]).then(
-      (results) => {
-        return this.turnoRepository.save({
-          cupo: createTurnoActividadDto.cupo,
-          descripcion: createTurnoActividadDto.descripcion,
-          actividad: results[0],
-          espacio: results[1],
-          estado: results[2],
-          horarios: results.slice(3),
-        });
-      },
-    );
+    const tarifas = createTurnoActividadDto.idsTarifa.map((idTarifa) => {
+      return this.tarifasService.findOne(idTarifa);
+    });
+
+    return Promise.all([
+      actividad,
+      espacio,
+      estadoActividad,
+      Promise.all(horarios),
+      Promise.all(tarifas),
+    ]).then(async (results) => {
+      const turno = await this.turnoRepository.save({
+        cupo: createTurnoActividadDto.cupo,
+        descripcion: createTurnoActividadDto.descripcion,
+        actividad: results[0],
+        espacio: results[1],
+        estado: results[2],
+        horarios: results[3],
+      });
+
+      this.tarifasService.asignarTarifas(results[4], turno);
+
+      return turno;
+    });
   }
 
   findTurnos(idActividad: string) {
@@ -169,7 +183,9 @@ export class ActividadesService {
         estado: true,
         horarios: true,
         inscriptos: true,
-        tarifas: true,
+        tarifas: {
+          tarifa: true,
+        },
       },
     });
   }

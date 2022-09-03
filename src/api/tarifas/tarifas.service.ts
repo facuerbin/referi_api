@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { ActividadOrganizacion } from '../actividades/entities/actividad.organizacion.entity';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
 import { CreateFrecuenciaDto } from './dto/create.frecuencia.dto';
 import { UpdateTarifaDto } from './dto/update-tarifa.dto';
 import { Frecuencia } from './entities/frecuencia.entity';
+import { TarifaActividad } from './entities/tarifa.actividad.entity';
 import { Tarifa } from './entities/tarifa.entity';
 
 @Injectable()
 export class TarifasService {
   constructor(
     @InjectRepository(Tarifa) private tarifaRepository: Repository<Tarifa>,
+    @InjectRepository(TarifaActividad)
+    private tarifaActividadRepository: Repository<TarifaActividad>,
     @InjectRepository(Frecuencia)
     private frecuenciaRepository: Repository<Frecuencia>,
     private organizacionesService: OrganizacionesService,
@@ -70,6 +74,15 @@ export class TarifasService {
         organizacion: true,
         frecuencia: true,
       },
+    });
+  }
+
+  asignarTarifas(tarifas: Tarifa[], turno: ActividadOrganizacion) {
+    return tarifas.map((tarifa) => {
+      return this.tarifaActividadRepository.save({
+        actividadOrganizacion: turno,
+        tarifa: tarifa,
+      });
     });
   }
 

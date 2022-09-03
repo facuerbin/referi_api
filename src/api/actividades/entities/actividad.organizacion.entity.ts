@@ -43,7 +43,8 @@ export class ActividadOrganizacion {
 
   @OneToMany(
     () => TarifaActividad,
-    (tarifaActividad) => tarifaActividad.actividad,
+    (tarifaActividad) => tarifaActividad.actividadOrganizacion,
+    { cascade: ['insert', 'update'], lazy: true },
   )
   tarifas: TarifaActividad[];
 

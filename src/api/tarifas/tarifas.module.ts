@@ -5,13 +5,15 @@ import { Tarifa } from './entities/tarifa.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Frecuencia } from './entities/frecuencia.entity';
 import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
+import { TarifaActividad } from './entities/tarifa.actividad.entity';
 
 @Module({
   controllers: [TarifasController],
   providers: [TarifasService],
   imports: [
-    TypeOrmModule.forFeature([Tarifa, Frecuencia]),
+    TypeOrmModule.forFeature([Tarifa, Frecuencia, TarifaActividad]),
     OrganizacionesModule,
   ],
+  exports: [TarifasService],
 })
 export class TarifasModule {}

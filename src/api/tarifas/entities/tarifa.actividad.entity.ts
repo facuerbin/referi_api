@@ -17,18 +17,6 @@ export class TarifaActividad {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  nombre: string;
-
-  @Column()
-  monto: number;
-
-  @Column()
-  fechaDesde: Date;
-
-  @Column()
-  fechaHasta: Date;
-
   @ManyToOne(() => Tarifa, (tarifa) => tarifa.actividades)
   tarifa: Tarifa;
 
@@ -36,7 +24,7 @@ export class TarifaActividad {
     () => ActividadOrganizacion,
     (actividadOrganizacion) => actividadOrganizacion.tarifas,
   )
-  actividad: ActividadOrganizacion;
+  actividadOrganizacion: ActividadOrganizacion;
 
   @OneToMany(() => Cuota, (cuota) => cuota.tarifa)
   cuotas: Cuota[];

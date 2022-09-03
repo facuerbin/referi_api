@@ -8,6 +8,7 @@ import { EstadoActividad } from './entities/estado.actividad.entity';
 import { Horario } from './entities/horario.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
 import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
+import { TarifasModule } from '../tarifas/tarifas.module';
 
 @Module({
   controllers: [ActividadesController],
@@ -21,6 +22,7 @@ import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
       TipoActividad,
     ]),
     OrganizacionesModule,
+    TarifasModule,
   ],
 })
 export class ActividadesModule {}

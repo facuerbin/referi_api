@@ -49,7 +49,6 @@ import { EstadoActividad } from './api/actividades/entities/estado.actividad.ent
       username: config.DB_USER_NAME,
       password: config.DB_USER_PASSWORD,
       database: config.DB_NAME,
-      // logging: true,
       entities: [
         Actividad,
         ActividadOrganizacion,

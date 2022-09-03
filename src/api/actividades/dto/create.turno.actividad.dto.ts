@@ -19,4 +19,7 @@ export class CreateTurnoActividadDto {
 
   @ApiProperty()
   idEstadoActividad: string;
+
+  @ApiProperty()
+  idsTarifa: string[];
 }

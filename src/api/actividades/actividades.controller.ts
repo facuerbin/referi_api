@@ -35,9 +35,6 @@ export class ActividadesController {
     return 'Solicitar baja actividad';
   }
 
-  // Consultar actividades por organización
-  // Consultar activdades por tipo
-
   @Post()
   create(@Body() createActividadeDto: CreateActividadDto, @Res() res) {
     this.actividadesService

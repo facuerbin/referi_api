@@ -178,7 +178,9 @@ export class ActividadesService {
         fechaBaja: IsNull(),
       },
       relations: {
-        actividad: true,
+        actividad: {
+          organizacion: true,
+        },
         espacio: true,
         estado: true,
         horarios: true,

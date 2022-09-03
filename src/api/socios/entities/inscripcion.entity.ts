@@ -21,12 +21,6 @@ export class Inscripcion {
   @Column()
   legajo: number;
 
-  @Column()
-  fechaDesde: Date;
-
-  @Column()
-  fechaHasta: Date;
-
   @ManyToOne(() => Usuario, (usuario) => usuario.inscripciones)
   usuario: Usuario;
 

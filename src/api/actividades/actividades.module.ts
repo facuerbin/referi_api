@@ -24,5 +24,6 @@ import { TarifasModule } from '../tarifas/tarifas.module';
     OrganizacionesModule,
     TarifasModule,
   ],
+  exports: [ActividadesService],
 })
 export class ActividadesModule {}

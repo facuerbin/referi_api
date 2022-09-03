@@ -8,10 +8,10 @@ import {
   DeleteDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { EstadoInscripto } from './estado.inscripto.entity';
+import { EstadoInscripcion } from './estado.inscripcion.entity';
 
 @Entity()
-export class InscriptoEstado {
+export class InscripcionEstado {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -21,8 +21,8 @@ export class InscriptoEstado {
   @Column()
   fechaHasta: Date;
 
-  @ManyToOne(() => EstadoInscripto, (estado) => estado.inscriptoEstado)
-  estado: EstadoInscripto;
+  @ManyToOne(() => EstadoInscripcion, (estado) => estado.inscripcionEstado)
+  estado: EstadoInscripcion;
 
   @ManyToOne(() => Inscripcion, (inscripcion) => inscripcion.cuotas)
   inscripcion: Inscripcion;

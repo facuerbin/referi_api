@@ -28,9 +28,9 @@ import { PersonalOrganizacion } from './api/organizaciones/entities/personal.org
 import { Rol } from './api/organizaciones/entities/rol.entity';
 import { TipoOrganizacion } from './api/organizaciones/entities/tipo.organizacion.entity';
 import { Cuota } from './api/pagos/entities/cuota.entity';
-import { EstadoInscripto } from './api/socios/entities/estado.inscripto.entity';
+import { EstadoInscripcion } from './api/socios/entities/estado.inscripcion.entity';
 import { Inscripcion } from './api/socios/entities/inscripcion.entity';
-import { InscriptoEstado } from './api/socios/entities/inscripto.estado.entity';
+import { InscripcionEstado } from './api/socios/entities/inscripcion.estado.entity';
 import { Frecuencia } from './api/tarifas/entities/frecuencia.entity';
 import { TarifaActividad } from './api/tarifas/entities/tarifa.actividad.entity';
 import { Tarifa } from './api/tarifas/entities/tarifa.entity';
@@ -66,9 +66,9 @@ import { EstadoActividad } from './api/actividades/entities/estado.actividad.ent
         TipoOrganizacion,
         Cuota,
         Pago,
-        EstadoInscripto,
+        EstadoInscripcion,
         Inscripcion,
-        InscriptoEstado,
+        InscripcionEstado,
         Frecuencia,
         TarifaActividad,
         Tarifa,

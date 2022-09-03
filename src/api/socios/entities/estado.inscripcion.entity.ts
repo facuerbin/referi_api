@@ -7,18 +7,21 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from 'typeorm';
-import { InscriptoEstado } from './inscripto.estado.entity';
+import { InscripcionEstado } from './inscripcion.estado.entity';
 
 @Entity()
-export class EstadoInscripto {
+export class EstadoInscripcion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   nombre: Estado;
 
-  @OneToMany(() => InscriptoEstado, (inscriptoEstado) => inscriptoEstado.estado)
-  inscriptoEstado: InscriptoEstado[];
+  @OneToMany(
+    () => InscripcionEstado,
+    (inscripcionEstado) => inscripcionEstado.estado,
+  )
+  inscripcionEstado: InscripcionEstado[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
@@ -26,7 +29,7 @@ export class EstadoInscripto {
   @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
 }
 
-enum Estado {
+export enum Estado {
   ACTIVO = 'Activo',
   DEUDOR = 'Deudor',
   INACTIVO = 'Inactivo',

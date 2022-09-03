@@ -24,12 +24,6 @@ export class Tarifa {
   @Column()
   monto: number;
 
-  @Column({ nullable: true })
-  fechaDesde: Date;
-
-  @Column({ nullable: true })
-  fechaHasta: Date;
-
   @ManyToOne(() => Frecuencia, (frecuencia) => frecuencia.tarifas, {
     nullable: false,
   })
@@ -45,7 +39,4 @@ export class Tarifa {
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
   @UpdateDateColumn({ name: 'fecha_actualizacion' }) 'fechaActualizacion': Date;
   @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
-
-  @Column({ default: true })
-  isActive: boolean;
 }

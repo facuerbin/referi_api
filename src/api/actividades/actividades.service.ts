@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { CreateActividadDto } from './dto/create.actividad.dto';
 import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
@@ -33,7 +33,7 @@ export class ActividadesService {
     const tipo = await this.tipoActividadRepository.findOne({
       where: {
         id: createActividadDto.idTipoActividad,
-        isActive: true,
+        fechaBaja: IsNull(),
       },
     });
 
@@ -56,6 +56,7 @@ export class ActividadesService {
     return this.actividadRepository.find({
       where: {
         organizacion: { id: idOrg },
+        fechaBaja: IsNull(),
       },
       relations: {
         tipo: true,
@@ -67,6 +68,7 @@ export class ActividadesService {
     return this.actividadRepository.find({
       where: {
         tipo: { tipo: tipoActividad },
+        fechaBaja: IsNull(),
       },
       relations: {
         organizacion: true,
@@ -83,7 +85,7 @@ export class ActividadesService {
 
   listTipoActividad() {
     return this.tipoActividadRepository.find({
-      where: { isActive: true },
+      where: { fechaBaja: IsNull() },
     });
   }
 
@@ -96,7 +98,7 @@ export class ActividadesService {
   listEstadoActividad() {
     return this.estadoActividadRepository.find({
       where: {
-        isActive: true,
+        fechaBaja: IsNull(),
       },
     });
   }
@@ -145,6 +147,7 @@ export class ActividadesService {
         actividad: {
           id: idActividad,
         },
+        fechaBaja: IsNull(),
       },
       relations: {
         actividad: true,
@@ -158,7 +161,7 @@ export class ActividadesService {
     return this.turnoRepository.findOne({
       where: {
         id: idTurno,
-        isActive: true,
+        fechaBaja: IsNull(),
       },
       relations: {
         actividad: true,

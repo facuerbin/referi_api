@@ -88,7 +88,4 @@ export class Organizacion {
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
   @UpdateDateColumn({ name: 'fecha_actualizacion' }) 'fechaActualizacion': Date;
   @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
-
-  @Column({ default: true })
-  isActive: boolean;
 }

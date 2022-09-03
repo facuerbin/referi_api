@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
+} from 'typeorm';
 import { Actividad } from './actividad.entity';
 
 @Entity()
@@ -15,6 +22,7 @@ export class TipoActividad {
   @OneToMany(() => Actividad, (actividad) => actividad.tipo)
   actividades: Actividad[];
 
-  @Column({ default: true })
-  isActive: boolean;
+  // Timestamps
+  @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
+  @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
 }

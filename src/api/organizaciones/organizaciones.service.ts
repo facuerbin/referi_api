@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Domicilio } from '../usuarios/entities/domicilio.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { CreateOrganizacionDto } from './dto/create-organizacione.dto';
@@ -40,7 +40,10 @@ export class OrganizacionesService {
     });
 
     const tipo = await this.tipoOrganizacionRepository.findOne({
-      where: { nombre: createOrganizacionDto.tipoOrganizacion, isActive: true },
+      where: {
+        nombre: createOrganizacionDto.tipoOrganizacion,
+        fechaBaja: IsNull(),
+      },
     });
 
     const organizacion = {
@@ -60,24 +63,24 @@ export class OrganizacionesService {
       relations: {
         direccion: true,
       },
-      where: { isActive: true },
+      where: { fechaBaja: IsNull() },
     });
   }
 
   findOne(id: string) {
     return this.organizacionRepository.findOne({
       relations: { direccion: true, espacios: true },
-      where: { id: id, isActive: true },
+      where: { id: id, fechaBaja: IsNull() },
     });
   }
 
   async update(id: string, updateOrganizacioneDto: UpdateOrganizacionDto) {
     const organizacion = await this.organizacionRepository.findOne({
-      where: { id: id, isActive: true },
+      where: { id: id, fechaBaja: IsNull() },
     });
 
     for (const property in updateOrganizacioneDto) {
-      if (organizacion[property] && !['isActive', 'id'].includes(property)) {
+      if (organizacion[property] && !['fechaBaja', 'id'].includes(property)) {
         organizacion[property] = updateOrganizacioneDto[property];
       }
     }
@@ -102,7 +105,7 @@ export class OrganizacionesService {
   findOneEspacio(id: string) {
     return this.espacioRepository.findOne({
       relations: { organizacion: true },
-      where: { id: id, isActive: true },
+      where: { id: id, fechaBaja: IsNull() },
     });
   }
 
@@ -112,7 +115,10 @@ export class OrganizacionesService {
       createPersonalDto.emailUsuario,
     );
     const rol = this.rolRepository.findOne({
-      where: { nombre: createPersonalDto.rol.toUpperCase(), isActive: true },
+      where: {
+        nombre: createPersonalDto.rol.toUpperCase(),
+        fechaBaja: IsNull(),
+      },
     });
 
     Promise.all([organizacion, usuario, rol]).then((results) => {

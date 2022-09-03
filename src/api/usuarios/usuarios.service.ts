@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { Domicilio } from './entities/domicilio.entity';
@@ -36,30 +36,30 @@ export class UsuariosService {
 
   findAll() {
     return this.usuarioRepository.find({
-      where: { isActive: true },
+      where: { fechaBaja: IsNull() },
     });
   }
 
   findOne(id: string) {
     return this.usuarioRepository.findOne({
       relations: { domicilio: true },
-      where: { id: id, isActive: true },
+      where: { id: id, fechaBaja: IsNull() },
     });
   }
 
   findByEmail(email: string) {
     return this.usuarioRepository.findOne({
-      where: { email: email, isActive: true },
+      where: { email: email, fechaBaja: IsNull() },
     });
   }
 
   async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
     const user = await this.usuarioRepository.findOne({
-      where: { id: id, isActive: true },
+      where: { id: id, fechaBaja: IsNull() },
     });
 
     for (const property in updateUsuarioDto) {
-      if (user[property] && !['isActive', 'id'].includes(property)) {
+      if (user[property] && !['fechaBaja', 'id'].includes(property)) {
         user[property] = updateUsuarioDto[property];
       }
     }

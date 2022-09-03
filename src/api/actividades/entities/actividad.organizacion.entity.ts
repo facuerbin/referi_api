@@ -51,10 +51,7 @@ export class ActividadOrganizacion {
   inscriptos: Inscripcion[];
 
   // Timestamps
-  @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaDesde': Date;
+  @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;
   @UpdateDateColumn({ name: 'fecha_actualizacion' }) 'fechaActualizacion': Date;
-  @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaHasta': Date;
-
-  @Column({ default: true })
-  isActive: boolean;
+  @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
 }

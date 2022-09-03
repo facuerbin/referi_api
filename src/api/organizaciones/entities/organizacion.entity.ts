@@ -2,6 +2,7 @@ import { Actividad } from 'src/api/actividades/entities/actividad.entity';
 import { PlanillaAsistencia } from 'src/api/asistencias/entities/planilla.asistencia.entity';
 import { Pago } from 'src/api/pagos/entities/pago.entity';
 import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
+import { Tarifa } from 'src/api/tarifas/entities/tarifa.entity';
 import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
 import {
   Entity,
@@ -61,6 +62,9 @@ export class Organizacion {
 
   @OneToMany(() => Actividad, (actividad) => actividad.organizacion)
   actividades: Actividad[];
+
+  @OneToMany(() => Tarifa, (tarifa) => tarifa.organizacion)
+  tarifas: Tarifa[];
 
   @OneToMany(
     () => PlanillaAsistencia,

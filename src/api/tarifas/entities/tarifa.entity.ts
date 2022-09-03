@@ -1,4 +1,5 @@
 import { ActividadOrganizacion } from 'src/api/actividades/entities/actividad.organizacion.entity';
+import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -33,6 +34,9 @@ export class Tarifa {
     nullable: false,
   })
   frecuencia: Frecuencia;
+
+  @ManyToOne(() => Organizacion, (organizacion) => organizacion.tarifas)
+  organizacion: Organizacion;
 
   @OneToMany(() => TarifaActividad, (tarifaActividad) => tarifaActividad.tarifa)
   actividades: TarifaActividad[];

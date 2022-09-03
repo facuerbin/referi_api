@@ -1,33 +1,29 @@
 import {
   Entity,
-  Column,
   CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-  PrimaryColumn,
+  Column,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
 export class Horario {
-  @PrimaryColumn()
-  diaSemana: Dias;
-
-  @PrimaryColumn()
-  horaInicio: string;
-
-  @PrimaryColumn()
-  duracion: number; // en minutos
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  idOrganizacion: string;
+  diaSemana: Dias;
+
+  @Column('integer')
+  horaInicio: number;
+
+  @Column('integer')
+  minutosInicio: number;
+
+  @Column()
+  duracion: number; // en minutos
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaDesde': Date;
-  @UpdateDateColumn({ name: 'fecha_actualizacion' }) 'fechaActualizacion': Date;
-  @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaHasta': Date;
-
-  @Column({ default: true })
-  isActive: boolean;
 }
 
 export enum Dias {

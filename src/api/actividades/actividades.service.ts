@@ -10,7 +10,7 @@ import { UpdateActividadeDto } from './dto/update-actividade.dto';
 import { Actividad } from './entities/actividad.entity';
 import { ActividadOrganizacion } from './entities/actividad.organizacion.entity';
 import { EstadoActividad } from './entities/estado.actividad.entity';
-import { Horario } from './entities/horario.entity';
+import { Horario, Dias } from './entities/horario.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
 
 @Injectable()
@@ -114,9 +114,16 @@ export class ActividadesService {
       where: { estado: 'ACTIVO' },
     });
 
-    // const horario = this.horarioRepository.findOne()
+    const horarios = createTurnoActividadDto.horarios.map((horario) => {
+      return this.findHorario(
+        horario.diaSemana,
+        horario.horaInicio,
+        horario.minutosInicio,
+        horario.duracion,
+      );
+    });
 
-    return Promise.all([actividad, espacio, estadoActividad]).then(
+    return Promise.all([actividad, espacio, estadoActividad, ...horarios]).then(
       (results) => {
         return this.turnoRepository.save({
           cupo: createTurnoActividadDto.cupo,
@@ -124,6 +131,7 @@ export class ActividadesService {
           actividad: results[0],
           espacio: results[1],
           estado: results[2],
+          horarios: results.slice(3),
         });
       },
     );
@@ -161,6 +169,33 @@ export class ActividadesService {
         tarifas: true,
       },
     });
+  }
+
+  async findHorario(
+    dia: Dias,
+    hora: number,
+    minutos: number,
+    duracion: number,
+  ) {
+    let horario = await this.horarioRepository.findOne({
+      where: {
+        diaSemana: Dias[dia],
+        horaInicio: hora,
+        minutosInicio: minutos,
+        duracion: duracion,
+      },
+    });
+
+    if (!horario) {
+      horario = await this.horarioRepository.save({
+        diaSemana: dia,
+        horaInicio: hora,
+        minutosInicio: minutos,
+        duracion: duracion,
+      });
+    }
+
+    return horario;
   }
 
   update(id: number, updateActividadeDto: UpdateActividadeDto) {

@@ -7,29 +7,20 @@ import {
   Param,
   Delete,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { UpdateUsuarioDto } from './dto/update.usuario.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 
+@ApiBearerAuth()
 @ApiTags('Usuarios')
 @Controller({ path: 'usuarios', version: '1' })
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-  @Post()
-  create(@Body() createUsuarioDto: CreateUsuarioDto, @Res() res) {
-    this.usuariosService
-      .create(createUsuarioDto)
-      .then((result) => {
-        return res.status(200).send({ data: result });
-      })
-      .catch((error) => {
-        return res.status(400).send({ error: error });
-      });
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Res() res) {
     this.usuariosService
@@ -43,6 +34,7 @@ export class UsuariosController {
       });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Res() res) {
     this.usuariosService
@@ -54,6 +46,7 @@ export class UsuariosController {
       .catch((error) => res.status(401).send({ error: error }));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -66,6 +59,7 @@ export class UsuariosController {
       .catch((error) => res.status(400).send({ error: error }));
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string, @Res() res) {
     this.usuariosService

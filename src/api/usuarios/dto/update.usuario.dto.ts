@@ -1,9 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { Domicilio } from '../entities/domicilio.entity';
-import { CreateUsuarioDto } from './create-usuario.dto';
 
-export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
+export class UpdateUsuarioDto {
   @ApiProperty()
   email: string;
 
@@ -28,6 +26,6 @@ export class UpdateUsuarioDto extends PartialType(CreateUsuarioDto) {
   @ApiProperty({ required: false })
   fotoPerfil: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Domicilio })
   domicilio: Domicilio;
 }

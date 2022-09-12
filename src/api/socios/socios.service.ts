@@ -20,8 +20,6 @@ export class SociosService {
     private inscripcionRepository: Repository<Inscripcion>,
     @InjectRepository(EstadoInscripcion)
     private estadoInscripcionRepository: Repository<EstadoInscripcion>,
-    @InjectRepository(InscripcionEstado)
-    private inscripcionEstadoRepository: Repository<InscripcionEstado>,
     private organizacionesService: OrganizacionesService,
     private actividadesService: ActividadesService,
     private usuariosService: UsuariosService,

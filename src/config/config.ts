@@ -18,6 +18,8 @@ export const config: Iconfig = {
   DB_NAME: process.env.DB_NAME || 'referi_dev',
   DB_USER_NAME: process.env.DB_USER_NAME || 'root',
   DB_USER_PASSWORD: process.env.DB_USER_PASSWORD || 'toor',
+
+  JWT_SECRET: process.env.JWT_SECRET || 'somethingSecret',
 };
 
 export interface Iconfig {
@@ -31,4 +33,5 @@ export interface Iconfig {
   DB_NAME: string;
   DB_USER_NAME: string;
   DB_USER_PASSWORD: string;
+  JWT_SECRET: string;
 }

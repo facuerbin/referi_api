@@ -18,9 +18,6 @@ export class Pago {
   id: string;
 
   @Column()
-  monto: number;
-
-  @Column()
   fechaPago: Date;
 
   @Column()

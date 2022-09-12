@@ -8,6 +8,7 @@ async function bootstrap() {
   Logger.log(`App starting in ${config.NODE_ENV} enviroment`);
 
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
 
   app.useGlobalPipes(new ValidationPipe());
 
@@ -16,6 +17,7 @@ async function bootstrap() {
   });
 
   const swaggerConfig = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Referí')
     .setDescription(
       'Descripción de la API Rest del Sistema de Gestión de Clubes, Referí.',

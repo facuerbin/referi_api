@@ -1,14 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsInt,
-  IsDate,
-  IsDateString,
-} from 'class-validator';
-import { Domicilio } from '../entities/domicilio.entity';
+import { IsEmail, IsNotEmpty, IsInt, IsDateString } from 'class-validator';
+import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
 
-export class CreateUsuarioDto {
+export class RegisterDto {
   @ApiProperty()
   @IsEmail()
   email: string;
@@ -39,6 +33,6 @@ export class CreateUsuarioDto {
   @ApiProperty({ required: false })
   fotoPerfil: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: Domicilio })
   domicilio: Domicilio;
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { CreateUsuarioDto } from './dto/create-usuario.dto';
-import { UpdateUsuarioDto } from './dto/update-usuario.dto';
+import { RegisterDto } from '../seguridad/dto/register.dto';
+import { UpdateUsuarioDto } from './dto/update.usuario.dto';
 import { Domicilio } from './entities/domicilio.entity';
 import { Usuario } from './entities/usuario.entity';
 
@@ -14,22 +14,22 @@ export class UsuariosService {
     private domicilioRepository: Repository<Domicilio>,
   ) {}
 
-  async create(createUsuarioDto: CreateUsuarioDto) {
+  async create(userObject: RegisterDto) {
     const domicilio = await this.domicilioRepository.save({
-      calle: createUsuarioDto.domicilio.calle,
-      numero: createUsuarioDto.domicilio.numero,
-      ciudad: createUsuarioDto.domicilio.ciudad,
-      provincia: createUsuarioDto.domicilio.provincia,
+      calle: userObject.domicilio.calle,
+      numero: userObject.domicilio.numero,
+      ciudad: userObject.domicilio.ciudad,
+      provincia: userObject.domicilio.provincia,
     });
     return this.usuarioRepository.save({
-      nombre: createUsuarioDto.nombre,
-      apellido: createUsuarioDto.apellido,
-      email: createUsuarioDto.email,
-      password: createUsuarioDto.password,
-      dni: createUsuarioDto.dni,
-      telefono: createUsuarioDto.telefono,
-      fechaNacimiento: createUsuarioDto.fechaNacimiento,
-      fotoPerfil: createUsuarioDto.fotoPerfil,
+      nombre: userObject.nombre,
+      apellido: userObject.apellido,
+      email: userObject.email,
+      password: userObject.password,
+      dni: userObject.dni,
+      telefono: userObject.telefono,
+      fechaNacimiento: userObject.fechaNacimiento,
+      fotoPerfil: userObject.fotoPerfil,
       domicilio: domicilio,
     });
   }

@@ -14,8 +14,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { createReadStream } from 'fs';
-import { join } from 'path';
+import { createReadStream, readFileSync, existsSync, unlink } from 'fs';
+import path, { join } from 'path';
 import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 import { FileUploadDto } from './dto/file.upload.dto';
 import { saveImageOptions } from './helpers/save.image.helper';
@@ -24,7 +24,7 @@ import type { Response } from 'express';
 
 @ApiBearerAuth()
 @ApiTags('Imágenes')
-@Controller({ path: 'upload', version: '1' })
+@Controller({ path: 'uploads', version: '1' })
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
@@ -60,11 +60,24 @@ export class ImagesController {
 
   @Delete(':id')
   remove(@Param('id') id: string, @Res() res) {
-    // return
+    if (
+      (!id.includes('.jpg') && !id.includes('.png') && !id.includes('.jpeg')) ||
+      id.includes('../')
+    ) {
+      return res.status(401).send({ error: 'Bad Request' });
+    }
+    try {
+      const filePath = join(process.cwd(), id);
+      if (!existsSync(filePath)) {
+        return res.status(401).send({ error: 'File not found' });
+      }
+      unlink(filePath, (err) => {
+        if (err) console.log(err);
+        return err;
+      });
+      return res.status(200).send({ msg: 'Image deleted succesfully' });
+    } catch (error) {
+      return res.status(500).send({ error: 'Server error' });
+    }
   }
-}
-
-function renameImage(req, file: Express.Multer.File, callback) {
-  const name = file.originalname.split('.')[0];
-  callback(null, file.originalname);
 }

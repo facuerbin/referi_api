@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { existsSync, unlink } from 'fs';
+import { join } from 'path';
 import { IsNull, Repository } from 'typeorm';
 import { RegisterDto } from '../seguridad/dto/register.dto';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';
@@ -59,6 +61,19 @@ export class UsuariosService {
     });
 
     for (const property in updateUsuarioDto) {
+      if (property == 'fotoPerfil') {
+        try {
+          const filePath = join(process.cwd(), user.fotoPerfil);
+          if (existsSync(filePath)) {
+            unlink(filePath, (err) => {
+              return err;
+            });
+          }
+        } catch (error) {
+          return error;
+        }
+      }
+
       if (
         user[property] &&
         !['fechaBaja', 'id', 'verificado'].includes(property)

@@ -43,7 +43,7 @@ export class Usuario {
   @Column()
   fechaNacimiento: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 'uploads/profile.jpeg' })
   fotoPerfil: string;
 
   @OneToOne(() => Domicilio)

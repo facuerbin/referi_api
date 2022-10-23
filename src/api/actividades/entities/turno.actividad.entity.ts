@@ -1,10 +1,8 @@
 import { Espacio } from 'src/api/organizaciones/entities/espacio.entity';
 import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
-import { TarifaActividad } from 'src/api/tarifas/entities/tarifa.actividad.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
@@ -34,13 +32,6 @@ export class TurnoActividad {
   @ManyToMany(() => Horario)
   @JoinTable({ name: 'horario_actividad' })
   horarios: Horario[];
-
-  @OneToMany(
-    () => TarifaActividad,
-    (tarifaActividad) => tarifaActividad.actividadOrganizacion,
-    { cascade: ['insert', 'update'], lazy: true },
-  )
-  tarifas: TarifaActividad[];
 
   @OneToMany(() => Inscripcion, (inscriptos) => inscriptos.organizacion)
   inscriptos: Inscripcion[];

@@ -181,14 +181,14 @@ export class ActividadesService {
       relations: {
         actividad: {
           organizacion: true,
+          tarifas: {
+            tarifa: true,
+          },
         },
         espacio: true,
         estado: true,
         horarios: true,
         inscriptos: true,
-        tarifas: {
-          tarifa: true,
-        },
       },
     });
   }
@@ -201,10 +201,10 @@ export class ActividadesService {
       },
       relations: {
         organizacion: true,
+        tarifas: { tarifa: true },
         turnos: {
           espacio: true,
           horarios: true,
-          tarifas: true,
           inscriptos: true,
         },
         tipo: true,

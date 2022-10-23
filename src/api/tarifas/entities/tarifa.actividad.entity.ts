@@ -1,4 +1,4 @@
-import { TurnoActividad } from 'src/api/actividades/entities/turno.actividad.entity';
+import { Actividad } from 'src/api/actividades/entities/actividad.entity';
 import { Cuota } from 'src/api/pagos/entities/cuota.entity';
 import {
   Entity,
@@ -20,11 +20,8 @@ export class TarifaActividad {
   @ManyToOne(() => Tarifa, (tarifa) => tarifa.actividades)
   tarifa: Tarifa;
 
-  @ManyToOne(
-    () => TurnoActividad,
-    (actividadOrganizacion) => actividadOrganizacion.tarifas,
-  )
-  actividadOrganizacion: TurnoActividad;
+  @ManyToOne(() => Actividad, (actividad) => actividad.tarifas)
+  actividad: Actividad;
 
   @OneToMany(() => Cuota, (cuota) => cuota.tarifa)
   cuotas: Cuota[];

@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { TurnoActividad } from './turno.actividad.entity';
 import { TipoActividad } from './tipo.actividad.entity';
+import { TarifaActividad } from 'src/api/tarifas/entities/tarifa.actividad.entity';
 
 @Entity()
 export class Actividad {
@@ -38,6 +39,13 @@ export class Actividad {
 
   @OneToMany(() => TurnoActividad, (turnos) => turnos.actividad)
   turnos: TurnoActividad[];
+
+  @OneToMany(
+    () => TarifaActividad,
+    (tarifaActividad) => tarifaActividad.actividad,
+    { cascade: ['insert', 'update'], lazy: true },
+  )
+  tarifas: TarifaActividad[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

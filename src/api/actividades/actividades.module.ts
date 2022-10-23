@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ActividadesService } from './actividades.service';
 import { ActividadesController } from './actividades.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ActividadOrganizacion } from './entities/actividad.organizacion.entity';
+import { TurnoActividad } from './entities/turno.actividad.entity';
 import { Actividad } from './entities/actividad.entity';
 import { EstadoActividad } from './entities/estado.actividad.entity';
 import { Horario } from './entities/horario.entity';
@@ -15,7 +15,7 @@ import { TarifasModule } from '../tarifas/tarifas.module';
   providers: [ActividadesService],
   imports: [
     TypeOrmModule.forFeature([
-      ActividadOrganizacion,
+      TurnoActividad,
       Actividad,
       EstadoActividad,
       Horario,

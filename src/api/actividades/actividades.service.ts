@@ -9,7 +9,7 @@ import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
 import { CreateTurnoActividadDto } from './dto/create.turno.actividad.dto';
 import { UpdateActividadeDto } from './dto/update-actividade.dto';
 import { Actividad } from './entities/actividad.entity';
-import { ActividadOrganizacion } from './entities/actividad.organizacion.entity';
+import { TurnoActividad } from './entities/turno.actividad.entity';
 import { EstadoActividad } from './entities/estado.actividad.entity';
 import { Horario, Dias } from './entities/horario.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
@@ -21,8 +21,8 @@ export class ActividadesService {
     private actividadRepository: Repository<Actividad>,
     @InjectRepository(TipoActividad)
     private tipoActividadRepository: Repository<TipoActividad>,
-    @InjectRepository(ActividadOrganizacion)
-    private turnoRepository: Repository<ActividadOrganizacion>,
+    @InjectRepository(TurnoActividad)
+    private turnoRepository: Repository<TurnoActividad>,
     @InjectRepository(EstadoActividad)
     private estadoActividadRepository: Repository<EstadoActividad>,
     @InjectRepository(Horario)
@@ -50,7 +50,9 @@ export class ActividadesService {
       descripcion: createActividadDto.descripcion,
       organizacion: organizacion,
       tipo: tipo,
+      cupo: createActividadDto.cupo,
       turno: null,
+      imgUrl: 'default',
     });
   }
 
@@ -62,6 +64,7 @@ export class ActividadesService {
       },
       relations: {
         tipo: true,
+        turnos: true,
       },
     });
   }
@@ -139,8 +142,6 @@ export class ActividadesService {
       Promise.all(tarifas),
     ]).then(async (results) => {
       const turno = await this.turnoRepository.save({
-        cupo: createTurnoActividadDto.cupo,
-        descripcion: createTurnoActividadDto.descripcion,
         actividad: results[0],
         espacio: results[1],
         estado: results[2],
@@ -192,6 +193,25 @@ export class ActividadesService {
     });
   }
 
+  detailActividad(idActividad) {
+    return this.actividadRepository.findOne({
+      where: {
+        id: idActividad,
+        fechaBaja: IsNull(),
+      },
+      relations: {
+        organizacion: true,
+        turnos: {
+          espacio: true,
+          horarios: true,
+          tarifas: true,
+          inscriptos: true,
+        },
+        tipo: true,
+      },
+    });
+  }
+
   async findHorario(
     dia: Dias,
     hora: number,
@@ -200,7 +220,7 @@ export class ActividadesService {
   ) {
     let horario = await this.horarioRepository.findOne({
       where: {
-        diaSemana: Dias[dia],
+        diaSemana: dia,
         horaInicio: hora,
         minutosInicio: minutos,
         duracion: duracion,

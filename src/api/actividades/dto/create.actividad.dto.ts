@@ -8,6 +8,9 @@ export class CreateActividadDto {
   descripcion: string;
 
   @ApiProperty()
+  cupo: number;
+
+  @ApiProperty()
   imgUrl: string;
 
   @ApiProperty()

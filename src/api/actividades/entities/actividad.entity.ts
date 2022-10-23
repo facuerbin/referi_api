@@ -1,4 +1,5 @@
-import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
+import { Organizacion } from './../../organizaciones/entities/organizacion.entity';
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,7 +10,7 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { ActividadOrganizacion } from './actividad.organizacion.entity';
+import { TurnoActividad } from './turno.actividad.entity';
 import { TipoActividad } from './tipo.actividad.entity';
 
 @Entity()
@@ -24,6 +25,9 @@ export class Actividad {
   descripcion: string;
 
   @Column()
+  cupo: number;
+
+  @Column()
   imgUrl: string;
 
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.actividades)
@@ -32,8 +36,8 @@ export class Actividad {
   @ManyToOne(() => TipoActividad, (tipo) => tipo.actividades)
   tipo: TipoActividad;
 
-  @OneToMany(() => ActividadOrganizacion, (turnos) => turnos.actividad)
-  turnos: ActividadOrganizacion[];
+  @OneToMany(() => TurnoActividad, (turnos) => turnos.actividad)
+  turnos: TurnoActividad[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { ActividadOrganizacion } from '../actividades/entities/actividad.organizacion.entity';
+import { TurnoActividad } from '../actividades/entities/turno.actividad.entity';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
 import { CreateFrecuenciaDto } from './dto/create.frecuencia.dto';
@@ -67,6 +67,22 @@ export class TarifasService {
     });
   }
 
+  findByOrg(idOrg) {
+    return this.tarifaRepository.find({
+      where: {
+        organizacion: {
+          id: idOrg,
+        },
+        fechaBaja: IsNull(),
+      },
+      relations: {
+        organizacion: true,
+        frecuencia: true,
+        actividades: true,
+      },
+    });
+  }
+
   findOne(id: string) {
     return this.tarifaRepository.findOne({
       where: { id: id, fechaBaja: IsNull() },
@@ -77,7 +93,7 @@ export class TarifasService {
     });
   }
 
-  asignarTarifas(tarifas: Tarifa[], turno: ActividadOrganizacion) {
+  asignarTarifas(tarifas: Tarifa[], turno: TurnoActividad) {
     return tarifas.map((tarifa) => {
       return this.tarifaActividadRepository.save({
         actividadOrganizacion: turno,

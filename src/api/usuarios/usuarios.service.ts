@@ -59,7 +59,10 @@ export class UsuariosService {
     });
 
     for (const property in updateUsuarioDto) {
-      if (user[property] && !['fechaBaja', 'id'].includes(property)) {
+      if (
+        user[property] &&
+        !['fechaBaja', 'id', 'verificado'].includes(property)
+      ) {
         user[property] = updateUsuarioDto[property];
       }
     }
@@ -67,7 +70,17 @@ export class UsuariosService {
     return this.usuarioRepository.save(user);
   }
 
+  verify(user: Usuario) {
+    this.usuarioRepository.save(user);
+  }
+
   remove(id: string) {
     return this.usuarioRepository.softDelete(id);
+  }
+
+  async verifyEmail(userId: string) {
+    const user = await this.findOne(userId);
+    user.verificado = true;
+    return this.usuarioRepository.save(user);
   }
 }

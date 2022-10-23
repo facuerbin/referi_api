@@ -20,6 +20,7 @@ export const config: Iconfig = {
   DB_USER_PASSWORD: process.env.DB_USER_PASSWORD || 'toor',
 
   JWT_SECRET: process.env.JWT_SECRET || 'somethingSecret',
+  MAIL_API_KEY: process.env.MAIL_API_KEY || '',
 };
 
 export interface Iconfig {
@@ -34,4 +35,5 @@ export interface Iconfig {
   DB_USER_NAME: string;
   DB_USER_PASSWORD: string;
   JWT_SECRET: string;
+  MAIL_API_KEY: string;
 }

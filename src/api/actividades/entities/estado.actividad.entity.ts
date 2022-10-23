@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
 } from 'typeorm';
-import { ActividadOrganizacion } from './actividad.organizacion.entity';
+import { TurnoActividad } from './turno.actividad.entity';
 
 @Entity()
 export class EstadoActividad {
@@ -16,8 +16,8 @@ export class EstadoActividad {
   @Column()
   estado: string;
 
-  @OneToMany(() => ActividadOrganizacion, (actividades) => actividades.estado)
-  actividades: ActividadOrganizacion[];
+  @OneToMany(() => TurnoActividad, (actividades) => actividades.estado)
+  actividades: TurnoActividad[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

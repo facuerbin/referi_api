@@ -1,4 +1,4 @@
-import { ActividadOrganizacion } from 'src/api/actividades/entities/actividad.organizacion.entity';
+import { TurnoActividad } from 'src/api/actividades/entities/turno.actividad.entity';
 import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
 import {
   Entity,

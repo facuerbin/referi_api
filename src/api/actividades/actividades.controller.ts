@@ -39,7 +39,7 @@ export class ActividadesController {
   create(@Body() createActividadeDto: CreateActividadDto, @Res() res) {
     this.actividadesService
       .createActividad(createActividadeDto)
-      .then((result) => res.status(200).send({ data: result }))
+      .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error: error }));
   }
 
@@ -93,10 +93,10 @@ export class ActividadesController {
   }
 
   @Get(':idActividad')
-  listTurnoActividad(@Param('idActividad') idActividad: string, @Res() res) {
+  detailActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.actividadesService
-      .findTurnos(idActividad)
-      .then((result) => res.status(200).send({ data: result }))
+      .detailActividad(idActividad)
+      .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }
 

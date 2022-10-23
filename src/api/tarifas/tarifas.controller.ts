@@ -54,6 +54,14 @@ export class TarifasController {
       .catch((error) => res.status(400).send({ error }));
   }
 
+  @Get('/organizacion/:idOrg')
+  findAllByOrg(@Param('idOrg') idOrg: string, @Res() res) {
+    this.tarifasService
+      .findByOrg(idOrg)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string, @Res() res) {
     this.tarifasService

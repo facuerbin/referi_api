@@ -38,7 +38,6 @@ export class OrganizacionesService {
       ciudad: createOrganizacionDto.direccion.ciudad,
       provincia: createOrganizacionDto.direccion.provincia,
     });
-
     const tipo = await this.tipoOrganizacionRepository.findOne({
       where: {
         nombre: createOrganizacionDto.tipoOrganizacion,
@@ -127,6 +126,33 @@ export class OrganizacionesService {
         organizacion: results[0],
         rol: results[2],
       });
+    });
+  }
+
+  listTipos() {
+    return this.tipoOrganizacionRepository.find();
+  }
+
+  listEspacios() {
+    return this.espacioRepository.find();
+  }
+
+  listEspaciosOrg(orgId: string) {
+    return this.espacioRepository.find({
+      relations: { organizacion: true },
+      where: { organizacion: { id: orgId } },
+    });
+  }
+
+  listEmployeeOrganization(employeeId: string) {
+    return this.personalRepository.find({
+      where: {
+        personal: { id: employeeId },
+        fechaBaja: IsNull(),
+      },
+      relations: {
+        organizacion: true,
+      },
     });
   }
 }

@@ -18,15 +18,9 @@ import { EstadoActividad } from './estado.actividad.entity';
 import { Horario } from './horario.entity';
 
 @Entity()
-export class ActividadOrganizacion {
+export class TurnoActividad {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  cupo: number;
-
-  @Column()
-  descripcion: string;
 
   @ManyToOne(() => Actividad, (actividad) => actividad.turnos)
   actividad: Actividad;

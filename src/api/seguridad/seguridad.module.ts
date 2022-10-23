@@ -1,6 +1,8 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { EmailModule } from 'src/email/email.module';
+import { EmailService } from 'src/email/email.service';
 import { UsuariosModule } from '../usuarios/usuarios.module';
 import { jwtConstants } from './jwt/constants';
 import { JwtStrategy } from './jwt/jwt.strategy';
@@ -13,6 +15,7 @@ import { SeguridadService } from './seguridad.service';
   imports: [
     UsuariosModule,
     PassportModule,
+    EmailModule,
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '6h' },

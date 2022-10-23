@@ -37,6 +37,9 @@ export class Usuario {
   @Column({ nullable: true })
   telefono: string;
 
+  @Column({ default: false })
+  verificado: boolean;
+
   @Column()
   fechaNacimiento: Date;
 

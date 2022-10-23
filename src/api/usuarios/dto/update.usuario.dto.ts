@@ -26,6 +26,9 @@ export class UpdateUsuarioDto {
   @ApiProperty({ required: false })
   fotoPerfil: string;
 
+  @ApiProperty({ required: false })
+  verificado: boolean;
+
   @ApiProperty({ type: Domicilio })
   domicilio: Domicilio;
 }

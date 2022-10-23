@@ -3,24 +3,36 @@ import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { SeguridadService } from './seguridad.service';
 import { RegisterDto } from './dto/register.dto';
+import { EmailService } from 'src/email/email.service';
+import { VerifyEmailDto } from './dto/verify.email.dto';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
 export class SeguridadController {
-  constructor(private readonly seguridadService: SeguridadService) {}
+  constructor(
+    private readonly seguridadService: SeguridadService,
+    private emailService: EmailService,
+  ) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res() res) {
-    const user = await this.seguridadService.login(
+    const data = await this.seguridadService.login(
       loginDto.email,
       loginDto.password,
     );
-    return res.status(200).send({ data: user });
+    return res.status(200).send({ data });
   }
 
   @Post('register')
-  registerUser(@Body() user: RegisterDto) {
-    return this.seguridadService.register(user);
+  async registerUser(@Body() user: RegisterDto) {
+    const createdUser = await this.seguridadService.register(user);
+    this.emailService.sendConfirmationEmail(createdUser);
+    return createdUser;
+  }
+
+  @Post('verify')
+  verifyEmail(@Body() verification: VerifyEmailDto) {
+    return this.seguridadService.verifyEmail(verification);
   }
 
   // TODO Implentar

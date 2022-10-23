@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -16,7 +16,7 @@ import { Usuario } from './api/usuarios/entities/usuario.entity';
 import { Domicilio } from './api/usuarios/entities/domicilio.entity';
 import { Pago } from './api/pagos/entities/pago.entity';
 import { Actividad } from './api/actividades/entities/actividad.entity';
-import { ActividadOrganizacion } from './api/actividades/entities/actividad.organizacion.entity';
+import { TurnoActividad } from './api/actividades/entities/turno.actividad.entity';
 import { Horario } from './api/actividades/entities/horario.entity';
 import { Asistente } from './api/asistencias/entities/asistente.entity';
 import { PlanillaAsistencia } from './api/asistencias/entities/planilla.asistencia.entity';
@@ -39,6 +39,9 @@ import { Notificacion } from './api/notificaciones/entities/notificacion.entity'
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TipoActividad } from './api/actividades/entities/tipo.actividad.entity';
 import { EstadoActividad } from './api/actividades/entities/estado.actividad.entity';
+import { EmailService } from './email/email.service';
+import { EmailModule } from './email/email.module';
+import { ImagesModule } from './api/images/images.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -51,7 +54,7 @@ import { EstadoActividad } from './api/actividades/entities/estado.actividad.ent
       database: config.DB_NAME,
       entities: [
         Actividad,
-        ActividadOrganizacion,
+        TurnoActividad,
         EstadoActividad,
         TipoActividad,
         Horario,
@@ -77,8 +80,11 @@ import { EstadoActividad } from './api/actividades/entities/estado.actividad.ent
         Notificacion,
       ],
       synchronize: config.NODE_ENV === 'development' ? true : false,
+      // migrations: ['dist/db/*.js'],
     }),
+    CacheModule.register({ isGlobal: true }),
     SeguridadModule,
+    EmailModule,
     OrganizacionesModule,
     SociosModule,
     UsuariosModule,
@@ -88,8 +94,9 @@ import { EstadoActividad } from './api/actividades/entities/estado.actividad.ent
     NotificacionesModule,
     AsistenciasModule,
     NegocioModule,
+    ImagesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

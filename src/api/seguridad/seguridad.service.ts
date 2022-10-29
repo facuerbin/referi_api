@@ -3,6 +3,7 @@ import {
   HttpException,
   Inject,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import * as CacheManager from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
@@ -16,6 +17,7 @@ import {
   EmailService,
   validateCache as ValidateCache,
 } from 'src/email/email.service';
+import { RecoverPasswordDto } from './dto/recover.password.dto';
 
 @Injectable()
 export class SeguridadService {
@@ -49,16 +51,56 @@ export class SeguridadService {
 
   async verifyEmail(verifyForm: VerifyEmailDto) {
     const user = await this.usersService.findByEmail(verifyForm.email);
+    if (user && user.verificado) return { verified: true };
     if (user) {
       const status = await this.emailService.validateConfirmationNumber(
         user.id,
         '' + verifyForm.code,
       );
-      user.verificado = status;
-      this.usersService.verify(user);
+      if (!status) {
+        this.emailService.sendConfirmationEmail(user);
+        return { verified: false };
+      }
       return { verified: status };
     }
     return { verified: false };
+  }
+
+  async checkVerified(id) {
+    const user = await this.usersService.findOne(id);
+    if (!user) return false;
+    return user.verificado;
+  }
+
+  async recoverPassword(recover: RecoverPasswordDto) {
+    const user = await this.usersService.findOne(recover.id);
+    if (recover.email !== user.email) throw new Error('Invalid email');
+
+    const newPassword = this.generateRandomPassword();
+    const hashed = await hash(newPassword, 10);
+    user.password = hashed;
+    return this.usersService
+      .save(user)
+      .then((result) => {
+        return this.emailService.sendRecoverPasswordEmail(result, newPassword);
+      })
+      .catch((e) => {
+        Logger.error(e);
+        return false;
+      });
+  }
+
+  generateRandomPassword() {
+    const chars =
+      '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    const string_length = 10;
+    let password = '';
+    for (let i = 0; i < string_length; i++) {
+      const rand = Math.floor(Math.random() * chars.length);
+      password += chars.substring(rand, rand + 1);
+    }
+
+    return password;
   }
 
   generateToken(user: Usuario) {

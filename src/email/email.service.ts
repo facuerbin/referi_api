@@ -41,6 +41,29 @@ export class EmailService {
       });
   }
 
+  sendRecoverPasswordEmail(user: Usuario, password) {
+    const content = `<h1>¡Hola ${user.nombre}!</h1>
+    <p>Acá está tu nueva contraseña.</p>
+    <h3>Contraseña: <b>${password}</b></h3>
+    <p>No compartas esta contraseña con nadie.</p>`;
+    return this.transport
+      .sendMail({
+        from: 'no-reply@referiapp.com.ar',
+        to: `${user.nombre} ${user.apellido} facuerbin@gmail.com`,
+        subject: 'Nueva contraseña - Referí',
+        html: content,
+      })
+      .then(async () => {
+        Logger.log('Recovery email sent to user ' + user.id);
+        return true;
+      })
+      .catch((error) => {
+        Logger.error('Failed to send recovery email to user ' + user.id);
+        Logger.error(error);
+        return false;
+      });
+  }
+
   generateConfirmationNumber(userId: string) {
     const rand = Math.floor(Math.random() * 9999);
     this.cacheManager.set<validateCache>(
@@ -53,7 +76,10 @@ export class EmailService {
 
   async validateConfirmationNumber(userId: string, validationNumber: string) {
     const cached = await this.cacheManager.get<validateCache>(userId);
-    console.log('Cached', cached);
+    if (!cached) {
+      return false;
+    }
+
     if ('' + cached.number === validationNumber) {
       this.userService.verifyEmail(userId);
       return true;

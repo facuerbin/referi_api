@@ -7,7 +7,7 @@ import { CreateActividadDto } from './dto/create.actividad.dto';
 import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
 import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
 import { CreateTurnoActividadDto } from './dto/create.turno.actividad.dto';
-import { UpdateActividadeDto } from './dto/update-actividade.dto';
+import { UpdateActividadDto } from './dto/update.actividad.dto';
 import { Actividad } from './entities/actividad.entity';
 import { TurnoActividad } from './entities/turno.actividad.entity';
 import { EstadoActividad } from './entities/estado.actividad.entity';
@@ -52,7 +52,7 @@ export class ActividadesService {
       tipo: tipo,
       cupo: createActividadDto.cupo,
       turno: null,
-      imgUrl: 'default',
+      imgUrl: 'uploads/placeholder.png',
     });
   }
 
@@ -239,11 +239,14 @@ export class ActividadesService {
     return horario;
   }
 
-  update(id: number, updateActividadeDto: UpdateActividadeDto) {
-    return `This action updates a #${id} actividade`;
+  update(id: string, updateActividadDto: UpdateActividadDto) {
+    return this.actividadRepository.save({
+      id: id,
+      ...updateActividadDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} actividade`;
+  remove(id: string) {
+    return this.actividadRepository.softDelete(id);
   }
 }

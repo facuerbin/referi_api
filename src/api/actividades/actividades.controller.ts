@@ -16,7 +16,7 @@ import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
 import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
 import { CreateTurnoActividadDto } from './dto/create.turno.actividad.dto';
 import { InscribirActividadDto } from './dto/inscribir.actividad.dto';
-import { UpdateActividadeDto } from './dto/update-actividade.dto';
+import { UpdateActividadDto } from './dto/update.actividad.dto';
 
 @ApiTags('Actividades')
 @Controller({ path: 'actividades', version: '1' })
@@ -136,13 +136,17 @@ export class ActividadesController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateActividadeDto: UpdateActividadeDto,
+    @Body() updateActividadeDto: UpdateActividadDto,
+    @Res() res,
   ) {
-    return this.actividadesService.update(+id, updateActividadeDto);
+    this.actividadesService
+      .update(id, updateActividadeDto)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error }));
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.actividadesService.remove(+id);
+    return this.actividadesService.remove(id);
   }
 }

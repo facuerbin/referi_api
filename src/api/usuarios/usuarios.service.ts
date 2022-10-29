@@ -76,7 +76,7 @@ export class UsuariosService {
 
       if (
         user[property] &&
-        !['fechaBaja', 'id', 'verificado'].includes(property)
+        !['fechaBaja', 'id', 'verificado', 'password'].includes(property)
       ) {
         user[property] = updateUsuarioDto[property];
       }
@@ -85,8 +85,8 @@ export class UsuariosService {
     return this.usuarioRepository.save(user);
   }
 
-  verify(user: Usuario) {
-    this.usuarioRepository.save(user);
+  save(user: Usuario) {
+    return this.usuarioRepository.save(user);
   }
 
   remove(id: string) {

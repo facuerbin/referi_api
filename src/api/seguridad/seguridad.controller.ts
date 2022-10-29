@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Post, Body, Res, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { SeguridadService } from './seguridad.service';
 import { RegisterDto } from './dto/register.dto';
 import { EmailService } from 'src/email/email.service';
 import { VerifyEmailDto } from './dto/verify.email.dto';
+import { RecoverPasswordDto } from './dto/recover.password.dto';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
@@ -35,9 +36,36 @@ export class SeguridadController {
     return this.seguridadService.verifyEmail(verification);
   }
 
-  // TODO Implentar
+  @Get('verify/:id')
+  checkVerify(@Param('id') id: string, @Res() res) {
+    this.seguridadService
+      .checkVerified(id)
+      .then((result) => {
+        return res.status(200).send({ verified: result });
+      })
+      .catch((error) => {
+        return res.status(400).send({ error: error });
+      });
+  }
+
   @Post('recover')
-  recuperarContrasenia() {
+  recuperarContrasenia(@Body() recover: RecoverPasswordDto, @Res() res) {
+    this.seguridadService
+      .recoverPassword(recover)
+      .then((result) => {
+        if (result) {
+          return res.status(200).send({ data: 'Password email sent' });
+        } else {
+          return res.status(401).send({ error: 'Invalid request' });
+        }
+      })
+      .catch((error) => {
+        return res.status(400).send({ error: error });
+      });
+  }
+
+  @Get('logout')
+  logout(@Body() recover: RecoverPasswordDto, @Res() res) {
     return 'Recuperar contraseña';
   }
 }

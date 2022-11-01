@@ -68,7 +68,11 @@ export class UsuariosService {
       if (property == 'fotoPerfil') {
         try {
           const filePath = join(process.cwd(), user.fotoPerfil);
-          if (existsSync(filePath)) {
+          if (
+            existsSync(filePath) &&
+            user.fotoPerfil &&
+            user.fotoPerfil !== 'uploads/profile.jpeg'
+          ) {
             unlink(filePath, (err) => {
               return err;
             });
@@ -78,10 +82,8 @@ export class UsuariosService {
         }
       }
 
-      if (
-        user[property] &&
-        !['fechaBaja', 'id', 'verificado', 'password'].includes(property)
-      ) {
+      if (!['fechaBaja', 'id', 'verificado', 'password'].includes(property)) {
+        console.log(updateUsuarioDto.fotoPerfil);
         user[property] = updateUsuarioDto[property];
       }
     }

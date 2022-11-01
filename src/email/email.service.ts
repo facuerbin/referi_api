@@ -26,7 +26,7 @@ export class EmailService {
     return this.transport
       .sendMail({
         from: 'no-reply@referiapp.com.ar',
-        to: `${user.nombre} ${user.apellido} facuerbin@gmail.com`,
+        to: `${user.nombre} ${user.apellido} referiapp.com.ar@gmail.com`,
         subject: 'Código de confirmación - Referí',
         html: content,
       })
@@ -49,7 +49,7 @@ export class EmailService {
     return this.transport
       .sendMail({
         from: 'no-reply@referiapp.com.ar',
-        to: `${user.nombre} ${user.apellido} facuerbin@gmail.com`,
+        to: `${user.nombre} ${user.apellido} referiapp.com.ar@gmail.com`,
         subject: 'Nueva contraseña - Referí',
         html: content,
       })

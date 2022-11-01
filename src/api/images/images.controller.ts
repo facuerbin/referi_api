@@ -39,7 +39,9 @@ export class ImagesController {
   uploadFile(
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 })],
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 * 1024 }),
+        ],
       }),
     )
     file: Express.Multer.File,

@@ -13,6 +13,7 @@ import { TurnoActividad } from './entities/turno.actividad.entity';
 import { EstadoActividad } from './entities/estado.actividad.entity';
 import { Horario, Dias } from './entities/horario.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
+import { TurnoHorario } from './entities/turno.horario.entity';
 
 @Injectable()
 export class ActividadesService {
@@ -23,6 +24,8 @@ export class ActividadesService {
     private tipoActividadRepository: Repository<TipoActividad>,
     @InjectRepository(TurnoActividad)
     private turnoRepository: Repository<TurnoActividad>,
+    @InjectRepository(TurnoHorario)
+    private horariosTurnoRepository: Repository<TurnoHorario>,
     @InjectRepository(EstadoActividad)
     private estadoActividadRepository: Repository<EstadoActividad>,
     @InjectRepository(Horario)
@@ -145,11 +148,17 @@ export class ActividadesService {
     ]).then(async (results) => {
       const turno = await this.turnoRepository.save({
         actividad: results[0],
-        // espacio: results[1],
         estado: results[2],
         horarios: results[3],
       });
 
+      results[3].forEach((horario) => {
+        this.horariosTurnoRepository.save({
+          turnoActividad: turno,
+          espacio: results[1][0],
+          horario: horario,
+        });
+      });
       return turno;
     });
   }
@@ -204,7 +213,7 @@ export class ActividadesService {
         tarifas: true,
         turnos: {
           espacio: true,
-          horarios: true,
+          horarios: { horario: true, espacio: true },
           inscriptos: true,
         },
         tipo: true,

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { profile } from 'console';
 import { existsSync, unlink } from 'fs';
 import { join } from 'path';
 import { IsNull, Repository } from 'typeorm';
@@ -31,7 +32,9 @@ export class UsuariosService {
       dni: userObject.dni,
       telefono: userObject.telefono,
       fechaNacimiento: userObject.fechaNacimiento,
-      fotoPerfil: userObject.fotoPerfil,
+      fotoPerfil: userObject.fotoPerfil
+        ? userObject.fotoPerfil
+        : 'uploads/profile.jpeg',
       domicilio: domicilio,
     });
   }

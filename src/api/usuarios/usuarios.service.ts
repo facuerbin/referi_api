@@ -52,6 +52,7 @@ export class UsuariosService {
   findByEmail(email: string) {
     return this.usuarioRepository.findOne({
       where: { email: email, fechaBaja: IsNull() },
+      relations: { domicilio: true },
     });
   }
 

@@ -121,7 +121,6 @@ export class OrganizacionesService {
     });
 
     return Promise.all([organizacion, usuario, rol]).then((results) => {
-      console.log(results);
       return this.personalRepository.save({
         personal: results[1],
         organizacion: results[0],

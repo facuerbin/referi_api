@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ActividadesService } from './actividades.service';
 import { ActividadesController } from './actividades.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { Horario } from './entities/horario.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
 import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
 import { TarifasModule } from '../tarifas/tarifas.module';
+import { TurnoHorario } from './entities/turno.horario.entity';
 
 @Module({
   controllers: [ActividadesController],
@@ -19,10 +20,11 @@ import { TarifasModule } from '../tarifas/tarifas.module';
       Actividad,
       EstadoActividad,
       Horario,
+      TurnoHorario,
       TipoActividad,
     ]),
     OrganizacionesModule,
-    TarifasModule,
+    forwardRef(() => TarifasModule),
   ],
   exports: [ActividadesService],
 })

@@ -32,7 +32,6 @@ import { EstadoInscripcion } from './api/socios/entities/estado.inscripcion.enti
 import { Inscripcion } from './api/socios/entities/inscripcion.entity';
 import { InscripcionEstado } from './api/socios/entities/inscripcion.estado.entity';
 import { Frecuencia } from './api/tarifas/entities/frecuencia.entity';
-import { TarifaActividad } from './api/tarifas/entities/tarifa.actividad.entity';
 import { Tarifa } from './api/tarifas/entities/tarifa.entity';
 import { NegocioModule } from './api/negocio/negocio.module';
 import { Notificacion } from './api/notificaciones/entities/notificacion.entity';
@@ -42,6 +41,7 @@ import { EstadoActividad } from './api/actividades/entities/estado.actividad.ent
 import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { ImagesModule } from './api/images/images.module';
+import { TurnoHorario } from './api/actividades/entities/turno.horario.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -58,6 +58,7 @@ import { ImagesModule } from './api/images/images.module';
         EstadoActividad,
         TipoActividad,
         Horario,
+        TurnoHorario,
         Asistente,
         PlanillaAsistencia,
         Espacio,
@@ -73,7 +74,6 @@ import { ImagesModule } from './api/images/images.module';
         Inscripcion,
         InscripcionEstado,
         Frecuencia,
-        TarifaActividad,
         Tarifa,
         Domicilio,
         Usuario,

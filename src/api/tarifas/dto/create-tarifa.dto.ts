@@ -8,8 +8,14 @@ export class CreateTarifaDto {
   monto: number;
 
   @ApiProperty()
+  esOpcional: boolean;
+
+  @ApiProperty()
   nombreFrecuencia: string;
 
   @ApiProperty()
   idOrganizacion: string;
+
+  @ApiProperty()
+  idActividad: string;
 }

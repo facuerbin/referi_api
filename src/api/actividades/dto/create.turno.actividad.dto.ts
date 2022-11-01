@@ -1,16 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Horario } from '../entities/horario.entity';
+import { HorarioActividadDto } from './horario.actividad.dto';
 
 export class CreateTurnoActividadDto {
   @ApiProperty()
   idActividad: string;
 
   @ApiProperty()
-  idEspacio: string;
-
-  @ApiProperty({ type: [Horario] })
-  horarios: Horario[];
-
-  @ApiProperty()
-  idsTarifa: string[];
+  horarios: HorarioActividadDto[];
 }

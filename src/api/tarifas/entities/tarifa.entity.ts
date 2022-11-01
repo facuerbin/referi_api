@@ -1,5 +1,6 @@
-import { TurnoActividad } from 'src/api/actividades/entities/turno.actividad.entity';
+import { Actividad } from 'src/api/actividades/entities/actividad.entity';
 import { Organizacion } from 'src/api/organizaciones/entities/organizacion.entity';
+import { Cuota } from 'src/api/pagos/entities/cuota.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,7 +12,6 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Frecuencia } from './frecuencia.entity';
-import { TarifaActividad } from './tarifa.actividad.entity';
 
 @Entity()
 export class Tarifa {
@@ -24,6 +24,9 @@ export class Tarifa {
   @Column()
   monto: number;
 
+  @Column()
+  esOpcional: boolean;
+
   @ManyToOne(() => Frecuencia, (frecuencia) => frecuencia.tarifas, {
     nullable: false,
   })
@@ -32,8 +35,11 @@ export class Tarifa {
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.tarifas)
   organizacion: Organizacion;
 
-  @OneToMany(() => TarifaActividad, (tarifaActividad) => tarifaActividad.tarifa)
-  actividades: TarifaActividad[];
+  @ManyToOne(() => Actividad, (actividad) => actividad.tarifas)
+  actividad: Actividad;
+
+  @OneToMany(() => Cuota, (cuota) => cuota.tarifa)
+  cuotas: Cuota[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

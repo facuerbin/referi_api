@@ -1,24 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { TurnoActividad } from '../actividades/entities/turno.actividad.entity';
+import { ActividadesService } from '../actividades/actividades.service';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
 import { CreateFrecuenciaDto } from './dto/create.frecuencia.dto';
 import { UpdateTarifaDto } from './dto/update-tarifa.dto';
 import { Frecuencia } from './entities/frecuencia.entity';
-import { TarifaActividad } from './entities/tarifa.actividad.entity';
 import { Tarifa } from './entities/tarifa.entity';
 
 @Injectable()
 export class TarifasService {
   constructor(
     @InjectRepository(Tarifa) private tarifaRepository: Repository<Tarifa>,
-    @InjectRepository(TarifaActividad)
-    private tarifaActividadRepository: Repository<TarifaActividad>,
     @InjectRepository(Frecuencia)
     private frecuenciaRepository: Repository<Frecuencia>,
     private organizacionesService: OrganizacionesService,
+    @Inject(forwardRef(() => ActividadesService))
+    private actividadService: ActividadesService,
   ) {}
 
   create(createTarifaDto: CreateTarifaDto) {
@@ -33,14 +32,23 @@ export class TarifasService {
       createTarifaDto.idOrganizacion,
     );
 
-    return Promise.all([frecuencia, organizacion]).then((results) => {
-      return this.tarifaRepository.save({
-        nombre: createTarifaDto.nombre,
-        monto: createTarifaDto.monto,
-        frecuencia: results[0],
-        organizacion: results[1],
-      });
-    });
+    const actividad = this.actividadService.detailActividad(
+      createTarifaDto.idActividad,
+    );
+
+    return Promise.all([frecuencia, organizacion, actividad]).then(
+      (results) => {
+        // if (!results[0] || !results[1] || !results[2]) throw new Error();
+        return this.tarifaRepository.save({
+          nombre: createTarifaDto.nombre,
+          monto: createTarifaDto.monto,
+          esOpcional: createTarifaDto.esOpcional,
+          frecuencia: results[0],
+          organizacion: results[1],
+          actividad: results[2],
+        });
+      },
+    );
   }
 
   createFrecuencia(createFrecuenciaDto: CreateFrecuenciaDto) {
@@ -67,7 +75,7 @@ export class TarifasService {
     });
   }
 
-  findByOrg(idOrg) {
+  findByOrg(idOrg: string) {
     return this.tarifaRepository.find({
       where: {
         organizacion: {
@@ -78,7 +86,23 @@ export class TarifasService {
       relations: {
         organizacion: true,
         frecuencia: true,
-        actividades: true,
+        actividad: true,
+      },
+    });
+  }
+
+  findByActividad(idActividad: string) {
+    return this.tarifaRepository.find({
+      where: {
+        actividad: {
+          id: idActividad,
+        },
+        fechaBaja: IsNull(),
+      },
+      relations: {
+        organizacion: true,
+        frecuencia: true,
+        actividad: true,
       },
     });
   }
@@ -90,15 +114,6 @@ export class TarifasService {
         organizacion: true,
         frecuencia: true,
       },
-    });
-  }
-
-  asignarTarifas(tarifas: Tarifa[], turno: TurnoActividad) {
-    return tarifas.map((tarifa) => {
-      return this.tarifaActividadRepository.save({
-        actividadOrganizacion: turno,
-        tarifa: tarifa,
-      });
     });
   }
 

@@ -1,5 +1,5 @@
 import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
-import { TarifaActividad } from 'src/api/tarifas/entities/tarifa.actividad.entity';
+import { Tarifa } from 'src/api/tarifas/entities/tarifa.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -25,8 +25,8 @@ export class Cuota {
   @ManyToOne(() => Pago, (pago) => pago.cuotas)
   pago: Pago;
 
-  @ManyToOne(() => TarifaActividad, (tarifa) => tarifa.cuotas)
-  tarifa: TarifaActividad;
+  @ManyToOne(() => Tarifa, (tarifa) => tarifa.cuotas)
+  tarifa: Tarifa;
 
   @ManyToOne(() => Inscripcion, (inscripcion) => inscripcion.cuotas)
   inscripcion: Inscripcion;

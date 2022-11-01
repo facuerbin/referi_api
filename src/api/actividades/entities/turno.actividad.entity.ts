@@ -6,14 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
 } from 'typeorm';
 import { Actividad } from './actividad.entity';
 import { EstadoActividad } from './estado.actividad.entity';
-import { Horario } from './horario.entity';
+
+import { TurnoHorario } from './turno.horario.entity';
 
 @Entity()
 export class TurnoActividad {
@@ -29,9 +28,8 @@ export class TurnoActividad {
   @ManyToOne(() => EstadoActividad, (estado) => estado.actividades)
   estado: EstadoActividad;
 
-  @ManyToMany(() => Horario)
-  @JoinTable({ name: 'horario_actividad' })
-  horarios: Horario[];
+  @OneToMany(() => TurnoHorario, (horario) => horario.turnoActividad)
+  horarios: TurnoHorario[];
 
   @OneToMany(() => Inscripcion, (inscriptos) => inscriptos.organizacion)
   inscriptos: Inscripcion[];

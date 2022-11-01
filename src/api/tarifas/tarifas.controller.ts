@@ -23,7 +23,7 @@ export class TarifasController {
   create(@Body() createTarifaDto: CreateTarifaDto, @Res() res) {
     this.tarifasService
       .create(createTarifaDto)
-      .then((result) => res.status(200).send({ data: result }))
+      .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }
 
@@ -58,6 +58,14 @@ export class TarifasController {
   findAllByOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.tarifasService
       .findByOrg(idOrg)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('/actividad/:idActividad')
+  findAllByActividad(@Param('idActividad') idActividad: string, @Res() res) {
+    this.tarifasService
+      .findByActividad(idActividad)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
@@ -28,6 +28,7 @@ export class ActividadesService {
     @InjectRepository(Horario)
     private horarioRepository: Repository<Horario>,
     private organizacionesService: OrganizacionesService,
+    @Inject(forwardRef(() => TarifasService))
     private tarifasService: TarifasService,
   ) {}
 
@@ -113,9 +114,15 @@ export class ActividadesService {
       where: { id: createTurnoActividadDto.idActividad },
     });
 
-    const espacio = this.organizacionesService.findOneEspacio(
-      createTurnoActividadDto.idEspacio,
+    const idEspacios = createTurnoActividadDto.horarios.map(
+      (horario) => horario.idEspacio,
     );
+
+    const uniqueIdEspacio = [...new Set(idEspacios)];
+
+    const espacios = uniqueIdEspacio.map((id) => {
+      return this.organizacionesService.findOneEspacio(id);
+    });
 
     const estadoActividad = this.estadoActividadRepository.findOne({
       where: { estado: 'ACTIVO' },
@@ -123,32 +130,25 @@ export class ActividadesService {
 
     const horarios = createTurnoActividadDto.horarios.map((horario) => {
       return this.findHorario(
-        horario.diaSemana,
+        Dias[horario.dia],
         horario.horaInicio,
         horario.minutosInicio,
         horario.duracion,
       );
     });
 
-    const tarifas = createTurnoActividadDto.idsTarifa.map((idTarifa) => {
-      return this.tarifasService.findOne(idTarifa);
-    });
-
     return Promise.all([
       actividad,
-      espacio,
+      Promise.all(espacios),
       estadoActividad,
       Promise.all(horarios),
-      Promise.all(tarifas),
     ]).then(async (results) => {
       const turno = await this.turnoRepository.save({
         actividad: results[0],
-        espacio: results[1],
+        // espacio: results[1],
         estado: results[2],
         horarios: results[3],
       });
-
-      this.tarifasService.asignarTarifas(results[4], turno);
 
       return turno;
     });
@@ -181,13 +181,13 @@ export class ActividadesService {
       relations: {
         actividad: {
           organizacion: true,
-          tarifas: {
-            tarifa: true,
-          },
+          tarifas: true,
         },
-        espacio: true,
         estado: true,
-        horarios: true,
+        horarios: {
+          espacio: true,
+          horario: true,
+        },
         inscriptos: true,
       },
     });
@@ -201,7 +201,7 @@ export class ActividadesService {
       },
       relations: {
         organizacion: true,
-        tarifas: { tarifa: true },
+        tarifas: true,
         turnos: {
           espacio: true,
           horarios: true,

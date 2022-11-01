@@ -97,7 +97,6 @@ export class ActividadesController {
     this.actividadesService
       .detailActividad(idActividad)
       .then((result) => {
-        console.log(res);
         res.status(200).send({ ...result });
       })
       .catch((error) => res.status(400).send({ error }));

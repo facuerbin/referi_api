@@ -19,7 +19,6 @@ import { EstadoInscripcion } from './../api/socios/entities/estado.inscripcion.e
 import { Inscripcion } from './../api/socios/entities/inscripcion.entity';
 import { InscripcionEstado } from './../api/socios/entities/inscripcion.estado.entity';
 import { Frecuencia } from './../api/tarifas/entities/frecuencia.entity';
-import { TarifaActividad } from './../api/tarifas/entities/tarifa.actividad.entity';
 import { Tarifa } from './../api/tarifas/entities/tarifa.entity';
 import { Domicilio } from './../api/usuarios/entities/domicilio.entity';
 import { Usuario } from './../api/usuarios/entities/usuario.entity';
@@ -57,7 +56,6 @@ const OrmConfig = new DataSource({
     Inscripcion,
     InscripcionEstado,
     Frecuencia,
-    TarifaActividad,
     Tarifa,
     Domicilio,
     Usuario,

@@ -11,9 +11,9 @@ export class Domicilio {
   @Column()
   numero: number;
 
-  @Column()
+  @Column({ default: ' ' })
   ciudad: string;
 
-  @Column()
+  @Column({ default: ' ' })
   provincia: string;
 }

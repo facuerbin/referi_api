@@ -30,7 +30,6 @@ import { TipoOrganizacion } from './api/organizaciones/entities/tipo.organizacio
 import { Cuota } from './api/pagos/entities/cuota.entity';
 import { EstadoInscripcion } from './api/socios/entities/estado.inscripcion.entity';
 import { Inscripcion } from './api/socios/entities/inscripcion.entity';
-import { InscripcionEstado } from './api/socios/entities/inscripcion.estado.entity';
 import { Frecuencia } from './api/tarifas/entities/frecuencia.entity';
 import { Tarifa } from './api/tarifas/entities/tarifa.entity';
 import { NegocioModule } from './api/negocio/negocio.module';
@@ -72,7 +71,6 @@ import { TurnoHorario } from './api/actividades/entities/turno.horario.entity';
         Pago,
         EstadoInscripcion,
         Inscripcion,
-        InscripcionEstado,
         Frecuencia,
         Tarifa,
         Domicilio,

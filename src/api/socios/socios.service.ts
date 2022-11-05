@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ActividadesService } from '../actividades/actividades.service';
-import { OrganizacionesService } from '../organizaciones/organizaciones.service';
+import { PagosService } from '../pagos/pagos.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
 import { UpdateSocioDto } from './dto/update.socio.dto';
@@ -11,7 +11,6 @@ import {
   Estado,
 } from './entities/estado.inscripcion.entity';
 import { Inscripcion } from './entities/inscripcion.entity';
-import { InscripcionEstado } from './entities/inscripcion.estado.entity';
 
 @Injectable()
 export class SociosService {
@@ -20,16 +19,17 @@ export class SociosService {
     private inscripcionRepository: Repository<Inscripcion>,
     @InjectRepository(EstadoInscripcion)
     private estadoInscripcionRepository: Repository<EstadoInscripcion>,
-    private organizacionesService: OrganizacionesService,
     private actividadesService: ActividadesService,
     private usuariosService: UsuariosService,
+    @Inject(forwardRef(() => PagosService))
+    private pagosService: PagosService,
   ) {}
 
-  create(createSocioDto: CreateSocioDto) {
+  async create(createSocioDto: CreateSocioDto) {
     const usuario = this.usuariosService.findOne(createSocioDto.idUsuario);
 
     const turnoActividad = this.actividadesService.detailTurno(
-      createSocioDto.idActividadOrg,
+      createSocioDto.idTurnoActividad,
     );
 
     const estado = this.estadoInscripcionRepository.findOneBy({
@@ -38,15 +38,22 @@ export class SociosService {
 
     if (!usuario || !turnoActividad || !estado) throw new Error();
 
-    return Promise.all([usuario, turnoActividad, estado]).then((results) => {
+    const inscripcion = await Promise.all([
+      usuario,
+      turnoActividad,
+      estado,
+    ]).then((results) => {
       return this.inscripcionRepository.save({
-        legajo: createSocioDto.legajo,
-        actividad: results[1],
+        turnoActividad: results[1],
         usuario: results[0],
         estado: results[2],
         organizacion: results[1].actividad.organizacion,
       });
     });
+
+    const cuotas = await this.pagosService.createCuotas(inscripcion);
+
+    return inscripcion;
   }
 
   findByOrg(idOrg: string) {
@@ -55,7 +62,23 @@ export class SociosService {
         organizacion: { id: idOrg },
       },
       relations: {
-        actividad: true,
+        turnoActividad: { actividad: true },
+        usuario: true,
+        estados: true,
+      },
+      order: {
+        fechaCreacion: 'DESC',
+      },
+    });
+  }
+
+  findByUser(idUser: string) {
+    return this.inscripcionRepository.find({
+      where: {
+        usuario: { id: idUser },
+      },
+      relations: {
+        turnoActividad: true,
       },
       order: {
         fechaCreacion: 'DESC',
@@ -66,10 +89,10 @@ export class SociosService {
   findByActividad(idActividad: string) {
     return this.inscripcionRepository.find({
       where: {
-        actividad: { id: idActividad },
+        turnoActividad: { id: idActividad },
       },
       relations: {
-        actividad: true,
+        turnoActividad: { actividad: true },
       },
       order: {
         fechaCreacion: 'DESC',
@@ -83,7 +106,7 @@ export class SociosService {
         id: idInscripcion,
       },
       relations: {
-        actividad: true,
+        turnoActividad: { actividad: true },
         organizacion: true,
       },
     });

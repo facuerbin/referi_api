@@ -40,7 +40,7 @@ export class ImagesController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 * 1024 }),
+          // new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 * 1024 }),
         ],
       }),
     )

@@ -5,9 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { InscripcionEstado } from './inscripcion.estado.entity';
 
 @Entity()
 export class EstadoInscripcion {
@@ -16,12 +14,6 @@ export class EstadoInscripcion {
 
   @Column()
   nombre: Estado;
-
-  @OneToMany(
-    () => InscripcionEstado,
-    (inscripcionEstado) => inscripcionEstado.estado,
-  )
-  inscripcionEstado: InscripcionEstado[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

@@ -20,6 +20,12 @@ export class Cuota {
   monto: number;
 
   @Column()
+  periodoInicio: Date;
+
+  @Column()
+  periodoFin: Date;
+
+  @Column()
   fechaVencimiento: Date;
 
   @ManyToOne(() => Pago, (pago) => pago.cuotas)

@@ -15,19 +15,12 @@ import { CreateActividadDto } from './dto/create.actividad.dto';
 import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
 import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
 import { CreateTurnoActividadDto } from './dto/create.turno.actividad.dto';
-import { InscribirActividadDto } from './dto/inscribir.actividad.dto';
 import { UpdateActividadDto } from './dto/update.actividad.dto';
 
 @ApiTags('Actividades')
 @Controller({ path: 'actividades', version: '1' })
 export class ActividadesController {
   constructor(private readonly actividadesService: ActividadesService) {}
-
-  // Inscribir a una actividad
-  @Post('inscribir')
-  inscribir(@Body() inscribirActividadDto: InscribirActividadDto) {
-    return 'Inscribir a actividad';
-  }
 
   // Dar de baja de una actividad
   @Delete()
@@ -50,6 +43,14 @@ export class ActividadesController {
   ) {
     this.actividadesService
       .createTipoActividad(createTipoActividadDto)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('tipo/:idTipo')
+  findActividadByTipo(@Param('idTipo') idTipo: string, @Res() res) {
+    this.actividadesService
+      .findActividadByTipo(idTipo)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
   }
@@ -117,17 +118,6 @@ export class ActividadesController {
   ) {
     this.actividadesService
       .findActividadByOrg(idOrganizacion)
-      .then((result) => res.status(200).send({ data: result }))
-      .catch((error) => res.status(400).send({ error }));
-  }
-
-  @Get('organizacion/:tipoOrganizacion')
-  findActividadByTipo(
-    @Param('tipoOrganizacion') tipoOrganizacion: string,
-    @Res() res,
-  ) {
-    this.actividadesService
-      .findActividadByTipo(tipoOrganizacion)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
   }

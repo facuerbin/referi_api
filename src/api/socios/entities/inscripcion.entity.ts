@@ -11,15 +11,15 @@ import {
   DeleteDateColumn,
   ManyToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
+import { EstadoInscripcion } from './estado.inscripcion.entity';
 
 @Entity()
 export class Inscripcion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column()
-  legajo: number;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.inscripciones)
   usuario: Usuario;
@@ -27,11 +27,18 @@ export class Inscripcion {
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.socios)
   organizacion: Organizacion;
 
-  @ManyToOne(() => TurnoActividad, (actividad) => actividad.inscriptos)
-  actividad: TurnoActividad;
+  @ManyToOne(
+    () => TurnoActividad,
+    (turnoActividad) => turnoActividad.inscriptos,
+  )
+  turnoActividad: TurnoActividad;
 
   @OneToMany(() => Cuota, (cuota) => cuota.inscripcion)
   cuotas: Cuota[];
+
+  @ManyToMany(() => EstadoInscripcion)
+  @JoinTable()
+  estados: EstadoInscripcion[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

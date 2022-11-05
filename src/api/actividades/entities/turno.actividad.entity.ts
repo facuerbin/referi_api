@@ -22,16 +22,13 @@ export class TurnoActividad {
   @ManyToOne(() => Actividad, (actividad) => actividad.turnos)
   actividad: Actividad;
 
-  @ManyToOne(() => Espacio, (espacio) => espacio.actividades)
-  espacio: Espacio;
-
   @ManyToOne(() => EstadoActividad, (estado) => estado.actividades)
   estado: EstadoActividad;
 
   @OneToMany(() => TurnoHorario, (horario) => horario.turnoActividad)
   horarios: TurnoHorario[];
 
-  @OneToMany(() => Inscripcion, (inscriptos) => inscriptos.organizacion)
+  @OneToMany(() => Inscripcion, (inscriptos) => inscriptos.turnoActividad)
   inscriptos: Inscripcion[];
 
   // Timestamps

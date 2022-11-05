@@ -1,8 +1,7 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
-import { TarifasService } from '../tarifas/tarifas.service';
 import { CreateActividadDto } from './dto/create.actividad.dto';
 import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
 import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
@@ -31,8 +30,6 @@ export class ActividadesService {
     @InjectRepository(Horario)
     private horarioRepository: Repository<Horario>,
     private organizacionesService: OrganizacionesService,
-    @Inject(forwardRef(() => TarifasService))
-    private tarifasService: TarifasService,
   ) {}
 
   async createActividad(createActividadDto: CreateActividadDto) {
@@ -73,14 +70,19 @@ export class ActividadesService {
     });
   }
 
-  findActividadByTipo(tipoActividad) {
+  findActividadByTipo(idTipoActividad) {
     return this.actividadRepository.find({
       where: {
-        tipo: { tipo: tipoActividad },
+        tipo: { id: idTipoActividad },
         fechaBaja: IsNull(),
+        turnos: !IsNull(),
+        tarifas: !IsNull(),
       },
       relations: {
         organizacion: true,
+        tipo: true,
+        turnos: true,
+        tarifas: true,
       },
     });
   }
@@ -175,7 +177,7 @@ export class ActividadesService {
       },
       relations: {
         actividad: true,
-        espacio: true,
+        horarios: { horario: true, espacio: true },
         estado: true,
       },
     });
@@ -212,9 +214,8 @@ export class ActividadesService {
         organizacion: true,
         tarifas: true,
         turnos: {
-          espacio: true,
-          horarios: { horario: true, espacio: true },
           inscriptos: true,
+          horarios: { horario: true, espacio: true },
         },
         tipo: true,
       },

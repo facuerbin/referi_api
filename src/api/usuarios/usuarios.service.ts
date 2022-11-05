@@ -83,7 +83,6 @@ export class UsuariosService {
       }
 
       if (!['fechaBaja', 'id', 'verificado', 'password'].includes(property)) {
-        console.log(updateUsuarioDto.fotoPerfil);
         user[property] = updateUsuarioDto[property];
       }
     }

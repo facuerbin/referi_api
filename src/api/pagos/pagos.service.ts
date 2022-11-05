@@ -4,25 +4,76 @@ import * as moment from 'moment';
 import { In, Repository } from 'typeorm';
 import { Inscripcion } from '../socios/entities/inscripcion.entity';
 import { SociosService } from '../socios/socios.service';
-import { Tarifa } from '../tarifas/entities/tarifa.entity';
 import { TarifasService } from '../tarifas/tarifas.service';
-import { UsuariosService } from '../usuarios/usuarios.service';
-import { CreatePagoDto } from './dto/create-pago.dto';
-import { UpdatePagoDto } from './dto/update-pago.dto';
+import { MedioDePago, RegistrarPagoDto } from './dto/registrar.pago.dto';
 import { Cuota } from './entities/cuota.entity';
+import { Pago } from './entities/pago.entity';
 
 @Injectable()
 export class PagosService {
   constructor(
     @InjectRepository(Cuota)
     private cuotaRepository: Repository<Cuota>,
-    private usuariosService: UsuariosService,
+    @InjectRepository(Pago)
+    private pagoRepository: Repository<Pago>,
     @Inject(forwardRef(() => SociosService))
     private sociosService: SociosService,
     private tarifasService: TarifasService,
   ) {}
-  create(createPagoDto: CreatePagoDto) {
-    return 'This action adds a new pago';
+  async registrarPago(registrarPagoDto: RegistrarPagoDto) {
+    const cuotas = await this.cuotaRepository.find({
+      where: { id: In(registrarPagoDto.idsCuota) },
+      relations: {
+        inscripcion: {
+          usuario: true,
+          organizacion: true,
+        },
+      },
+    });
+    const user = cuotas[0].inscripcion.usuario;
+    const org = cuotas[0].inscripcion.organizacion;
+    return this.pagoRepository.save({
+      fechaPago: new Date(),
+      numeroComprobante: registrarPagoDto.numeroDeComprobante
+        ? registrarPagoDto.numeroDeComprobante
+        : null,
+      medioDePago: MedioDePago[registrarPagoDto.medioDePago],
+      usuario: user,
+      organizacion: org,
+      cuotas: cuotas,
+    });
+  }
+
+  async consultarPagosInscripto(idInscripcion: string) {
+    return this.pagoRepository.find({
+      where: {
+        cuotas: {
+          inscripcion: {
+            id: idInscripcion,
+          },
+        },
+      },
+    });
+  }
+
+  async consultarPagosOrganizacion(idOrganizacion: string) {
+    return this.pagoRepository.find({
+      where: {
+        organizacion: {
+          id: idOrganizacion,
+        },
+      },
+    });
+  }
+
+  async consultarPagosUsuario(idUsuario: string) {
+    return this.pagoRepository.find({
+      where: {
+        usuario: {
+          id: idUsuario,
+        },
+      },
+    });
   }
 
   async createCuotas(inscripcion: Inscripcion) {
@@ -52,6 +103,13 @@ export class PagosService {
       where: {
         inscripcion: { id: idInscripcion },
       },
+      relations: {
+        tarifa: {
+          actividad: true,
+        },
+        pago: true,
+        inscripcion: { usuario: true },
+      },
     });
   }
 
@@ -63,6 +121,12 @@ export class PagosService {
     return this.cuotaRepository.find({
       where: {
         inscripcion: { id: In(ids) },
+      },
+      relations: {
+        tarifa: {
+          actividad: true,
+        },
+        pago: true,
       },
     });
   }
@@ -76,22 +140,32 @@ export class PagosService {
       where: {
         inscripcion: { id: In(ids) },
       },
+      relations: {
+        tarifa: {
+          actividad: true,
+        },
+        pago: true,
+        inscripcion: { usuario: true },
+      },
     });
   }
 
-  findAll() {
-    return `This action returns all pagos`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} pago`;
-  }
-
-  update(id: number, updatePagoDto: UpdatePagoDto) {
-    return `This action updates a #${id} pago`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} pago`;
+  findOne(id: string) {
+    return this.pagoRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        organizacion: true,
+        usuario: true,
+        cuotas: {
+          inscripcion: {
+            turnoActividad: {
+              actividad: true,
+            },
+          },
+        },
+      },
+    });
   }
 }

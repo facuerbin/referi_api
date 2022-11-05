@@ -9,7 +9,6 @@ import {
   DeleteDateColumn,
   OneToMany,
   ManyToOne,
-  OneToOne,
 } from 'typeorm';
 import { Cuota } from './cuota.entity';
 @Entity()
@@ -20,7 +19,7 @@ export class Pago {
   @Column()
   fechaPago: Date;
 
-  @Column()
+  @Column({ nullable: true })
   numeroComprobante: string;
 
   @Column()
@@ -29,7 +28,7 @@ export class Pago {
   @ManyToOne(() => Organizacion, (organizacion) => organizacion.pagos)
   organizacion: Organizacion;
 
-  @OneToMany(() => Cuota, (cuota) => cuota.pago)
+  @OneToMany(() => Cuota, (cuota) => cuota.pago, { cascade: true })
   cuotas: Cuota[];
 
   @ManyToOne(() => Usuario, (usuario) => usuario.pagos)

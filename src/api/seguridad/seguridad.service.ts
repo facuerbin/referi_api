@@ -8,7 +8,6 @@ import {
 import * as CacheManager from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
-import { Cache } from 'cache-manager';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { RegisterDto } from './dto/register.dto';
@@ -18,6 +17,7 @@ import {
   validateCache as ValidateCache,
 } from 'src/email/email.service';
 import { RecoverPasswordDto } from './dto/recover.password.dto';
+import { ChangePasswordDto } from './dto/change.password.dto';
 
 @Injectable()
 export class SeguridadService {
@@ -73,8 +73,8 @@ export class SeguridadService {
   }
 
   async recoverPassword(recover: RecoverPasswordDto) {
-    const user = await this.usersService.findOne(recover.id);
-    if (recover.email !== user.email) throw new Error('Invalid email');
+    const user = await this.usersService.findByEmail(recover.email);
+    if (!user.email) throw new Error('Invalid email');
 
     const newPassword = this.generateRandomPassword();
     const hashed = await hash(newPassword, 10);
@@ -88,6 +88,19 @@ export class SeguridadService {
         Logger.error(e);
         return false;
       });
+  }
+
+  async changePassword(dto: ChangePasswordDto) {
+    const user = await this.usersService.findOne(dto.id);
+    if (!user) throw new HttpException('USER_NOT_FOUND', 404);
+
+    const checkPassword = await compare(dto.oldPassword, user.password);
+    if (!checkPassword) throw new HttpException('PASSWORD_INCORRECT', 403);
+
+    const newPassword = dto.newPassword;
+    const hashed = await hash(newPassword, 10);
+    user.password = hashed;
+    return this.usersService.save(user);
   }
 
   generateRandomPassword() {

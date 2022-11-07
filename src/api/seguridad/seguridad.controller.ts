@@ -6,6 +6,7 @@ import { RegisterDto } from './dto/register.dto';
 import { EmailService } from 'src/email/email.service';
 import { VerifyEmailDto } from './dto/verify.email.dto';
 import { RecoverPasswordDto } from './dto/recover.password.dto';
+import { ChangePasswordDto } from './dto/change.password.dto';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
@@ -64,8 +65,24 @@ export class SeguridadController {
       });
   }
 
+  @Post('change_password')
+  cambiarContrasenia(@Body() dto: ChangePasswordDto, @Res() res) {
+    this.seguridadService
+      .changePassword(dto)
+      .then((result) => {
+        if (result) {
+          return res.status(200).send({ data: 'Password updated' });
+        } else {
+          return res.status(401).send({ error: 'Invalid request' });
+        }
+      })
+      .catch((error) => {
+        return res.status(400).send({ error: error });
+      });
+  }
+
   @Get('logout')
   logout(@Body() recover: RecoverPasswordDto, @Res() res) {
-    return 'Recuperar contraseña';
+    return 'Logout';
   }
 }

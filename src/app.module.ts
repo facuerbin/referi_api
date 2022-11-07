@@ -78,6 +78,7 @@ import { TurnoHorario } from './api/actividades/entities/turno.horario.entity';
         Notificacion,
       ],
       synchronize: config.NODE_ENV === 'development' ? true : false,
+      // logging: true,
       // migrations: ['dist/db/*.js'],
     }),
     CacheModule.register({ isGlobal: true }),

@@ -122,8 +122,11 @@ export class TarifasService {
       where: { id: id, fechaBaja: IsNull() },
     });
 
-    for (const property in tarifa) {
-      if (tarifa[property] && !['fechaBaja', 'id'].includes(property)) {
+    for (const property in updateTarifaDto) {
+      if (
+        !['fechaBaja', 'id'].includes(property) &&
+        updateTarifaDto[property]
+      ) {
         tarifa[property] = updateTarifaDto[property];
       }
     }

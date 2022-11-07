@@ -1,10 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { distinct } from 'rxjs';
+import { Between, LessThan, Repository } from 'typeorm';
 import { ActividadesService } from '../actividades/actividades.service';
 import { PagosService } from '../pagos/pagos.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
+import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
 import { UpdateSocioDto } from './dto/update.socio.dto';
 import {
   EstadoInscripcion,
@@ -57,9 +59,31 @@ export class SociosService {
   }
 
   findByOrg(idOrg: string) {
+    // return this.inscripcionRepository
+    //   .createQueryBuilder('inscripto')
+    //   .relation(Inscripcion, 'usuario')
+    //   .select('DISTINCT inscripto.usuario', 'usuarios')
+    //   .getRawMany();
     return this.inscripcionRepository.find({
       where: {
         organizacion: { id: idOrg },
+      },
+      relations: {
+        turnoActividad: { actividad: true },
+        usuario: true,
+        estados: true,
+      },
+      order: {
+        fechaCreacion: 'DESC',
+      },
+    });
+  }
+
+  findDeudoresByOrg(idOrg: string) {
+    return this.inscripcionRepository.find({
+      where: {
+        organizacion: { id: idOrg },
+        cuotas: { pago: null, fechaVencimiento: LessThan(new Date()) },
       },
       relations: {
         turnoActividad: { actividad: true },
@@ -78,7 +102,11 @@ export class SociosService {
         usuario: { id: idUser },
       },
       relations: {
-        turnoActividad: true,
+        turnoActividad: {
+          actividad: true,
+          horarios: { espacio: true, horario: true },
+        },
+        organizacion: true,
       },
       order: {
         fechaCreacion: 'DESC',
@@ -118,5 +146,25 @@ export class SociosService {
 
   remove(id: number) {
     return `This action removes a #${id} socio`;
+  }
+
+  inscriptosPorMes(reporteDto: ReporteInscriptosMesDto) {
+    return this.inscripcionRepository.find({
+      where: {
+        organizacion: { id: reporteDto.idOrganizacion },
+        fechaCreacion: Between(
+          new Date(reporteDto.fromYear, reporteDto.fromMonth - 1, 1),
+          new Date(reporteDto.toYear, reporteDto.toMonth, -1),
+        ),
+      },
+      relations: {
+        turnoActividad: { actividad: true },
+        usuario: true,
+        estados: true,
+      },
+      order: {
+        fechaCreacion: 'DESC',
+      },
+    });
   }
 }

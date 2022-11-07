@@ -63,6 +63,14 @@ export class PagosService {
           id: idOrganizacion,
         },
       },
+      relations: {
+        cuotas: {
+          tarifa: {
+            actividad: true,
+          },
+        },
+        usuario: true,
+      },
     });
   }
 

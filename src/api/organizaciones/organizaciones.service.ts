@@ -152,7 +152,7 @@ export class OrganizacionesService {
       },
       relations: {
         organizacion: true,
-        rol: true,
+        rol: { permisos: true },
       },
     });
   }

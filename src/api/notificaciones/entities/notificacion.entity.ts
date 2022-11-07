@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Notificacion {
@@ -9,24 +16,40 @@ export class Notificacion {
   idRemitente: string;
 
   @Column()
-  tipoDestinatario: Date;
+  nombreRemitente: string;
 
   @Column()
-  tipoRemitente: Tipo;
+  tipoRemitente: TipoRemitente;
 
   @Column()
-  titulo: Tipo;
+  tipoDestinatario: TipoDestinatario;
+
+  @Column()
+  titulo: string;
 
   @Column()
   cuerpo: string;
 
   @Column()
   fecha: Date;
+
+  @ManyToMany(() => Usuario)
+  @JoinTable({ name: 'notificaciones_usuario' })
+  usuarios: Usuario[];
 }
 
-enum Tipo {
+export enum TipoRemitente {
   SOCIO = 'Socio',
   ORGANIZACION = 'Organizacion',
   ADMINISTRADORSISTEMA = 'Administrador de Sistema',
   TODOS = 'Todos',
+}
+
+export enum TipoDestinatario {
+  DEUDORES = 'Deudores',
+  SOCIOS = 'Socios',
+  ACTIVIDAD = 'Inscriptos a Actividad',
+  TURNO_ACTIVIDAD = 'Inscriptos a un Turno',
+  PERSONAL_ORGANIZACION = 'Personal Organización',
+  SOCIO = 'Socio',
 }

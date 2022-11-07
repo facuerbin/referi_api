@@ -3,9 +3,6 @@ import { IsEmail } from 'class-validator';
 
 export class RecoverPasswordDto {
   @ApiProperty()
-  id: string;
-
-  @ApiProperty()
   @IsEmail()
   email: string;
 }

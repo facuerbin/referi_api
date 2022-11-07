@@ -29,7 +29,7 @@ export class Rol {
   )
   empleados: PersonalOrganizacion[];
 
-  @ManyToMany(() => Permiso)
+  @ManyToMany(() => Permiso, { cascade: ['insert'] })
   @JoinTable({ name: 'permiso_rol' })
   permisos: Permiso[];
 

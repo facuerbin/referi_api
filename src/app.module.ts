@@ -41,8 +41,14 @@ import { EmailService } from './email/email.service';
 import { EmailModule } from './email/email.module';
 import { ImagesModule } from './api/images/images.module';
 import { TurnoHorario } from './api/actividades/entities/turno.horario.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+console.log(join(__dirname, '..', 'web'));
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'web'),
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       namingStrategy: new SnakeNamingStrategy(),

@@ -29,8 +29,8 @@ export class Organizacion {
   @Column()
   nombre: string;
 
-  @Column()
-  logo: string; // url
+  @Column({ default: 'uploads/placeholder.png' })
+  logo: string;
 
   @Column()
   descripcion: string;

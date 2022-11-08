@@ -7,6 +7,7 @@ import { EmailService } from 'src/email/email.service';
 import { VerifyEmailDto } from './dto/verify.email.dto';
 import { RecoverPasswordDto } from './dto/recover.password.dto';
 import { ChangePasswordDto } from './dto/change.password.dto';
+import { RegisterFromOrgDto } from './dto/register.user.from.organization.dto';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
@@ -59,6 +60,18 @@ export class SeguridadController {
         } else {
           return res.status(401).send({ error: 'Invalid request' });
         }
+      })
+      .catch((error) => {
+        return res.status(400).send({ error: error });
+      });
+  }
+
+  @Post('socio')
+  asociarNuevoUsuario(@Body() dto: RegisterFromOrgDto, @Res() res) {
+    this.seguridadService
+      .registerFromOrganization(dto)
+      .then((result) => {
+        return res.status(200).send({ ...result });
       })
       .catch((error) => {
         return res.status(400).send({ error: error });

@@ -1,15 +1,11 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsInt, IsDateString } from 'class-validator';
 import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
 
-export class RegisterDto {
+export class RegisterFromOrgDto {
   @ApiProperty()
   @IsEmail()
   email: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  password: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -30,9 +26,9 @@ export class RegisterDto {
   @IsDateString()
   fechaNacimiento: Date;
 
-  @ApiProperty({ required: false })
-  fotoPerfil: string;
+  @ApiProperty({ type: Domicilio })
+  domicilio: Domicilio;
 
-  @ApiProperty({ type: PartialType<Domicilio> })
-  domicilio: Partial<Domicilio>;
+  @ApiProperty()
+  idTurnoActividad: string;
 }

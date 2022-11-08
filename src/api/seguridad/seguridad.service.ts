@@ -18,12 +18,15 @@ import {
 } from 'src/email/email.service';
 import { RecoverPasswordDto } from './dto/recover.password.dto';
 import { ChangePasswordDto } from './dto/change.password.dto';
+import { RegisterFromOrgDto } from './dto/register.user.from.organization.dto';
+import { SociosService } from '../socios/socios.service';
 
 @Injectable()
 export class SeguridadService {
   constructor(
     private usersService: UsuariosService,
     private emailService: EmailService,
+    private sociosService: SociosService,
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager.Cache,
   ) {}
@@ -47,6 +50,39 @@ export class SeguridadService {
     const createdUser = await this.usersService.create(user);
     const access_token = this.generateToken(createdUser);
     return { ...createdUser, access_token };
+  }
+
+  async registerFromOrganization(dto: RegisterFromOrgDto) {
+    const userExist = await this.usersService.findByEmail(dto.email);
+    if (userExist) {
+      return this.sociosService.create({
+        idTurnoActividad: dto.idTurnoActividad,
+        idUsuario: userExist.id,
+      });
+    }
+
+    const password = this.generateRandomPassword();
+    const newUser = await this.usersService.create({
+      email: dto.email,
+      password,
+      nombre: dto.nombre,
+      apellido: dto.apellido,
+      dni: dto.dni,
+      fechaNacimiento: dto.fechaNacimiento,
+      telefono: dto.telefono,
+      fotoPerfil: '',
+      domicilio: {
+        calle: dto.domicilio.calle,
+        numero: dto.domicilio.numero,
+        ciudad: dto.domicilio.ciudad,
+        provincia: dto.domicilio.provincia,
+      },
+    });
+
+    return this.sociosService.create({
+      idTurnoActividad: dto.idTurnoActividad,
+      idUsuario: newUser.id,
+    });
   }
 
   async verifyEmail(verifyForm: VerifyEmailDto) {

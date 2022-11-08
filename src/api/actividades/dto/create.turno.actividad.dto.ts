@@ -5,6 +5,6 @@ export class CreateTurnoActividadDto {
   @ApiProperty()
   idActividad: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: HorarioActividadDto })
   horarios: HorarioActividadDto[];
 }

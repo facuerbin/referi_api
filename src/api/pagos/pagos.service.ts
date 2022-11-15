@@ -64,11 +64,7 @@ export class PagosService {
         },
       },
       relations: {
-        cuotas: {
-          tarifa: {
-            actividad: true,
-          },
-        },
+        cuotas: { tarifa: { actividad: true } },
         usuario: true,
       },
     });

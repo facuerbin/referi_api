@@ -40,7 +40,9 @@ export class PagosController {
   ) {
     return this.pagosService
       .consultarPagosOrganizacion(idOrganizacion)
-      .then((result) => res.status(200).send({ data: result }))
+      .then((result) => {
+        res.status(200).send({ data: result });
+      })
       .catch((error) => res.status(400).send({ error }));
   }
 
@@ -52,7 +54,7 @@ export class PagosController {
       .catch((error) => res.status(400).send({ error }));
   }
 
-  @Get('cuotas/:idInscripto')
+  @Get('cuotas/inscripto/:idInscripto')
   listCuotasInscripto(@Param('idInscripto') idInscripto: string, @Res() res) {
     return this.pagosService
       .consultarCuotasInscripto(idInscripto)

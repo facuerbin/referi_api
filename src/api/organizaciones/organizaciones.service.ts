@@ -68,7 +68,7 @@ export class OrganizacionesService {
 
   findOne(id: string) {
     return this.organizacionRepository.findOne({
-      relations: { direccion: true, espacios: true },
+      relations: { direccion: true, espacios: true, tipo: true },
       where: { id: id, fechaBaja: IsNull() },
     });
   }
@@ -129,6 +129,13 @@ export class OrganizacionesService {
     });
   }
 
+  listPersonalOrganizacion(idOrg: string) {
+    return this.personalRepository.find({
+      where: { organizacion: { id: idOrg } },
+      relations: { organizacion: true, rol: true, personal: true },
+    });
+  }
+
   listTipos() {
     return this.tipoOrganizacionRepository.find();
   }
@@ -141,6 +148,13 @@ export class OrganizacionesService {
     return this.espacioRepository.find({
       relations: { organizacion: true },
       where: { organizacion: { id: orgId } },
+    });
+  }
+
+  listRoles() {
+    return this.rolRepository.find({
+      where: { fechaBaja: IsNull() },
+      relations: { permisos: true },
     });
   }
 

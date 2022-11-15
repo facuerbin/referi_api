@@ -27,10 +27,10 @@ export class OrganizacionesController {
     return this.organizacionesService
       .create(createOrganizacioneDto)
       .then((result) => {
-        this.organizacionesService.createPersonal(result.id, {
-          emailUsuario: result.email,
-          rol: 'Owner',
-        });
+        // this.organizacionesService.createPersonal(result.id, {
+        //   emailUsuario: result.email,
+        //   rol: 'Owner',
+        // });
         this.organizacionesService.createEspacio(result.id, {
           nombre: 'SUM',
           capacidad: 100,
@@ -68,6 +68,14 @@ export class OrganizacionesController {
   listEspaciosOrg(@Param('orgId') orgId: string, @Res() res) {
     return this.organizacionesService
       .listEspaciosOrg(orgId)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('/roles')
+  listRoles(@Res() res) {
+    this.organizacionesService
+      .listRoles()
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
   }
@@ -127,6 +135,14 @@ export class OrganizacionesController {
   findEmployeeOrganization(@Param('id') id: string, @Res() res) {
     this.organizacionesService
       .listEmployeeOrganization(id)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('/:idOrg/personal')
+  listPersonalOrg(@Param('idOrg') idOrg: string, @Res() res) {
+    this.organizacionesService
+      .listPersonalOrganizacion(idOrg)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
   }

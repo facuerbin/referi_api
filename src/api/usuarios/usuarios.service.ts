@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { profile } from 'console';
 import { existsSync, unlink } from 'fs';
 import { join } from 'path';
 import { IsNull, Repository } from 'typeorm';
@@ -82,7 +81,10 @@ export class UsuariosService {
         }
       }
 
-      if (!['fechaBaja', 'id', 'verificado', 'password'].includes(property)) {
+      if (
+        !['fechaBaja', 'id', 'verificado', 'password'].includes(property) &&
+        updateUsuarioDto[property]
+      ) {
         user[property] = updateUsuarioDto[property];
       }
     }

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Repository, UpdateDateColumn } from 'typeorm';
 import { Domicilio } from '../usuarios/entities/domicilio.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { CreateOrganizacionDto } from './dto/create-organizacione.dto';
 import { CreateEspacioDto } from './dto/create.espacio.dto';
 import { CreatePersonalDto } from './dto/create.personal.dto';
-import { UpdateOrganizacionDto } from './dto/update-organizacione.dto';
+import { UpdateOrganizacionDto } from './dto/update.organizacion.dto';
 import { Espacio } from './entities/espacio.entity';
 import { Organizacion } from './entities/organizacion.entity';
 import { PersonalOrganizacion } from './entities/personal.organizacion.entity';
@@ -73,16 +73,22 @@ export class OrganizacionesService {
     });
   }
 
-  async update(id: string, updateOrganizacioneDto: UpdateOrganizacionDto) {
+  async update(id: string, updateOrganizacionDto: UpdateOrganizacionDto) {
     const organizacion = await this.organizacionRepository.findOne({
       where: { id: id, fechaBaja: IsNull() },
+      relations: { direccion: true },
     });
 
-    for (const property in updateOrganizacioneDto) {
-      if (organizacion[property] && !['fechaBaja', 'id'].includes(property)) {
-        organizacion[property] = updateOrganizacioneDto[property];
+    for (const property in updateOrganizacionDto) {
+      if (!['fechaBaja', 'id', 'direccion'].includes(property)) {
+        organizacion[property] = updateOrganizacionDto[property];
       }
     }
+
+    organizacion.direccion = {
+      id: organizacion.direccion.id,
+      ...updateOrganizacionDto.direccion,
+    };
 
     return this.organizacionRepository.save(organizacion);
   }
@@ -93,6 +99,8 @@ export class OrganizacionesService {
 
   async createEspacio(orgId: string, createEspacioDto: CreateEspacioDto) {
     const organizacion = await this.findOne(orgId);
+
+    if (!organizacion) throw new Error('Organization not found');
 
     return this.espacioRepository.save({
       nombre: createEspacioDto.nombre,

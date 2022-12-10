@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { OrganizacionesService } from './organizaciones.service';
 import { CreateOrganizacionDto } from './dto/create-organizacione.dto';
-import { UpdateOrganizacionDto } from './dto/update-organizacione.dto';
+import { UpdateOrganizacionDto } from './dto/update.organizacion.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateEspacioDto } from './dto/create.espacio.dto';
 import { CreatePersonalDto } from './dto/create.personal.dto';
@@ -27,10 +27,6 @@ export class OrganizacionesController {
     return this.organizacionesService
       .create(createOrganizacioneDto)
       .then((result) => {
-        // this.organizacionesService.createPersonal(result.id, {
-        //   emailUsuario: result.email,
-        //   rol: 'Owner',
-        // });
         this.organizacionesService.createEspacio(result.id, {
           nombre: 'SUM',
           capacidad: 100,
@@ -115,7 +111,7 @@ export class OrganizacionesController {
   ) {
     this.organizacionesService
       .createEspacio(id, createEspacioDto)
-      .then((result) => res.status(200).send({ data: result }))
+      .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }
 

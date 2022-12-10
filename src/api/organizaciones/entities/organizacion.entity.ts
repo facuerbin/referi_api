@@ -41,7 +41,7 @@ export class Organizacion {
   @Column()
   email: string;
 
-  @OneToOne(() => Domicilio)
+  @OneToOne(() => Domicilio, { cascade: true })
   @JoinColumn()
   direccion: Domicilio;
 

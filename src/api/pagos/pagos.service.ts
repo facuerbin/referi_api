@@ -88,15 +88,57 @@ export class PagosService {
     const diasDeTolerancia = 3;
 
     tarifas.forEach(async (tarifa) => {
-      const cuota = await this.cuotaRepository.save({
-        inscripcion: inscripcion,
-        tarifa: tarifa,
-        monto: tarifa.monto,
-        fechaVencimiento: moment().add(diasDeTolerancia, 'days').toDate(),
-        periodoInicio: moment().toDate(),
-        periodoFin: moment().add(tarifa.frecuencia.cantDias, 'days').toDate(),
-      });
-      cuotas.push(cuota);
+      const cuotasCreadas: Cuota[] = [];
+      cuotasCreadas.push(
+        await this.cuotaRepository.save({
+          inscripcion: inscripcion,
+          tarifa: tarifa,
+          monto: tarifa.monto,
+          fechaVencimiento: moment().add(diasDeTolerancia, 'days').toDate(),
+          periodoInicio: moment().toDate(),
+          periodoFin: moment().add(tarifa.frecuencia.cantDias, 'days').toDate(),
+        }),
+      );
+
+      if (tarifa.frecuencia.cantDias > 0) {
+        cuotasCreadas.push(
+          await this.cuotaRepository.save({
+            inscripcion: inscripcion,
+            tarifa: tarifa,
+            monto: tarifa.monto,
+            fechaVencimiento: moment()
+              .add(diasDeTolerancia, 'days')
+              .add(tarifa.frecuencia.cantDias, 'days')
+              .toDate(),
+            periodoInicio: moment()
+              .add(tarifa.frecuencia.cantDias, 'days')
+              .toDate(),
+            periodoFin: moment()
+              .add(tarifa.frecuencia.cantDias * 2, 'days')
+              .toDate(),
+          }),
+        );
+
+        cuotasCreadas.push(
+          await this.cuotaRepository.save({
+            inscripcion: inscripcion,
+            tarifa: tarifa,
+            monto: tarifa.monto,
+            fechaVencimiento: moment()
+              .add(diasDeTolerancia, 'days')
+              .add(tarifa.frecuencia.cantDias * 2, 'days')
+              .toDate(),
+            periodoInicio: moment()
+              .add(tarifa.frecuencia.cantDias * 2, 'days')
+              .toDate(),
+            periodoFin: moment()
+              .add(tarifa.frecuencia.cantDias * 3, 'days')
+              .toDate(),
+          }),
+        );
+      }
+
+      cuotas.push(...cuotasCreadas);
     });
 
     return cuotas;

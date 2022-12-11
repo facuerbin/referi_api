@@ -45,8 +45,8 @@ export class SociosService {
       usuario,
       turnoActividad,
       estado,
-    ]).then((results) => {
-      const yaInscripto = this.inscripcionRepository.findOne({
+    ]).then(async (results) => {
+      const yaInscripto = await this.inscripcionRepository.findOne({
         where: {
           fechaBaja: IsNull(),
           usuario: { id: results[0].id },
@@ -172,8 +172,20 @@ export class SociosService {
     return `This action updates a #${id} socio`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} socio`;
+  async remove(id: string) {
+    const socio = await this.findOne(id);
+    if (socio.estados[0].nombre != Estado.ACTIVO.toUpperCase()) {
+      console.log(socio);
+      return new Error(
+        'El inscripto no puede ser dado de baja hasta que esté en estado Activo',
+      );
+    }
+    const baja = await this.estadoInscripcionRepository.findOne({
+      where: { nombre: Estado.BAJA },
+    });
+    socio.fechaBaja = new Date();
+    socio.estados = [baja];
+    return this.inscripcionRepository.save(socio);
   }
 
   inscriptosPorMes(reporteDto: ReporteInscriptosMesDto) {

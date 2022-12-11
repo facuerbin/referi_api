@@ -93,8 +93,11 @@ export class SociosController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.sociosService.remove(+id);
+  remove(@Param('id') id: string, @Res() res) {
+    return this.sociosService
+      .remove(id)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error: error.message }));
   }
 
   @Post('reporte/inscriptos-mes')

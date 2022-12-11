@@ -13,6 +13,7 @@ import { CreateNotificacioneDto } from './dto/create-notificacione.dto';
 import { UpdateNotificacioneDto } from './dto/update-notificacione.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { EnviarNotifiacionDto } from './dto/enviar.notificacion.dto';
+import { TipoDestinatario } from './entities/notificacion.entity';
 
 @ApiTags('Notificaciones')
 @Controller({ path: 'notificaciones', version: '1' })
@@ -26,10 +27,38 @@ export class NotificacionesController {
 
   @Post('socios')
   enviarNotificacionesSocios(@Body() dto: EnviarNotifiacionDto, @Res() res) {
-    return this.notificacionesService
-      .enviarNotificacionSocios(dto)
-      .then((result) => res.status(200).send({ data: result }))
-      .catch((error) => res.status(400).send({ error: error }));
+    switch (dto.tipoDestinatario) {
+      case TipoDestinatario.DEUDORES:
+        return this.notificacionesService
+          .enviarNotificacionDeudores(dto)
+          .then((result) => res.status(200).send({ ...result }))
+          .catch((error) => res.status(400).send({ error: error }));
+      case TipoDestinatario.SOCIOS:
+        return this.notificacionesService
+          .enviarNotificacionSocios(dto)
+          .then((result) => res.status(200).send({ ...result }))
+          .catch((error) => res.status(400).send({ error: error }));
+      case TipoDestinatario.ACTIVIDAD:
+        return this.notificacionesService
+          .enviarNotificacionSocios(dto)
+          .then((result) => res.status(200).send({ ...result }))
+          .catch((error) => res.status(400).send({ error: error }));
+      case TipoDestinatario.TURNO_ACTIVIDAD:
+        return this.notificacionesService
+          .enviarNotificacionSocios(dto)
+          .then((result) => res.status(200).send({ ...result }))
+          .catch((error) => res.status(400).send({ error: error }));
+      default:
+        break;
+    }
+  }
+
+  @Get('socios/:idUsuario')
+  findAllByUser(@Param('idUsuario') idUser: string, @Res() res) {
+    this.notificacionesService
+      .findAllByUser(idUser)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ erro: error }));
   }
 
   @Get()

@@ -11,8 +11,10 @@ import {
   OneToMany,
   OneToOne,
   JoinColumn,
+  ManyToMany,
 } from 'typeorm';
 import { Domicilio } from './domicilio.entity';
+import { Notificacion } from 'src/api/notificaciones/entities/notificacion.entity';
 
 @Entity()
 export class Usuario {
@@ -61,6 +63,9 @@ export class Usuario {
     (organizaciones) => organizaciones.personal,
   )
   organizaciones: PersonalOrganizacion[];
+
+  @ManyToMany(() => Notificacion)
+  notificaciones: Notificacion[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

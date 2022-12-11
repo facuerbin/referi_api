@@ -105,4 +105,12 @@ export class UsuariosService {
     user.verificado = true;
     return this.usuarioRepository.save(user);
   }
+
+  async getNotificaciones(idUser: string) {
+    return this.usuarioRepository
+      .createQueryBuilder('usuario')
+      .leftJoin('usuario.notificaciones', 'notificaciones')
+      .where('notificaciones.usuarios = :id', { id: idUser })
+      .getMany();
+  }
 }

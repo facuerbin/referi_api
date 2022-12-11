@@ -66,10 +66,11 @@ export class AsistenciasService {
     });
   }
 
-  findOne(id: string, idOrg: string) {
+  findOne(fecha: Date, idOrg: string) {
+    const date = new Date(fecha);
     return this.planillaRepository.findOne({
       where: {
-        id: id,
+        fecha: new Date(date.setUTCHours(0, 0, 0, 0)),
         organizacion: {
           id: idOrg,
         },

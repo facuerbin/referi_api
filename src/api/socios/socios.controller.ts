@@ -49,6 +49,17 @@ export class SociosController {
       .catch((error) => res.status(400).send({ error }));
   }
 
+  @Get('actividad/turno/:idTurnoActividad')
+  findByTurnoActividad(
+    @Param('idTurnoActividad') idTurnoActividad: string,
+    @Res() res,
+  ) {
+    this.sociosService
+      .findByTurnoActividad(idTurnoActividad)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
   @Get('actividad/:idActividad')
   findByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.sociosService

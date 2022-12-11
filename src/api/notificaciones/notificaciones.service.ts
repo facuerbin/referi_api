@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TipoOrganizacion } from '../organizaciones/entities/tipo.organizacion.entity';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { SociosService } from '../socios/socios.service';
 import { CreateNotificacioneDto } from './dto/create-notificacione.dto';
@@ -29,6 +28,19 @@ export class NotificacionesService {
     return `This action returns all notificaciones`;
   }
 
+  findAllByUser(idUser) {
+    // subjectRepo
+    // .createQueryBuilder('subject')
+    // .leftJoin('subject.notes', 'note')
+    // .where('note.id = :id', { id: note.id })
+    // .getMany();
+    return this.notificacionRepository
+      .createQueryBuilder('notificaciones')
+      .leftJoin('notificaciones.usuarios', 'usuario')
+      .where('usuario.id = :id', { id: idUser })
+      .getMany();
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} notificacione`;
   }
@@ -41,10 +53,26 @@ export class NotificacionesService {
     return `This action removes a #${id} notificacione`;
   }
 
-  // enviarNotificacion(dto: EnviarNotifiacionDto) {}
+  async enviarNotificacionDeudores(dto: EnviarNotifiacionDto) {
+    const destinatarios = this.sociosService.findDeudoresByOrg(dto.idRemitente);
+    const remitente = this.organizacionService.findOne(dto.idRemitente);
 
-  enviarNotificacionDeudores(dto: EnviarNotifiacionDto) {
-    this.sociosService.findDeudoresByOrg(dto.idRemitente);
+    return Promise.all([destinatarios, remitente])
+      .then((result) => {
+        const notificacion: Partial<Notificacion> = {
+          idRemitente: result[1].id,
+          nombreRemitente: result[1].nombre,
+          tipoRemitente: TipoRemitente.ORGANIZACION,
+          tipoDestinatario: TipoDestinatario.DEUDORES,
+          titulo: dto.titulo,
+          cuerpo: dto.cuerpo,
+          fecha: new Date(),
+          usuarios: result[0].map((inscripcion) => inscripcion.usuario),
+        };
+
+        return this.notificacionRepository.save(notificacion);
+      })
+      .catch((e) => e);
   }
 
   async enviarNotificacionSocios(dto: EnviarNotifiacionDto) {

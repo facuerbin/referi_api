@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { distinct } from 'rxjs';
 import { Between, LessThan, Repository } from 'typeorm';
 import { ActividadesService } from '../actividades/actividades.service';
 import { PagosService } from '../pagos/pagos.service';
@@ -48,7 +47,7 @@ export class SociosService {
       return this.inscripcionRepository.save({
         turnoActividad: results[1],
         usuario: results[0],
-        estado: results[2],
+        estados: [results[2]],
         organizacion: results[1].actividad.organizacion,
       });
     });
@@ -59,11 +58,6 @@ export class SociosService {
   }
 
   findByOrg(idOrg: string) {
-    // return this.inscripcionRepository
-    //   .createQueryBuilder('inscripto')
-    //   .relation(Inscripcion, 'usuario')
-    //   .select('DISTINCT inscripto.usuario', 'usuarios')
-    //   .getRawMany();
     return this.inscripcionRepository.find({
       where: {
         organizacion: { id: idOrg },
@@ -114,13 +108,31 @@ export class SociosService {
     });
   }
 
-  findByActividad(idActividad: string) {
+  findByTurnoActividad(idTurnoActividad: string) {
     return this.inscripcionRepository.find({
       where: {
-        turnoActividad: { id: idActividad },
+        turnoActividad: { id: idTurnoActividad },
       },
       relations: {
         turnoActividad: { actividad: true },
+        usuario: true,
+      },
+      order: {
+        fechaCreacion: 'DESC',
+      },
+    });
+  }
+
+  findByActividad(idActividad: string) {
+    return this.inscripcionRepository.find({
+      where: {
+        turnoActividad: {
+          actividad: { id: idActividad },
+        },
+      },
+      relations: {
+        turnoActividad: { actividad: true },
+        usuario: true,
       },
       order: {
         fechaCreacion: 'DESC',
@@ -136,6 +148,9 @@ export class SociosService {
       relations: {
         turnoActividad: { actividad: true },
         organizacion: true,
+        estados: true,
+        cuotas: true,
+        usuario: true,
       },
     });
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository, UpdateDateColumn } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Domicilio } from '../usuarios/entities/domicilio.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { CreateOrganizacionDto } from './dto/create-organizacione.dto';

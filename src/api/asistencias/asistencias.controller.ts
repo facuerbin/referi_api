@@ -26,14 +26,10 @@ export class AsistenciasController {
   }
 
   @Get(':id')
-  findOne(
-    @Param('id') idOrg: string,
-    @Query('idPlanilla') idPlanilla: string,
-    @Res() res,
-  ) {
+  findOne(@Param('id') idOrg: string, @Query('fecha') fecha: Date, @Res() res) {
     this.asistenciasService
-      .findOne(idPlanilla, idOrg)
-      .then((result) => res.status(200).send({ data: result }))
+      .findOne(fecha, idOrg)
+      .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }
 }

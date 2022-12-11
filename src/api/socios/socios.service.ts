@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThan, Repository } from 'typeorm';
+import { Between, IsNull, LessThan, Repository } from 'typeorm';
 import { ActividadesService } from '../actividades/actividades.service';
 import { PagosService } from '../pagos/pagos.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
@@ -37,13 +37,26 @@ export class SociosService {
       nombre: Estado.ACTIVO,
     });
 
-    if (!usuario || !turnoActividad || !estado) throw new Error();
+    if (!usuario) throw new Error('Usuario no encontrado');
+    if (!turnoActividad) throw new Error('No se encontró el turno solicitado');
+    if (!estado) throw new Error('Error interno, intente más tarde');
 
     const inscripcion = await Promise.all([
       usuario,
       turnoActividad,
       estado,
     ]).then((results) => {
+      const yaInscripto = this.inscripcionRepository.findOne({
+        where: {
+          fechaBaja: IsNull(),
+          usuario: { id: results[0].id },
+          turnoActividad: { id: results[1].id },
+        },
+      });
+      if (yaInscripto)
+        throw new Error(
+          'El usuario ya se encuentra inscripto en el turno solicitado',
+        );
       return this.inscripcionRepository.save({
         turnoActividad: results[1],
         usuario: results[0],

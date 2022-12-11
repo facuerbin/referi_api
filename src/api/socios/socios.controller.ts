@@ -24,7 +24,10 @@ export class SociosController {
     this.sociosService
       .create(createSocioDto)
       .then((result) => res.status(200).send({ data: result }))
-      .catch((error) => res.status(400).send({ error }));
+      .catch((error) => {
+        console.log(error);
+        res.status(400).send({ error: error.message ? error.message : error });
+      });
   }
 
   @Get('organizacion/:idOrganizacion')

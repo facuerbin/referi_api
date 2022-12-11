@@ -53,35 +53,30 @@ export class SeguridadService {
   }
 
   async registerFromOrganization(dto: RegisterFromOrgDto) {
-    const userExist = await this.usersService.findByEmail(dto.email);
-    if (userExist) {
-      return this.sociosService.create({
-        idTurnoActividad: dto.idTurnoActividad,
-        idUsuario: userExist.id,
+    let user = await this.usersService.findByEmail(dto.email);
+    if (!user) {
+      const password = this.generateRandomPassword();
+      user = await this.usersService.create({
+        email: dto.email,
+        password,
+        nombre: dto.nombre,
+        apellido: dto.apellido,
+        dni: dto.dni,
+        fechaNacimiento: dto.fechaNacimiento,
+        telefono: dto.telefono,
+        fotoPerfil: '',
+        domicilio: {
+          calle: dto.domicilio.calle,
+          numero: dto.domicilio.numero,
+          ciudad: dto.domicilio.ciudad,
+          provincia: dto.domicilio.provincia,
+        },
       });
     }
 
-    const password = this.generateRandomPassword();
-    const newUser = await this.usersService.create({
-      email: dto.email,
-      password,
-      nombre: dto.nombre,
-      apellido: dto.apellido,
-      dni: dto.dni,
-      fechaNacimiento: dto.fechaNacimiento,
-      telefono: dto.telefono,
-      fotoPerfil: '',
-      domicilio: {
-        calle: dto.domicilio.calle,
-        numero: dto.domicilio.numero,
-        ciudad: dto.domicilio.ciudad,
-        provincia: dto.domicilio.provincia,
-      },
-    });
-
     return this.sociosService.create({
       idTurnoActividad: dto.idTurnoActividad,
-      idUsuario: newUser.id,
+      idUsuario: user.id,
     });
   }
 

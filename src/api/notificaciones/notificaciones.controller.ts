@@ -20,10 +20,10 @@ import { TipoDestinatario } from './entities/notificacion.entity';
 export class NotificacionesController {
   constructor(private readonly notificacionesService: NotificacionesService) {}
 
-  @Post()
-  create(@Body() createNotificacioneDto: CreateNotificacioneDto) {
-    return this.notificacionesService.create(createNotificacioneDto);
-  }
+  // @Post()
+  // create(@Body() createNotificacioneDto: CreateNotificacioneDto) {
+  //   return this.notificacionesService.create(createNotificacioneDto);
+  // }
 
   @Post('socios')
   enviarNotificacionesSocios(@Body() dto: EnviarNotifiacionDto, @Res() res) {
@@ -40,16 +40,23 @@ export class NotificacionesController {
           .catch((error) => res.status(400).send({ error: error }));
       case TipoDestinatario.ACTIVIDAD:
         return this.notificacionesService
-          .enviarNotificacionSocios(dto)
+          .enviarNotificacionActividad(dto)
           .then((result) => res.status(200).send({ ...result }))
           .catch((error) => res.status(400).send({ error: error }));
       case TipoDestinatario.TURNO_ACTIVIDAD:
         return this.notificacionesService
-          .enviarNotificacionSocios(dto)
+          .enviarNotificacionTurnoActividad(dto)
+          .then((result) => res.status(200).send({ ...result }))
+          .catch((error) => res.status(400).send({ error: error }));
+      case TipoDestinatario.SOCIO:
+        return this.notificacionesService
+          .enviarNotificacionSocio(dto)
           .then((result) => res.status(200).send({ ...result }))
           .catch((error) => res.status(400).send({ error: error }));
       default:
-        break;
+        res
+          .status(400)
+          .send({ error: 'No se encontró el destinatario seleccionado.' });
     }
   }
 
@@ -61,26 +68,18 @@ export class NotificacionesController {
       .catch((error) => res.status(400).send({ erro: error }));
   }
 
-  @Get()
-  findAll() {
-    return this.notificacionesService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.notificacionesService.findAll();
+  // }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.notificacionesService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateNotificacioneDto: UpdateNotificacioneDto,
-  ) {
-    return this.notificacionesService.update(+id, updateNotificacioneDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notificacionesService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.notificacionesService.remove(+id);
+  // }
 }

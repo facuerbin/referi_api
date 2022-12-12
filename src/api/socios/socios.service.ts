@@ -175,7 +175,6 @@ export class SociosService {
   async remove(id: string) {
     const socio = await this.findOne(id);
     if (socio.estados[0].nombre != Estado.ACTIVO.toUpperCase()) {
-      console.log(socio);
       return new Error(
         'El inscripto no puede ser dado de baja hasta que esté en estado Activo',
       );

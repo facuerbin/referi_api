@@ -5,6 +5,12 @@ export class EnviarNotifiacionDto {
   idRemitente: string;
 
   @ApiProperty()
+  tipoRemitente: string;
+
+  @ApiProperty()
+  idDestinatario?: string;
+
+  @ApiProperty()
   tipoDestinatario: string;
 
   @ApiProperty()
@@ -12,7 +18,4 @@ export class EnviarNotifiacionDto {
 
   @ApiProperty()
   cuerpo: string;
-
-  @ApiProperty()
-  fecha: Date;
 }

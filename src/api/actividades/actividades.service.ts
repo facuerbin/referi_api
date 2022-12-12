@@ -65,7 +65,7 @@ export class ActividadesService {
       },
       relations: {
         tipo: true,
-        turnos: true,
+        turnos: { horarios: { horario: true } },
         tarifas: true,
       },
     });

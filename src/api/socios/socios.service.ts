@@ -12,7 +12,7 @@ import {
   Estado,
 } from './entities/estado.inscripcion.entity';
 import { Inscripcion } from './entities/inscripcion.entity';
-
+import * as csv from 'csv-writer';
 @Injectable()
 export class SociosService {
   constructor(
@@ -84,6 +84,80 @@ export class SociosService {
         fechaCreacion: 'DESC',
       },
     });
+  }
+
+  async backupSociosByOrg(idOrg: string) {
+    const socios = await this.inscripcionRepository.find({
+      where: {
+        organizacion: { id: idOrg },
+      },
+      relations: {
+        turnoActividad: true,
+        usuario: true,
+        estados: true,
+      },
+      order: {
+        fechaCreacion: 'DESC',
+      },
+    });
+
+    const mapedSocios = socios.map((socio) => {
+      return {
+        id: socio.id,
+        fechaBaja: socio.fechaBaja,
+        idUsuario: socio.usuario.id,
+        idActividadOrganizacion: socio.turnoActividad.id,
+      };
+    });
+
+    if (!mapedSocios) return new Error('No se encontraron socios');
+    const stringyfier = csv.createObjectCsvStringifier({
+      header: [
+        { id: 'id', title: 'ID' },
+        { id: 'fechaBaja', title: 'FECHA_BAJA' },
+        { id: 'idUsuario', title: 'ID_USUARIO' },
+        { id: 'idActividadOrganizacion', title: 'ID_ACTIVIDAD_ORGANIZACION' },
+      ],
+    });
+
+    const response =
+      stringyfier.getHeaderString() +
+      (await stringyfier.stringifyRecords(mapedSocios));
+    return response;
+  }
+
+  async restoreSociosOrg(csvArray: string[][]) {
+    const restoredArray = csvArray.map((row) => {
+      return {
+        id: row[0],
+        idUsuario: row[2],
+        idTurnoActividad: row[3],
+        fechaBaja: row[1],
+      };
+    });
+    restoredArray.shift();
+
+    restoredArray.forEach((registry) => {
+      const user = this.usuariosService.findOne(registry.idUsuario);
+      const turnActividad = this.actividadesService.detailTurno(
+        registry.idTurnoActividad,
+      );
+      Promise.all([user, turnActividad])
+        .then((results) => {
+          const inscripcion: Partial<Inscripcion> = {
+            id: registry.id,
+            usuario: results[0],
+            fechaBaja: null,
+            turnoActividad: results[1],
+            organizacion: results[1].actividad.organizacion,
+          };
+          if (registry.fechaBaja)
+            inscripcion.fechaBaja = new Date(registry.fechaBaja);
+          this.inscripcionRepository.save(inscripcion);
+        })
+        .catch((e) => new Error());
+    });
+    return csvArray;
   }
 
   findDeudoresByOrg(idOrg: string) {

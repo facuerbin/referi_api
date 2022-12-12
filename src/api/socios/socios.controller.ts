@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Res,
+  StreamableFile,
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
@@ -25,7 +26,6 @@ export class SociosController {
       .create(createSocioDto)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => {
-        console.log(error);
         res.status(400).send({ error: error.message ? error.message : error });
       });
   }
@@ -39,6 +39,38 @@ export class SociosController {
       .findByOrg(idOrganizacion)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('organizacion/:idOrganizacion/backup')
+  async backupSocios(
+    @Param('idOrganizacion') idOrganizacion: string,
+    @Res({ passthrough: true }) res,
+  ): Promise<StreamableFile> {
+    try {
+      const csv = await this.sociosService.backupSociosByOrg(idOrganizacion);
+      const buffer = Buffer.from('' + csv, 'utf-8');
+      res.set({
+        'Content-Type': 'text/csv',
+        'Content-Disposition': 'attachment; filename="backup.csv"',
+      });
+      return new StreamableFile(buffer);
+    } catch (e) {
+      return res.status(400).send({ error: e });
+    }
+  }
+
+  @Post('organizacion/:idOrganizacion/backup')
+  async restoreSocios(
+    @Param('idOrganizacion') idOrganizacion: string,
+    @Body() csvArray: string[][],
+    @Res({ passthrough: true }) res,
+  ) {
+    this.sociosService
+      .restoreSociosOrg(csvArray)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => {
+        res.status(400).send({ error: error.message ? error.message : error });
+      });
   }
 
   @Get('organizacion/:idOrganizacion/deudores')

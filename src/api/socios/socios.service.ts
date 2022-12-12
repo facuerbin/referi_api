@@ -71,8 +71,8 @@ export class SociosService {
     return inscripcion;
   }
 
-  findByOrg(idOrg: string) {
-    return this.inscripcionRepository.find({
+  async findByOrg(idOrg: string) {
+    const socios = await this.inscripcionRepository.find({
       where: {
         organizacion: { id: idOrg },
       },
@@ -80,11 +80,65 @@ export class SociosService {
         turnoActividad: { actividad: true },
         usuario: true,
         estados: true,
+        cuotas: { pago: true },
       },
       order: {
         fechaCreacion: 'DESC',
       },
     });
+
+    const today = moment();
+    const deudores = socios.filter((socio) => {
+      return (
+        socio.cuotas.find((cuota) => {
+          return today.isAfter(cuota.fechaVencimiento) && !cuota.pago;
+        }) && !socio.fechaBaja
+      );
+    });
+
+    const alDia = socios.filter((socio) => {
+      return (
+        socio.cuotas.filter((cuota) => {
+          return (
+            (today.isSameOrBefore(cuota.fechaVencimiento) || cuota.pago) &&
+            !socio.fechaBaja
+          );
+        }).length == socio.cuotas.length
+      );
+    });
+
+    const estadoDeudor = await this.estadoInscripcionRepository.findOne({
+      where: { nombre: Estado.DEUDOR },
+    });
+
+    const estadoActivo = await this.estadoInscripcionRepository.findOne({
+      where: { nombre: Estado.ACTIVO },
+    });
+
+    const estadoInactivo = await this.estadoInscripcionRepository.findOne({
+      where: { nombre: Estado.INACTIVO },
+    });
+
+    deudores.forEach(async (deudor) => {
+      const inactividad = deudor.cuotas.find((cuota) => {
+        return today.isAfter(moment(cuota.fechaVencimiento).add(1, 'month'));
+      });
+
+      if (deudor.estados[0].nombre == Estado.DEUDOR) return '';
+
+      deudor.estados = [estadoDeudor];
+      if (inactividad) deudor.estados = [estadoInactivo];
+      await this.inscripcionRepository.save(deudor);
+    });
+    console.log(socios.length);
+
+    alDia.forEach(async (socio) => {
+      if (socio.estados[0]?.nombre == Estado.ACTIVO) return '';
+      socio.estados = [estadoActivo];
+      await this.inscripcionRepository.save(socio);
+    });
+
+    return socios;
   }
 
   async backupSociosByOrg(idOrg: string) {

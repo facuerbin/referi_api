@@ -22,8 +22,8 @@ export class EstadoInscripcion {
 }
 
 export enum Estado {
-  ACTIVO = 'Activo',
-  DEUDOR = 'Deudor',
-  INACTIVO = 'Inactivo',
-  BAJA = 'Baja',
+  ACTIVO = 'ACTIVO',
+  DEUDOR = 'DEUDOR',
+  INACTIVO = 'INACTIVO',
+  BAJA = 'BAJA',
 }

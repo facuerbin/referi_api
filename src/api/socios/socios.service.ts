@@ -13,6 +13,7 @@ import {
 } from './entities/estado.inscripcion.entity';
 import { Inscripcion } from './entities/inscripcion.entity';
 import * as csv from 'csv-writer';
+import * as moment from 'moment';
 @Injectable()
 export class SociosService {
   constructor(
@@ -261,8 +262,8 @@ export class SociosService {
     return this.inscripcionRepository.save(socio);
   }
 
-  inscriptosPorMes(reporteDto: ReporteInscriptosMesDto) {
-    return this.inscripcionRepository.find({
+  async inscriptosPorMes(reporteDto: ReporteInscriptosMesDto) {
+    const inscriptos = await this.inscripcionRepository.find({
       where: {
         organizacion: { id: reporteDto.idOrganizacion },
         fechaCreacion: Between(
@@ -279,5 +280,55 @@ export class SociosService {
         fechaCreacion: 'DESC',
       },
     });
+
+    const response = inscriptos.map((inscripto) => {
+      return inscripto.fechaCreacion.toISOString().slice(0, 7);
+    });
+    const counts = {};
+    response.forEach(function (x) {
+      counts[x] = (counts[x] || 0) + 1;
+    });
+    return counts;
+  }
+
+  async rangoEtarioSociosOrganizacion(idOrg: string) {
+    const socios = await this.inscripcionRepository.find({
+      where: {
+        organizacion: { id: idOrg },
+        fechaBaja: IsNull(),
+      },
+      relations: { usuario: true },
+    });
+
+    const response = socios.map((socio) => {
+      return (
+        Math.floor(moment().diff(socio.usuario.fechaNacimiento, 'years') / 10) *
+        10
+      );
+    });
+    const counts = {};
+    response.forEach(function (x) {
+      counts[x] = (counts[x] || 0) + 1;
+    });
+    return counts;
+  }
+
+  async sociosPorEstadoOrganizacion(idOrg: string) {
+    const socios = await this.inscripcionRepository.find({
+      where: {
+        organizacion: { id: idOrg },
+        fechaBaja: IsNull(),
+      },
+      relations: { estados: true },
+    });
+
+    const response = socios.map((socio) => {
+      if (socio.estados[0]) return socio.estados[0]?.nombre;
+    });
+    const counts = {};
+    response.forEach(function (x) {
+      counts[x] = (counts[x] || 0) + 1;
+    });
+    return counts;
   }
 }

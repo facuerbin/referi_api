@@ -136,7 +136,23 @@ export class SociosController {
   reporteSociosPorMes(@Body() dto: ReporteInscriptosMesDto, @Res() res) {
     this.sociosService
       .inscriptosPorMes(dto)
-      .then((result) => res.status(200).send({ data: result }))
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('reporte/rango-etario/:idOrg')
+  reporteRangoEtarioSocios(@Param('idOrg') idOrg: string, @Res() res) {
+    this.sociosService
+      .rangoEtarioSociosOrganizacion(idOrg)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('reporte/distribucion-estados/:idOrg')
+  reporteEstadoSocios(@Param('idOrg') idOrg: string, @Res() res) {
+    this.sociosService
+      .sociosPorEstadoOrganizacion(idOrg)
+      .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }
 }

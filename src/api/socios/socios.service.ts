@@ -130,7 +130,6 @@ export class SociosService {
       if (inactividad) deudor.estados = [estadoInactivo];
       await this.inscripcionRepository.save(deudor);
     });
-    console.log(socios.length);
 
     alDia.forEach(async (socio) => {
       if (socio.estados[0]?.nombre == Estado.ACTIVO) return '';

@@ -12,10 +12,6 @@ export class ImagesService {
     return null;
   }
 
-  createFrecuencia() {
-    return null;
-  }
-
   find() {
     return null;
   }

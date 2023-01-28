@@ -11,6 +11,8 @@ import {
   MaxFileSizeValidator,
   UseGuards,
   StreamableFile,
+  Logger,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -21,12 +23,16 @@ import { FileUploadDto } from './dto/file.upload.dto';
 import { saveImageOptions } from './helpers/save.image.helper';
 import { ImagesService } from './images.service';
 import type { Response } from 'express';
+import { UsuariosService } from '../usuarios/usuarios.service';
 
 @ApiBearerAuth()
 @ApiTags('Imágenes')
 @Controller({ path: 'uploads', version: '1' })
 export class ImagesController {
-  constructor(private readonly imagesService: ImagesService) {}
+  constructor(
+    private readonly imagesService: ImagesService,
+    private usuarioService: UsuariosService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
@@ -40,7 +46,7 @@ export class ImagesController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          // new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 * 1024 }),
+          new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 * 1024 }),
         ],
       }),
     )
@@ -48,6 +54,35 @@ export class ImagesController {
   ) {
     const fileName = file?.filename;
     if (!fileName) return { error: 'Invalid file type' };
+    return file;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Archivo de imagen',
+    type: FileUploadDto,
+  })
+  @Post('user')
+  @UseInterceptors(FileInterceptor('file', saveImageOptions))
+  uploadUserFile(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 6 * 1024 * 1024 * 1024 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Req() req,
+  ) {
+    const fileName = file?.filename;
+    if (!fileName) return { error: 'Invalid file type' };
+    if (req.user.userId) {
+      this.usuarioService.update(req.user.userId, {
+        fotoPerfil: 'uploads/' + file.filename,
+      });
+    }
     return file;
   }
 

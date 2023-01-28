@@ -12,10 +12,7 @@ import { Usuario } from '../usuarios/entities/usuario.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { RegisterDto } from './dto/register.dto';
 import { VerifyEmailDto } from './dto/verify.email.dto';
-import {
-  EmailService,
-  validateCache as ValidateCache,
-} from 'src/email/email.service';
+import { EmailService } from 'src/email/email.service';
 import { RecoverPasswordDto } from './dto/recover.password.dto';
 import { ChangePasswordDto } from './dto/change.password.dto';
 import { RegisterFromOrgDto } from './dto/register.user.from.organization.dto';
@@ -150,5 +147,10 @@ export class SeguridadService {
   generateToken(user: Usuario) {
     const payload = { sub: user.id, iss: 'Referi' };
     return this.jwtService.sign(payload);
+  }
+
+  decodeToken(token: string) {
+    const verify = this.jwtService.verify(token);
+    return verify;
   }
 }

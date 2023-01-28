@@ -58,7 +58,7 @@ export class UsuariosService {
     });
   }
 
-  async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
+  async update(id: string, updateUsuarioDto: Partial<UpdateUsuarioDto>) {
     const user = await this.usuarioRepository.findOne({
       where: { id: id, fechaBaja: IsNull() },
     });

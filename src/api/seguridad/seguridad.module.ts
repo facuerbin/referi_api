@@ -23,5 +23,6 @@ import { SeguridadService } from './seguridad.service';
       signOptions: { expiresIn: '6h' },
     }),
   ],
+  exports: [SeguridadService],
 })
 export class SeguridadModule {}

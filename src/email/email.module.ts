@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UsuariosModule } from 'src/api/usuarios/usuarios.module';
 import { EmailService } from 'src/email/email.service';
 

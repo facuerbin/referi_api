@@ -1,0 +1,5 @@
+id,nombre,descripcion
+82e1a2fd-eb51-408d-86fe-44a180853f0e,ADMINISTRADOR,"Es el dueño de la organización, tiene control total sobre la misma."
+de62dd9d-fdb4-44ce-ac41-cbfdd7f348ad,PORTERO,Se encarga de registrar el ingreso a la organización y puede registrar nuevos socios.
+4adacacf-f41c-431e-b2df-429f9fc1d4b6,ADMINISTRATIVO,Puede manejar todos los aspectos del negocio a excepción de los datos sensibles de la institución.
+ec430664-fabf-481f-be1d-af53e187abc5,CONTABLE,Puede manejar lo referido a tarifas y pagos de la institución.

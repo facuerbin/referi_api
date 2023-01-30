@@ -1,0 +1,12 @@
+id,tipo,img_url
+0ee6d17b-6db7-4d6f-a8a8-bd16f66b66c4,BASKETBALL,uploads/basket.png
+27531bc9-1d26-4625-a9c4-e43250cdc66f,FUTBOL,uploads/futbol.png
+afcb2189-6436-4033-9dbc-8818745cbbc0,GIMNASIO,uploads/gimnasio.png
+2d10c95e-5caf-44bb-99e7-487ece807960,VOLLEY,uploads/voley.png
+61a0ec24-8d51-4fc5-916c-f88b247f3991,DANZA,uploads/danza.png
+a903e1aa-3220-40e6-8953-0de41a230238,RUGBY,uploads/rugby.png
+1348d362-57de-4694-b0f6-d699a13382d4,ARTES MARCIALES,uploads/artes_marciales.png
+57d71ff3-a45d-4d85-ad82-126fc0e64c02,HANDBALL,uploads/handball.png
+5cc007aa-1a29-4736-85c3-4f04d33245ad,NATACIÓN,uploads/natacion.png
+506049d4-2f12-4db5-bab4-b28b63e24056,TENIS,uploads/tenis.png
+58b7b4dd-5dec-406c-b5ae-a3b803544a93,OTROS,uploads/otros.png

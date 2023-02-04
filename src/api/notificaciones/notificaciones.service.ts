@@ -4,7 +4,7 @@ import { IsNull, Repository } from 'typeorm';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { SociosService } from '../socios/socios.service';
 import { Usuario } from '../usuarios/entities/usuario.entity';
-import { CreateNotificacioneDto } from './dto/create-notificacione.dto';
+import { UsuariosService } from '../usuarios/usuarios.service';
 import { EnviarNotifiacionDto } from './dto/enviar.notificacion.dto';
 import {
   Notificacion,
@@ -21,12 +21,9 @@ export class NotificacionesService {
     @InjectRepository(NotificacionUsuario)
     private notificacionUsuarioRepository: Repository<NotificacionUsuario>,
     private sociosService: SociosService,
+    private usuariosService: UsuariosService,
     private organizacionService: OrganizacionesService,
   ) {}
-
-  create(createNotificacioneDto: CreateNotificacioneDto) {
-    return 'This action adds a new notificacione';
-  }
 
   findAllByUser(idUser) {
     return this.notificacionUsuarioRepository.find({
@@ -60,14 +57,19 @@ export class NotificacionesService {
         notificacion: true,
       },
     });
-    return this.notificacionUsuarioRepository.save({
-      ...userNotification,
-      fechaLectura: Date.now(),
-    });
+    userNotification.fechaLectura = new Date();
+    return this.notificacionUsuarioRepository.save(userNotification);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notificacione`;
+  findOne(id: string) {
+    return this.notificacionRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        destinatarios: { destinatario: true },
+      },
+    });
   }
 
   async enviarNotificacionDeudores(dto: EnviarNotifiacionDto) {
@@ -181,8 +183,7 @@ export class NotificacionesService {
   async enviarNotificacionSocio(dto: EnviarNotifiacionDto) {
     if (!dto.idDestinatario) return new Error('No se encontró el destinatario');
     const remitente = await this.organizacionService.findOne(dto.idRemitente);
-    const socio = await this.sociosService.findByUser(dto.idDestinatario);
-    const usuario = socio[0].usuario;
+    const usuario = await this.usuariosService.findOne(dto.idDestinatario);
     const notif = await this.notificacionRepository.save({
       titulo: dto.titulo,
       cuerpo: dto.cuerpo,

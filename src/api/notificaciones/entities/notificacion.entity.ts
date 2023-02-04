@@ -31,7 +31,7 @@ export class Notificacion {
     () => NotificacionUsuario,
     (notificacionUsuario) => notificacionUsuario.notificacion,
   )
-  detinatarios: NotificacionUsuario[];
+  destinatarios: NotificacionUsuario[];
 }
 
 export enum TipoRemitente {

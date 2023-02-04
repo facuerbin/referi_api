@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Notificacion } from './notificacion.entity';
@@ -10,9 +11,9 @@ export class NotificacionUsuario {
   @ManyToOne(() => Usuario, (destinatario) => destinatario.notificaciones)
   destinatario: Usuario;
 
-  @ManyToOne(() => Notificacion, (notificacion) => notificacion.detinatarios)
+  @ManyToOne(() => Notificacion, (notificacion) => notificacion.destinatarios)
   notificacion: Notificacion;
 
-  @Column()
+  @Column({ default: null })
   fechaLectura: Date;
 }

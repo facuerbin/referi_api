@@ -7,6 +7,7 @@ import { Notificacion } from './entities/notificacion.entity';
 import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
 import { NotificacionUsuario } from './entities/notificaciones.usuario.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
+import { UsuariosModule } from '../usuarios/usuarios.module';
 
 @Module({
   controllers: [NotificacionesController],
@@ -15,6 +16,7 @@ import { Usuario } from '../usuarios/entities/usuario.entity';
     TypeOrmModule.forFeature([Notificacion, NotificacionUsuario, Usuario]),
     SociosModule,
     OrganizacionesModule,
+    UsuariosModule,
   ],
 })
 export class NotificacionesModule {}

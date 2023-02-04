@@ -43,6 +43,7 @@ import { ImagesModule } from './api/images/images.module';
 import { TurnoHorario } from './api/actividades/entities/turno.horario.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { NotificacionUsuario } from './api/notificaciones/entities/notificaciones.usuario.entity';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -81,6 +82,7 @@ import { join } from 'path';
         Domicilio,
         Usuario,
         Notificacion,
+        NotificacionUsuario,
       ],
       synchronize: config.NODE_ENV === 'development' ? true : false,
       // logging: true,

@@ -6,6 +6,7 @@ import { TipoActividad } from './../api/actividades/entities/tipo.actividad.enti
 import { Asistente } from './../api/asistencias/entities/asistente.entity';
 import { PlanillaAsistencia } from './../api/asistencias/entities/planilla.asistencia.entity';
 import { Notificacion } from './../api/notificaciones/entities/notificacion.entity';
+import { NotificacionUsuario } from './../api/notificaciones/entities/notificaciones.usuario.entity';
 import { Espacio } from './../api/organizaciones/entities/espacio.entity';
 import { InformacionPago } from './../api/organizaciones/entities/informacion.pago.entity';
 import { Organizacion } from './../api/organizaciones/entities/organizacion.entity';
@@ -58,6 +59,7 @@ const OrmConfig = new DataSource({
     Domicilio,
     Usuario,
     Notificacion,
+    NotificacionUsuario,
   ],
   synchronize: config.NODE_ENV === 'development' ? true : false,
   migrations: ['dist/db/*.js'],

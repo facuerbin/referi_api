@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { SociosService } from '../socios/socios.service';
 import { Usuario } from '../usuarios/entities/usuario.entity';
@@ -11,33 +11,63 @@ import {
   TipoDestinatario,
   TipoRemitente,
 } from './entities/notificacion.entity';
+import { NotificacionUsuario } from './entities/notificaciones.usuario.entity';
 
 @Injectable()
 export class NotificacionesService {
   constructor(
     @InjectRepository(Notificacion)
     private notificacionRepository: Repository<Notificacion>,
+    @InjectRepository(NotificacionUsuario)
+    private notificacionUsuarioRepository: Repository<NotificacionUsuario>,
     private sociosService: SociosService,
     private organizacionService: OrganizacionesService,
   ) {}
+
   create(createNotificacioneDto: CreateNotificacioneDto) {
     return 'This action adds a new notificacione';
   }
 
   findAllByUser(idUser) {
-    return this.notificacionRepository
-      .createQueryBuilder('notificaciones')
-      .leftJoin('notificaciones.usuarios', 'usuario')
-      .where('usuario.id = :id', { id: idUser })
-      .getMany();
+    return this.notificacionUsuarioRepository.find({
+      where: {
+        destinatario: { id: idUser },
+      },
+      relations: {
+        notificacion: true,
+      },
+    });
+  }
+
+  getUnreadNotifications(idUser) {
+    return this.notificacionUsuarioRepository.find({
+      where: {
+        destinatario: { id: idUser },
+        fechaLectura: IsNull(),
+      },
+      relations: {
+        notificacion: true,
+      },
+    });
+  }
+
+  async readNotification(id) {
+    const userNotification = await this.notificacionUsuarioRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        notificacion: true,
+      },
+    });
+    return this.notificacionUsuarioRepository.save({
+      ...userNotification,
+      fechaLectura: Date.now(),
+    });
   }
 
   findOne(id: number) {
     return `This action returns a #${id} notificacione`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} notificacione`;
   }
 
   async enviarNotificacionDeudores(dto: EnviarNotifiacionDto) {
@@ -45,8 +75,8 @@ export class NotificacionesService {
     const remitente = this.organizacionService.findOne(dto.idRemitente);
 
     return Promise.all([destinatarios, remitente])
-      .then((result) => {
-        const notificacion: Partial<Notificacion> = {
+      .then(async (result) => {
+        const notificacion = await this.notificacionRepository.save({
           idRemitente: result[1].id,
           nombreRemitente: result[1].nombre,
           tipoRemitente: TipoRemitente.ORGANIZACION,
@@ -54,12 +84,20 @@ export class NotificacionesService {
           titulo: dto.titulo,
           cuerpo: dto.cuerpo,
           fecha: new Date(),
-          usuarios: this.getUniqueUsers(
-            result[0].map((inscripcion) => inscripcion.usuario),
-          ),
-        };
+        });
 
-        return this.notificacionRepository.save(notificacion);
+        const users = this.getUniqueUsers(
+          result[0].map((inscripcion) => inscripcion.usuario),
+        );
+
+        users.forEach((user) => {
+          this.notificacionUsuarioRepository.save({
+            notificacion: notificacion,
+            destinatario: user,
+          });
+        });
+
+        return notificacion;
       })
       .catch((e) => e);
   }
@@ -76,8 +114,15 @@ export class NotificacionesService {
       nombreRemitente: remitente.nombre,
       tipoRemitente: TipoRemitente.ORGANIZACION,
       tipoDestinatario: TipoDestinatario.SOCIOS,
-      usuarios: this.getUniqueUsers(usuarios),
     });
+
+    this.getUniqueUsers(usuarios).forEach((user) => {
+      this.notificacionUsuarioRepository.save({
+        destinatario: user,
+        notificacion: notif,
+      });
+    });
+
     return notif;
   }
 
@@ -94,8 +139,15 @@ export class NotificacionesService {
       nombreRemitente: remitente.nombre,
       tipoRemitente: TipoRemitente.ORGANIZACION,
       tipoDestinatario: TipoDestinatario.ACTIVIDAD,
-      usuarios: this.getUniqueUsers(usuarios),
     });
+
+    this.getUniqueUsers(usuarios).forEach((user) => {
+      this.notificacionUsuarioRepository.save({
+        destinatario: user,
+        notificacion: notif,
+      });
+    });
+
     return notif;
   }
 
@@ -114,8 +166,15 @@ export class NotificacionesService {
       nombreRemitente: remitente.nombre,
       tipoRemitente: TipoRemitente.ORGANIZACION,
       tipoDestinatario: TipoDestinatario.ACTIVIDAD,
-      usuarios: this.getUniqueUsers(usuarios),
     });
+
+    this.getUniqueUsers(usuarios).forEach((user) => {
+      this.notificacionUsuarioRepository.save({
+        destinatario: user,
+        notificacion: notif,
+      });
+    });
+
     return notif;
   }
 
@@ -132,8 +191,13 @@ export class NotificacionesService {
       nombreRemitente: remitente.nombre,
       tipoRemitente: TipoRemitente.ORGANIZACION,
       tipoDestinatario: TipoDestinatario.ACTIVIDAD,
-      usuarios: [usuario],
     });
+
+    this.notificacionUsuarioRepository.save({
+      destinatario: usuario,
+      notificacion: notif,
+    });
+
     return notif;
   }
 

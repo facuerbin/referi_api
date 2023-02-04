@@ -5,12 +5,14 @@ import { SociosModule } from '../socios/socios.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notificacion } from './entities/notificacion.entity';
 import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
+import { NotificacionUsuario } from './entities/notificaciones.usuario.entity';
+import { Usuario } from '../usuarios/entities/usuario.entity';
 
 @Module({
   controllers: [NotificacionesController],
   providers: [NotificacionesService],
   imports: [
-    TypeOrmModule.forFeature([Notificacion]),
+    TypeOrmModule.forFeature([Notificacion, NotificacionUsuario, Usuario]),
     SociosModule,
     OrganizacionesModule,
   ],

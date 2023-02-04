@@ -1,11 +1,5 @@
-import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { NotificacionUsuario } from './notificaciones.usuario.entity';
 
 @Entity()
 export class Notificacion {
@@ -33,9 +27,11 @@ export class Notificacion {
   @Column()
   fecha: Date;
 
-  @ManyToMany(() => Usuario)
-  @JoinTable({ name: 'notificaciones_usuario' })
-  usuarios: Usuario[];
+  @OneToMany(
+    () => NotificacionUsuario,
+    (notificacionUsuario) => notificacionUsuario.notificacion,
+  )
+  detinatarios: NotificacionUsuario[];
 }
 
 export enum TipoRemitente {

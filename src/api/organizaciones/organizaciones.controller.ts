@@ -95,14 +95,6 @@ export class OrganizacionesController {
       .catch((error) => res.status(400).send({ error }));
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string, @Res() res) {
-    this.organizacionesService
-      .remove(id)
-      .then((result) => res.status(200).send({ data: result }))
-      .catch((error) => res.status(400).send({ error }));
-  }
-
   @Post(':id/espacio')
   createEspacio(
     @Param('id') id: string,
@@ -139,6 +131,38 @@ export class OrganizacionesController {
   listPersonalOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.organizacionesService
       .listPersonalOrganizacion(idOrg)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Patch('/personal/:idPersonal/:idRole')
+  changePersonalOrgRole(
+    @Param('idPersonal') idPersonal: string,
+    @Param('idRole') idRole: string,
+    @Res() res,
+  ) {
+    this.organizacionesService
+      .changeRole(idPersonal, idRole)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Delete('/:idOrg/personal/:idPersonal')
+  deletePersonalOrg(
+    @Param('idOrg') idOrg: string,
+    @Param('idPersonal') idPersonal: string,
+    @Res() res,
+  ) {
+    this.organizacionesService
+      .deletePersonal(idOrg, idPersonal)
+      .then((result) => res.status(200).send({ data: result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string, @Res() res) {
+    this.organizacionesService
+      .remove(id)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
   }

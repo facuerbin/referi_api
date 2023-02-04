@@ -128,13 +128,57 @@ export class OrganizacionesService {
       },
     });
 
-    return Promise.all([organizacion, usuario, rol]).then((results) => {
+    return Promise.all([organizacion, usuario, rol]).then(async (results) => {
+      const alreadyExist = await this.personalRepository.findOne({
+        where: {
+          personal: { id: results[1].id },
+          organizacion: { id: results[0].id },
+        },
+      });
+
+      if (alreadyExist) {
+        alreadyExist.rol = results[2];
+        return this.personalRepository.save(alreadyExist);
+      }
+
       return this.personalRepository.save({
         personal: results[1],
         organizacion: results[0],
         rol: results[2],
       });
     });
+  }
+
+  async changeRole(id: string, roleId: string) {
+    const personal = this.personalRepository.findOne({
+      where: {
+        personal: { id: id },
+        organizacion: { id: roleId },
+      },
+    });
+    const role = this.rolRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    return await Promise.all([personal, role]).then((results) => {
+      const personal = results[0];
+      personal.rol = results[1];
+      return this.personalRepository.save(personal);
+    });
+  }
+
+  async deletePersonal(orgId: string, personalId: string) {
+    const personal = await this.personalRepository.findOne({
+      where: {
+        organizacion: {
+          id: orgId,
+        },
+        id: personalId,
+      },
+    });
+    return await this.personalRepository.softDelete(personal.id);
   }
 
   listPersonalOrganizacion(idOrg: string) {

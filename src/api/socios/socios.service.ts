@@ -1,6 +1,12 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, IsNull, LessThan, Repository } from 'typeorm';
+import {
+  Between,
+  FindManyOptions,
+  IsNull,
+  LessThan,
+  Repository,
+} from 'typeorm';
 import { ActividadesService } from '../actividades/actividades.service';
 import { PagosService } from '../pagos/pagos.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
@@ -14,6 +20,7 @@ import {
 import { Inscripcion } from './entities/inscripcion.entity';
 import * as csv from 'csv-writer';
 import * as moment from 'moment';
+import { ReporteInscriptosActividadMesDto } from './dto/reporte.inscriptos.actividad.mes.dto';
 @Injectable()
 export class SociosService {
   constructor(
@@ -316,11 +323,11 @@ export class SociosService {
   }
 
   async inscriptosPorMes(reporteDto: ReporteInscriptosMesDto) {
-    const inscriptos = await this.inscripcionRepository.find({
+    const dbQuery: FindManyOptions<Inscripcion> = {
       where: {
         organizacion: { id: reporteDto.idOrganizacion },
         fechaCreacion: Between(
-          new Date(reporteDto.fromYear, reporteDto.fromMonth - 1, 1),
+          new Date(reporteDto.fromYear, reporteDto.fromMonth - 1),
           new Date(reporteDto.toYear, reporteDto.toMonth, -1),
         ),
       },
@@ -332,7 +339,9 @@ export class SociosService {
       order: {
         fechaCreacion: 'DESC',
       },
-    });
+    };
+
+    const inscriptos = await this.inscripcionRepository.find(dbQuery);
 
     const response = inscriptos.map((inscripto) => {
       return inscripto.fechaCreacion.toISOString().slice(0, 7);
@@ -367,16 +376,74 @@ export class SociosService {
   }
 
   async sociosPorEstadoOrganizacion(idOrg: string) {
-    const socios = await this.inscripcionRepository.find({
+    const dbQuery: FindManyOptions<Inscripcion> = {
       where: {
         organizacion: { id: idOrg },
         fechaBaja: IsNull(),
       },
       relations: { estados: true },
-    });
+    };
+
+    const socios = await this.inscripcionRepository.find(dbQuery);
 
     const response = socios.map((socio) => {
       if (socio.estados[0]) return socio.estados[0]?.nombre;
+    });
+    const counts = {};
+    response.forEach(function (x) {
+      counts[x] = (counts[x] || 0) + 1;
+    });
+    return counts;
+  }
+
+  async inscriptosPorActividadPorMes(
+    reporteDto: ReporteInscriptosActividadMesDto,
+  ) {
+    const dbQuery: FindManyOptions<Inscripcion> = {
+      where: {
+        turnoActividad: {
+          actividad: { id: reporteDto.idActividad },
+        },
+        fechaCreacion: Between(
+          new Date(reporteDto.fromYear, reporteDto.fromMonth - 1),
+          new Date(reporteDto.toYear, reporteDto.toMonth, -1),
+        ),
+      },
+      relations: {
+        turnoActividad: { actividad: true },
+        usuario: true,
+      },
+      order: {
+        fechaCreacion: 'DESC',
+      },
+    };
+
+    const inscriptos = await this.inscripcionRepository.find(dbQuery);
+
+    const response = inscriptos.map((inscripto) => {
+      return inscripto.fechaCreacion.toISOString().slice(0, 7);
+    });
+    const counts = {};
+    response.forEach(function (x) {
+      counts[x] = (counts[x] || 0) + 1;
+    });
+    return counts;
+  }
+
+  async rangoEtarioSociosActividad(idActividad: string) {
+    const socios = await this.inscripcionRepository.find({
+      where: {
+        turnoActividad: { actividad: { id: idActividad } },
+        fechaBaja: IsNull(),
+      },
+      relations: { usuario: true },
+    });
+
+    const response = socios.map((socio) => {
+      return (
+        Math.floor(moment().diff(socio.usuario.fechaNacimiento, 'years') / 10) *
+        10
+      );
     });
     const counts = {};
     response.forEach(function (x) {

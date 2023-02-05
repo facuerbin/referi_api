@@ -8,12 +8,16 @@ import {
   Delete,
   Res,
   StreamableFile,
+  Query,
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
 import { UpdateSocioDto } from './dto/update.socio.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
+import { DefaultDeserializer } from 'v8';
+import { DateQuery } from './dto/date.query.dto';
+import { ReporteInscriptosActividadMesDto } from './dto/reporte.inscriptos.actividad.mes.dto';
 
 @ApiTags('Socios')
 @Controller({ path: 'socios', version: '1' })
@@ -140,10 +144,32 @@ export class SociosController {
       .catch((error) => res.status(400).send({ error }));
   }
 
+  @Post('reporte/actividad-inscriptos-mes')
+  reporteSociosPorActividadMes(
+    @Body() dto: ReporteInscriptosActividadMesDto,
+    @Res() res,
+  ) {
+    this.sociosService
+      .inscriptosPorActividadPorMes(dto)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
   @Get('reporte/rango-etario/:idOrg')
   reporteRangoEtarioSocios(@Param('idOrg') idOrg: string, @Res() res) {
     this.sociosService
       .rangoEtarioSociosOrganizacion(idOrg)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
+
+  @Get('reporte/rango-etario-actividad/:idActividad')
+  reporteRangoEtarioSociosActividad(
+    @Param('idActividad') idActividad: string,
+    @Res() res,
+  ) {
+    this.sociosService
+      .rangoEtarioSociosActividad(idActividad)
       .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }

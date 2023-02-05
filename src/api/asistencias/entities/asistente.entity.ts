@@ -17,6 +17,9 @@ export class Asistente {
   @Column()
   dni: number;
 
+  @Column({ default: null })
+  idUsuario: string;
+
   @ManyToOne(() => PlanillaAsistencia, (planilla) => planilla.asistentes, {
     nullable: false,
   })

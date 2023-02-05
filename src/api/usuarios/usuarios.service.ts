@@ -46,8 +46,8 @@ export class UsuariosService {
 
   findOne(id: string) {
     return this.usuarioRepository.findOne({
-      relations: { domicilio: true },
       where: { id: id, fechaBaja: IsNull() },
+      relations: { domicilio: true },
     });
   }
 

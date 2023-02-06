@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToMany,
 } from 'typeorm';
+import { Inscripcion } from './inscripcion.entity';
 
 @Entity()
 export class EstadoInscripcion {
@@ -14,6 +16,9 @@ export class EstadoInscripcion {
 
   @Column()
   nombre: Estado;
+
+  @ManyToMany(() => Inscripcion, (inscripcion) => inscripcion.estados)
+  inscriptos: Inscripcion[];
 
   // Timestamps
   @CreateDateColumn({ name: 'fecha_creacion' }) 'fechaCreacion': Date;

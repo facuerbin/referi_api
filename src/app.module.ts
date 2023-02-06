@@ -93,7 +93,7 @@ import { Admin } from './api/admin/entities/admin.entity';
       synchronize: config.NODE_ENV === 'development' ? true : false,
       // logging: true,
     }),
-    CacheModule.register({ isGlobal: true }),
+    CacheModule.register({ isGlobal: true, ttl: 2000 }),
     SeguridadModule,
     EmailModule,
     OrganizacionesModule,

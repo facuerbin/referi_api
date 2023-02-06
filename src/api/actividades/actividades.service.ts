@@ -13,6 +13,7 @@ import { EstadoActividad } from './entities/estado.actividad.entity';
 import { Horario, Dias } from './entities/horario.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
 import { TurnoHorario } from './entities/turno.horario.entity';
+import { Cuota } from '../pagos/entities/cuota.entity';
 
 @Injectable()
 export class ActividadesService {
@@ -259,5 +260,118 @@ export class ActividadesService {
 
   remove(id: string) {
     return this.actividadRepository.softDelete(id);
+  }
+
+  async ingresosPorActividad(idActividad: string) {
+    const actividad = await this.actividadRepository.findOne({
+      where: {
+        id: idActividad,
+      },
+      relations: {
+        tarifas: {
+          cuotas: {
+            pago: true,
+          },
+        },
+      },
+      loadEagerRelations: true,
+    });
+    const tarifas = await actividad.tarifas;
+    const cuotas: Cuota[] = [];
+    tarifas.forEach((tarifa) => {
+      cuotas.push(...tarifa.cuotas.filter((cuotaTarifa) => cuotaTarifa.pago));
+    });
+
+    return cuotas.reduce((acc, value) => acc + value.monto, 0);
+  }
+
+  async ingresosPorActividadPorOrganizacion(idOrganizacion: string) {
+    const actividades = await this.actividadRepository.find({
+      where: {
+        organizacion: {
+          id: idOrganizacion,
+        },
+      },
+      relations: {
+        tarifas: {
+          cuotas: {
+            pago: true,
+          },
+        },
+      },
+      loadEagerRelations: true,
+    });
+    return Promise.all(
+      actividades.map(async (actividad) => {
+        const tarifas = await actividad.tarifas;
+        const cuotas: Cuota[] = [];
+
+        tarifas.forEach((tarifa) => {
+          cuotas.push(
+            ...tarifa.cuotas.filter((cuotaTarifa) => cuotaTarifa.pago),
+          );
+        });
+        const obj = {};
+        obj[actividad.nombre] = cuotas.reduce(
+          (acc, value) => acc + value.monto,
+          0,
+        );
+        return obj;
+      }),
+    ).then((results) => {
+      const obj = {};
+      results.forEach(
+        (result) =>
+          (obj[Object.keys(result)[0]] = result[Object.keys(result)[0]]),
+      );
+      return obj;
+    });
+  }
+
+  async deudaPorActividadPorOrganizacion(idOrganizacion: string) {
+    const actividades = await this.actividadRepository.find({
+      where: {
+        organizacion: {
+          id: idOrganizacion,
+        },
+      },
+      relations: {
+        tarifas: {
+          cuotas: {
+            pago: true,
+          },
+        },
+      },
+      loadEagerRelations: true,
+    });
+    return Promise.all(
+      actividades.map(async (actividad) => {
+        const tarifas = await actividad.tarifas;
+        const cuotas: Cuota[] = [];
+
+        tarifas.forEach((tarifa) => {
+          cuotas.push(
+            ...tarifa.cuotas.filter(
+              (cuotaTarifa) =>
+                !cuotaTarifa.pago &&
+                new Date(cuotaTarifa.fechaVencimiento).getTime() > Date.now(),
+            ),
+          );
+        });
+        const obj = {};
+        obj[actividad.nombre] = cuotas.reduce(
+          (acc, value) => acc + value.monto,
+          0,
+        );
+        return obj;
+      }),
+    ).then((results) => {
+      const obj = {};
+      results.forEach(
+        (result) =>
+          (obj[Object.keys(result)[0]] = result[Object.keys(result)[0]]),
+      );
+      return obj;
+    });
   }
 }

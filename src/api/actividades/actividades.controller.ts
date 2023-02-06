@@ -146,4 +146,24 @@ export class ActividadesController {
   remove(@Param('id') id: string) {
     return this.actividadesService.remove(id);
   }
+
+  @Get('reporte/ingresos-por-actividad/:idOrganizacion')
+  async reporteIngresosActividad(
+    @Param('idOrganizacion') idOrganizacion: string,
+  ) {
+    const results =
+      await this.actividadesService.ingresosPorActividadPorOrganizacion(
+        idOrganizacion,
+      );
+    return results;
+  }
+
+  @Get('reporte/deuda-por-actividad/:idOrganizacion')
+  async reporteDeudaActividad(@Param('idOrganizacion') idOrganizacion: string) {
+    const results =
+      await this.actividadesService.deudaPorActividadPorOrganizacion(
+        idOrganizacion,
+      );
+    return results;
+  }
 }

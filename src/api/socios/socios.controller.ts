@@ -188,4 +188,12 @@ export class SociosController {
       .then((result) => res.status(200).send({ ...result }))
       .catch((error) => res.status(400).send({ error }));
   }
+
+  @Get('reporte/deudores-por-actividad/:idOrg')
+  reporteDeudoresPorActividad(@Param('idOrg') idOrg: string, @Res() res) {
+    this.sociosService
+      .sociosDeudoresPorActividad(idOrg)
+      .then((result) => res.status(200).send({ ...result }))
+      .catch((error) => res.status(400).send({ error }));
+  }
 }

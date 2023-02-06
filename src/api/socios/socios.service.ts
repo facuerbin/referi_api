@@ -364,8 +364,8 @@ export class SociosService {
 
     const response = socios.map((socio) => {
       return (
-        Math.floor(moment().diff(socio.usuario.fechaNacimiento, 'years') / 10) *
-        10
+        Math.floor(moment().diff(socio.usuario.fechaNacimiento, 'years') / 5) *
+        5
       );
     });
     const counts = {};
@@ -441,9 +441,31 @@ export class SociosService {
 
     const response = socios.map((socio) => {
       return (
-        Math.floor(moment().diff(socio.usuario.fechaNacimiento, 'years') / 10) *
-        10
+        Math.floor(moment().diff(socio.usuario.fechaNacimiento, 'years') / 5) *
+        5
       );
+    });
+    const counts = {};
+    response.forEach(function (x) {
+      counts[x] = (counts[x] || 0) + 1;
+    });
+    return counts;
+  }
+
+  async sociosDeudoresPorActividad(idOrganizacion: string) {
+    const socios = await this.inscripcionRepository.find({
+      where: {
+        organizacion: { id: idOrganizacion },
+        estados: { nombre: Estado.DEUDOR },
+      },
+      relations: {
+        estados: true,
+        turnoActividad: { actividad: true },
+      },
+    });
+
+    const response = socios.map((socio) => {
+      return socio.turnoActividad.actividad.nombre;
     });
     const counts = {};
     response.forEach(function (x) {

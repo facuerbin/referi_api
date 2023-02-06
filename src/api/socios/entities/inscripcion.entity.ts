@@ -5,7 +5,6 @@ import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,

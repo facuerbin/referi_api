@@ -49,6 +49,19 @@ export class UsuariosController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('/email/:email')
+  @UseInterceptors(CacheInterceptor)
+  findByEmail(@Param('email') email: string, @Res() res) {
+    this.usuariosService
+      .findByEmail(email)
+      .then((result) => {
+        delete result.password;
+        return res.status(200).send(result);
+      })
+      .catch((error) => res.status(401).send({ error: error }));
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,

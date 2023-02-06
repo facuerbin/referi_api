@@ -11,14 +11,13 @@ import {
   MaxFileSizeValidator,
   UseGuards,
   StreamableFile,
-  Logger,
   Req,
   CacheInterceptor,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { createReadStream, readFileSync, existsSync, unlink } from 'fs';
-import path, { join } from 'path';
+import { createReadStream, existsSync, unlink } from 'fs';
+import { join } from 'path';
 import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 import { FileUploadDto } from './dto/file.upload.dto';
 import { saveImageOptions } from './helpers/save.image.helper';
@@ -30,10 +29,7 @@ import { UsuariosService } from '../usuarios/usuarios.service';
 @ApiTags('Imágenes')
 @Controller({ path: 'uploads', version: '1' })
 export class ImagesController {
-  constructor(
-    private readonly imagesService: ImagesService,
-    private usuarioService: UsuariosService,
-  ) {}
+  constructor(private usuarioService: UsuariosService) {}
 
   @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
@@ -88,7 +84,6 @@ export class ImagesController {
   }
 
   @Get(':path')
-  @UseInterceptors(CacheInterceptor)
   findImage(
     @Param('path') path: string,
     @Res({ passthrough: true }) res: Response,

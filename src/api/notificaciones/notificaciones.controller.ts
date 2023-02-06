@@ -60,7 +60,7 @@ export class NotificacionesController {
   }
 
   @Get('socios/:idUsuario')
-  @UseInterceptors(CacheInterceptor)
+   
   findAllByUser(@Param('idUsuario') idUser: string, @Res() res) {
     this.notificacionesService
       .findAllByUser(idUser)
@@ -69,7 +69,7 @@ export class NotificacionesController {
   }
 
   @Get('socios/:idUsuario/new')
-  @UseInterceptors(CacheInterceptor)
+   
   getUnreadNotifications(@Param('idUsuario') idUser: string, @Res() res) {
     this.notificacionesService
       .getUnreadNotifications(idUser)
@@ -78,7 +78,7 @@ export class NotificacionesController {
   }
 
   @Get(':id')
-  @UseInterceptors(CacheInterceptor)
+   
   @ApiResponse({
     status: 200,
     description:

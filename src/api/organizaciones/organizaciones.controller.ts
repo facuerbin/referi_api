@@ -39,7 +39,6 @@ export class OrganizacionesController {
   }
 
   @Get()
-  @UseInterceptors(CacheInterceptor)
   findAll(@Res() res) {
     return this.organizacionesService
       .findAll()
@@ -48,7 +47,7 @@ export class OrganizacionesController {
   }
 
   @Get('tipos')
-  @UseInterceptors(CacheInterceptor)
+   
   listTipos(@Res() res) {
     return this.organizacionesService
       .listTipos()
@@ -57,7 +56,6 @@ export class OrganizacionesController {
   }
 
   @Get('espacios')
-  @UseInterceptors(CacheInterceptor)
   listEspacios(@Res() res) {
     return this.organizacionesService
       .listEspacios()
@@ -66,7 +64,7 @@ export class OrganizacionesController {
   }
 
   @Get('espacios/:orgId')
-  @UseInterceptors(CacheInterceptor)
+   
   listEspaciosOrg(@Param('orgId') orgId: string, @Res() res) {
     return this.organizacionesService
       .listEspaciosOrg(orgId)
@@ -75,7 +73,7 @@ export class OrganizacionesController {
   }
 
   @Get('/roles')
-  @UseInterceptors(CacheInterceptor)
+   
   listRoles(@Res() res) {
     this.organizacionesService
       .listRoles()
@@ -84,7 +82,7 @@ export class OrganizacionesController {
   }
 
   @Get(':id')
-  @UseInterceptors(CacheInterceptor)
+   
   findOne(@Param('id') id: string) {
     return this.organizacionesService.findOne(id);
   }
@@ -128,7 +126,7 @@ export class OrganizacionesController {
   }
 
   @Get('/personal/:id')
-  @UseInterceptors(CacheInterceptor)
+   
   findEmployeeOrganization(@Param('id') id: string, @Res() res) {
     this.organizacionesService
       .listEmployeeOrganization(id)
@@ -137,7 +135,7 @@ export class OrganizacionesController {
   }
 
   @Get('/:idOrg/personal')
-  @UseInterceptors(CacheInterceptor)
+   
   listPersonalOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.organizacionesService
       .listPersonalOrganizacion(idOrg)

@@ -105,7 +105,7 @@ export class SeguridadController {
   }
 
   @Get('logout')
-  @UseInterceptors(CacheInterceptor)
+   
   logout(@Body() recover: RecoverPasswordDto, @Res() res) {
     return 'Logout';
   }

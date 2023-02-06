@@ -37,7 +37,7 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  @UseInterceptors(CacheInterceptor)
+   
   findOne(@Param('id') id: string, @Res() res) {
     this.usuariosService
       .findOne(id)
@@ -50,7 +50,7 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/email/:email')
-  @UseInterceptors(CacheInterceptor)
+   
   findByEmail(@Param('email') email: string, @Res() res) {
     this.usuariosService
       .findByEmail(email)

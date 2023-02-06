@@ -28,7 +28,7 @@ export class PagosController {
   }
 
   @Get('inscripto/:idInscripto')
-  @UseInterceptors(CacheInterceptor)
+   
   listPagosInscripto(@Param('idInscripto') idInscripto: string, @Res() res) {
     return this.pagosService
       .consultarPagosInscripto(idInscripto)
@@ -37,7 +37,7 @@ export class PagosController {
   }
 
   @Get('organizacion/:idOrganizacion')
-  @UseInterceptors(CacheInterceptor)
+   
   listPagosOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -51,7 +51,7 @@ export class PagosController {
   }
 
   @Get('usuario/:idUsuario')
-  @UseInterceptors(CacheInterceptor)
+   
   listPagosUsuario(@Param('idUsuario') idUsuario: string, @Res() res) {
     return this.pagosService
       .consultarPagosUsuario(idUsuario)
@@ -60,7 +60,7 @@ export class PagosController {
   }
 
   @Get('cuotas/inscripto/:idInscripto')
-  @UseInterceptors(CacheInterceptor)
+   
   listCuotasInscripto(@Param('idInscripto') idInscripto: string, @Res() res) {
     return this.pagosService
       .consultarCuotasInscripto(idInscripto)
@@ -69,7 +69,7 @@ export class PagosController {
   }
 
   @Get('cuotas/organizacion/:idOrganizacion')
-  @UseInterceptors(CacheInterceptor)
+   
   listCuotasOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -81,7 +81,7 @@ export class PagosController {
   }
 
   @Get('cuotas/usuario/:idUsuario')
-  @UseInterceptors(CacheInterceptor)
+   
   listCuotasUsuario(@Param('idUsuario') idUsuario: string, @Res() res) {
     return this.pagosService
       .consultarCuotasUsuario(idUsuario)
@@ -90,7 +90,7 @@ export class PagosController {
   }
 
   @Get(':id')
-  @UseInterceptors(CacheInterceptor)
+   
   findOne(@Param('id') id: string) {
     return this.pagosService.findOne(id);
   }

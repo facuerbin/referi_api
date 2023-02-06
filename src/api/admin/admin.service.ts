@@ -50,17 +50,24 @@ export class AdminService {
       },
     });
 
-    backups.forEach((file) => {
-      if (new Date(file.fechaCreacion).getMonth() + 1 >= new Date().getMonth())
+    const oneMonth = 2628000000000; //ms
+    backups.forEach(async (file) => {
+      if (
+        new Date(file.fechaCreacion).getTime() >=
+        new Date().getTime() - oneMonth
+      )
         return;
+      await this.backupRepository.softDelete(file.id);
+      console.log(file);
       try {
         const fileRoute = `./backups/${file.nombreArchivo}`;
         unlink(fileRoute, (err) => this.logger.error(err));
-        this.backupRepository.softDelete(file);
       } catch (e) {
         this.logger.log(e);
       }
     });
+
+    return backups;
   }
 
   backup(scheduled: boolean) {
@@ -121,7 +128,7 @@ export class AdminService {
     return 'Database restored';
   }
 
-  @Cron('45 * * * * *')
+  @Cron('0 0 6/12 * * *')
   async scheduledDbDump() {
     await this.backup(true);
     this.logger.log('Backup created succesfully.');

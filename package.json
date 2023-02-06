@@ -43,6 +43,7 @@
     "class-validator": "^0.13.2",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.0.1",
+    "express-basic-auth": "^1.2.1",
     "file-type": "^18.0.0",
     "moment": "^2.29.4",
     "mysql2": "^2.3.3",

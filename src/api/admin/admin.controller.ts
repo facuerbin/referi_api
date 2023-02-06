@@ -88,6 +88,6 @@ export class AdminController {
   @UseGuards(JwtAuthGuard)
   @Get('backups')
   getBackupsList() {
-    return this.adminService.adminLogin;
+    return this.adminService.listBackups();
   }
 }

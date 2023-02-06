@@ -32,7 +32,6 @@ import { EstadoInscripcion } from './api/socios/entities/estado.inscripcion.enti
 import { Inscripcion } from './api/socios/entities/inscripcion.entity';
 import { Frecuencia } from './api/tarifas/entities/frecuencia.entity';
 import { Tarifa } from './api/tarifas/entities/tarifa.entity';
-import { NegocioModule } from './api/negocio/negocio.module';
 import { Notificacion } from './api/notificaciones/entities/notificacion.entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { TipoActividad } from './api/actividades/entities/tipo.actividad.entity';
@@ -44,11 +43,16 @@ import { TurnoHorario } from './api/actividades/entities/turno.horario.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { NotificacionUsuario } from './api/notificaciones/entities/notificaciones.usuario.entity';
+import { AdminModule } from './api/admin/admin.module';
+import { Backup } from './api/admin/entities/backup.entity';
+import { ScheduleModule } from '@nestjs/schedule';
+import { Admin } from './api/admin/entities/admin.entity';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'web'),
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       namingStrategy: new SnakeNamingStrategy(),
@@ -83,10 +87,11 @@ import { NotificacionUsuario } from './api/notificaciones/entities/notificacione
         Usuario,
         Notificacion,
         NotificacionUsuario,
+        Backup,
+        Admin,
       ],
       synchronize: config.NODE_ENV === 'development' ? true : false,
       // logging: true,
-      // migrations: ['dist/db/*.js'],
     }),
     CacheModule.register({ isGlobal: true }),
     SeguridadModule,
@@ -99,8 +104,8 @@ import { NotificacionUsuario } from './api/notificaciones/entities/notificacione
     PagosModule,
     NotificacionesModule,
     AsistenciasModule,
-    NegocioModule,
     ImagesModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService, EmailService],

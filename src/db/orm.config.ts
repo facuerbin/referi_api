@@ -26,6 +26,8 @@ import { config } from './../config/config';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { DataSource } from 'typeorm';
+import { Backup } from 'src/api/admin/entities/backup.entity';
+import { Admin } from 'src/api/admin/entities/admin.entity';
 
 const OrmConfig = new DataSource({
   type: 'mysql',
@@ -60,6 +62,8 @@ const OrmConfig = new DataSource({
     Usuario,
     Notificacion,
     NotificacionUsuario,
+    Backup,
+    Admin,
   ],
   synchronize: config.NODE_ENV === 'development' ? true : false,
   migrations: ['dist/db/*.js'],

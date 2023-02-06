@@ -5,6 +5,9 @@
 # images
 /uploads
 
+# dumps
+*.sql
+
 # Logs
 logs
 *.log

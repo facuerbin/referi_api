@@ -9,6 +9,8 @@ import {
   Res,
   StreamableFile,
   Query,
+  UseInterceptors,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
@@ -35,6 +37,7 @@ export class SociosController {
   }
 
   @Get('organizacion/:idOrganizacion')
+  @UseInterceptors(CacheInterceptor)
   findByOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -78,6 +81,7 @@ export class SociosController {
   }
 
   @Get('organizacion/:idOrganizacion/deudores')
+  @UseInterceptors(CacheInterceptor)
   findDeudoresByOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -89,6 +93,7 @@ export class SociosController {
   }
 
   @Get('actividad/turno/:idTurnoActividad')
+  @UseInterceptors(CacheInterceptor)
   findByTurnoActividad(
     @Param('idTurnoActividad') idTurnoActividad: string,
     @Res() res,
@@ -100,6 +105,7 @@ export class SociosController {
   }
 
   @Get('actividad/:idActividad')
+  @UseInterceptors(CacheInterceptor)
   findByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.sociosService
       .findByActividad(idActividad)
@@ -108,6 +114,7 @@ export class SociosController {
   }
 
   @Get('usuario/:idUsuario')
+  @UseInterceptors(CacheInterceptor)
   findBySocio(@Param('idUsuario') idUsuario: string, @Res() res) {
     this.sociosService
       .findByUser(idUsuario)

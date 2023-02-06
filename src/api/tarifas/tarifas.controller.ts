@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Res,
+  UseInterceptors,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { TarifasService } from './tarifas.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
@@ -39,6 +41,7 @@ export class TarifasController {
   }
 
   @Get('frecuencia')
+  @UseInterceptors(CacheInterceptor)
   findAllFrecuencias(@Res() res) {
     this.tarifasService
       .findAllFrecuencias()
@@ -47,6 +50,7 @@ export class TarifasController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   findAll(@Res() res) {
     this.tarifasService
       .findAll()
@@ -55,6 +59,7 @@ export class TarifasController {
   }
 
   @Get('/organizacion/:idOrg')
+  @UseInterceptors(CacheInterceptor)
   findAllByOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.tarifasService
       .findByOrg(idOrg)
@@ -63,6 +68,7 @@ export class TarifasController {
   }
 
   @Get('/actividad/:idActividad')
+  @UseInterceptors(CacheInterceptor)
   findAllByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.tarifasService
       .findByActividad(idActividad)
@@ -71,6 +77,7 @@ export class TarifasController {
   }
 
   @Get(':id')
+  @UseInterceptors(CacheInterceptor)
   findOne(@Param('id') id: string, @Res() res) {
     this.tarifasService
       .findOne(id)

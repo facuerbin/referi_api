@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Res, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Get,
+  Param,
+  UseInterceptors,
+  CacheInterceptor,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { SeguridadService } from './seguridad.service';
@@ -96,6 +105,7 @@ export class SeguridadController {
   }
 
   @Get('logout')
+  @UseInterceptors(CacheInterceptor)
   logout(@Body() recover: RecoverPasswordDto, @Res() res) {
     return 'Logout';
   }

@@ -7,6 +7,8 @@ import {
   Delete,
   Res,
   UseGuards,
+  UseInterceptors,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';
@@ -35,6 +37,7 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @UseInterceptors(CacheInterceptor)
   findOne(@Param('id') id: string, @Res() res) {
     this.usuariosService
       .findOne(id)

@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   Res,
+  UseInterceptors,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ActividadesService } from './actividades.service';
@@ -48,6 +50,7 @@ export class ActividadesController {
   }
 
   @Get('tipo/:idTipo')
+  @UseInterceptors(CacheInterceptor)
   findActividadByTipo(@Param('idTipo') idTipo: string, @Res() res) {
     this.actividadesService
       .findActividadByTipo(idTipo)
@@ -56,6 +59,7 @@ export class ActividadesController {
   }
 
   @Get('tipo')
+  @UseInterceptors(CacheInterceptor)
   listTipoActividad(@Res() res) {
     this.actividadesService
       .listTipoActividad()
@@ -75,6 +79,7 @@ export class ActividadesController {
   }
 
   @Get('estado')
+  @UseInterceptors(CacheInterceptor)
   listEstadoActividad(@Res() res) {
     this.actividadesService
       .listEstadoActividad()
@@ -94,6 +99,7 @@ export class ActividadesController {
   }
 
   @Get(':idActividad')
+  @UseInterceptors(CacheInterceptor)
   detailActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.actividadesService
       .detailActividad(idActividad)
@@ -104,6 +110,7 @@ export class ActividadesController {
   }
 
   @Get('turno/:idTurno')
+  @UseInterceptors(CacheInterceptor)
   detailTurno(@Param('idTurno') idTurno: string, @Res() res) {
     this.actividadesService
       .detailTurno(idTurno)
@@ -112,6 +119,7 @@ export class ActividadesController {
   }
 
   @Get('organizacion/:idOrganizacion')
+  @UseInterceptors(CacheInterceptor)
   findActividadByOrg(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,

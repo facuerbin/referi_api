@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Param, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Res,
+  UseInterceptors,
+  CacheInterceptor,
+} from '@nestjs/common';
 import { NotificacionesService } from './notificaciones.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EnviarNotifiacionDto } from './dto/enviar.notificacion.dto';
@@ -51,6 +60,7 @@ export class NotificacionesController {
   }
 
   @Get('socios/:idUsuario')
+  @UseInterceptors(CacheInterceptor)
   findAllByUser(@Param('idUsuario') idUser: string, @Res() res) {
     this.notificacionesService
       .findAllByUser(idUser)
@@ -59,6 +69,7 @@ export class NotificacionesController {
   }
 
   @Get('socios/:idUsuario/new')
+  @UseInterceptors(CacheInterceptor)
   getUnreadNotifications(@Param('idUsuario') idUser: string, @Res() res) {
     this.notificacionesService
       .getUnreadNotifications(idUser)
@@ -67,6 +78,7 @@ export class NotificacionesController {
   }
 
   @Get(':id')
+  @UseInterceptors(CacheInterceptor)
   @ApiResponse({
     status: 200,
     description:

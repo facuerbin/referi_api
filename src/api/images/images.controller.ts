@@ -13,6 +13,7 @@ import {
   StreamableFile,
   Logger,
   Req,
+  CacheInterceptor,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -87,6 +88,7 @@ export class ImagesController {
   }
 
   @Get(':path')
+  @UseInterceptors(CacheInterceptor)
   findImage(
     @Param('path') path: string,
     @Res({ passthrough: true }) res: Response,

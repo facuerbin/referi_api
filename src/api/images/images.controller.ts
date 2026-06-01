@@ -20,7 +20,6 @@ import { join } from 'path';
 import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 import { FileUploadDto } from './dto/file.upload.dto';
 import { saveImageOptions } from './helpers/save.image.helper';
-import { ImagesService } from './images.service';
 import type { Response } from 'express';
 import { UsuariosService } from '../usuarios/usuarios.service';
 

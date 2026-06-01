@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { SeguridadModule } from './api/seguridad/seguridad.module';
 import { OrganizacionesModule } from './api/organizaciones/organizaciones.module';
 import { SociosModule } from './api/socios/socios.module';
@@ -108,7 +106,6 @@ import { Admin } from './api/admin/entities/admin.entity';
     ImagesModule,
     AdminModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, EmailService],
+  providers: [EmailService],
 })
 export class AppModule {}

@@ -8,7 +8,6 @@ import {
   Res,
   UseGuards,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';

@@ -6,7 +6,6 @@ import {
   Param,
   Res,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { NotificacionesService } from './notificaciones.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';

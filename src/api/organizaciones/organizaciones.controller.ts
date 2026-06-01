@@ -9,7 +9,6 @@ import {
   Res,
   UseGuards,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { OrganizacionesService } from './organizaciones.service';
 import { CreateOrganizacionDto } from './dto/create-organizacion.dto';

@@ -8,7 +8,6 @@ import {
   Delete,
   Res,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { PagosService } from './pagos.service';
 import { ApiTags } from '@nestjs/swagger';

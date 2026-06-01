@@ -1,10 +1,5 @@
-import {
-  CACHE_MANAGER,
-  HttpException,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { HttpException, Inject, Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import * as CacheManager from 'cache-manager';
 import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';

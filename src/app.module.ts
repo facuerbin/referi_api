@@ -1,4 +1,5 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -93,7 +94,7 @@ import { Admin } from './api/admin/entities/admin.entity';
       synchronize: config.NODE_ENV === 'development' ? true : false,
       // logging: true,
     }),
-    CacheModule.register({ isGlobal: true, ttl: 2000 }),
+    CacheModule.register({ isGlobal: true, ttl: 2 }),
     SeguridadModule,
     EmailModule,
     OrganizacionesModule,

@@ -6,7 +6,6 @@ import {
   Get,
   Param,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';

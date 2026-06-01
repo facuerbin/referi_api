@@ -8,7 +8,6 @@ import {
   Delete,
   Res,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { TarifasService } from './tarifas.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';

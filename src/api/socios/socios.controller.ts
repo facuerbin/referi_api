@@ -10,7 +10,6 @@ import {
   StreamableFile,
   Query,
   UseInterceptors,
-  CacheInterceptor,
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';

@@ -20,7 +20,7 @@ API REST del sistema de gestión de clubes y socios Referí. Desarrollada como p
 
 ## Requisitos
 
-- Node.js 16+
+- Node.js 20+
 - MySQL 8+
 
 ---
@@ -90,7 +90,8 @@ Swagger disponible en `/v1/docs` una vez levantado el servidor. Requiere autenti
 
 ## Tecnologías
 
-- **NestJS 9** con arquitectura modular
+- **NestJS 11** con arquitectura modular
+- **TypeScript 5**
 - **TypeORM** con MySQL
 - **Passport JWT** para autenticación
 - **SendGrid** para envío de emails

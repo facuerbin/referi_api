@@ -1,4 +1,4 @@
-export class EnviarNotifiacionDto {
+export class EnviarNotificacionDto {
   idRemitente: string;
   tipoRemitente: string;
   idDestinatario?: string;

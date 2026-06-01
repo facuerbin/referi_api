@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { NotificacionesService } from './notificaciones.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { EnviarNotifiacionDto } from './dto/enviar.notificacion.dto';
+import { EnviarNotificacionDto } from './dto/enviar.notificacion.dto';
 import { Notificacion, TipoDestinatario } from './entities/notificacion.entity';
 import { NotificationResponseSchema } from './response/notification.response.dto';
 
@@ -25,7 +25,7 @@ export class NotificacionesController {
   }
 
   @Post('socios')
-  enviarNotificacionesSocios(@Body() dto: EnviarNotifiacionDto, @Res() res) {
+  enviarNotificacionesSocios(@Body() dto: EnviarNotificacionDto, @Res() res) {
     switch (dto.tipoDestinatario) {
       case TipoDestinatario.DEUDORES:
         return this.notificacionesService

@@ -106,10 +106,9 @@ export class ImagesController {
         return res.status(401).send({ error: 'File not found' });
       }
       unlink(filePath, (err) => {
-        if (err) console.log(err);
         return err;
       });
-      return res.status(200).send({ msg: 'Image deleted succesfully' });
+      return res.status(200).send({ msg: 'Image deleted successfully' });
     } catch (error) {
       return res.status(500).send({ error: 'Server error' });
     }

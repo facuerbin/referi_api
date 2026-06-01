@@ -12,7 +12,7 @@ import {
   CacheInterceptor,
 } from '@nestjs/common';
 import { OrganizacionesService } from './organizaciones.service';
-import { CreateOrganizacionDto } from './dto/create-organizacione.dto';
+import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { UpdateOrganizacionDto } from './dto/update.organizacion.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateEspacioDto } from './dto/create.espacio.dto';

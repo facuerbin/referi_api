@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Domicilio } from '../usuarios/entities/domicilio.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
-import { CreateOrganizacionDto } from './dto/create-organizacione.dto';
+import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
 import { CreateEspacioDto } from './dto/create.espacio.dto';
 import { CreatePersonalDto } from './dto/create.personal.dto';
 import { UpdateOrganizacionDto } from './dto/update.organizacion.dto';

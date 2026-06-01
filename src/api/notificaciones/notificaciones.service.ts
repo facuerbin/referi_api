@@ -5,7 +5,7 @@ import { OrganizacionesService } from '../organizaciones/organizaciones.service'
 import { SociosService } from '../socios/socios.service';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 import { UsuariosService } from '../usuarios/usuarios.service';
-import { EnviarNotifiacionDto } from './dto/enviar.notificacion.dto';
+import { EnviarNotificacionDto } from './dto/enviar.notificacion.dto';
 import {
   Notificacion,
   TipoDestinatario,
@@ -72,7 +72,7 @@ export class NotificacionesService {
     });
   }
 
-  async enviarNotificacionDeudores(dto: EnviarNotifiacionDto) {
+  async enviarNotificacionDeudores(dto: EnviarNotificacionDto) {
     const destinatarios = this.sociosService.findDeudoresByOrg(dto.idRemitente);
     const remitente = this.organizacionService.findOne(dto.idRemitente);
 
@@ -104,7 +104,7 @@ export class NotificacionesService {
       .catch((e) => e);
   }
 
-  async enviarNotificacionSocios(dto: EnviarNotifiacionDto) {
+  async enviarNotificacionSocios(dto: EnviarNotificacionDto) {
     const socios = await this.sociosService.findByOrg(dto.idRemitente);
     const remitente = await this.organizacionService.findOne(dto.idRemitente);
     const usuarios = socios.map((socio) => socio.usuario);
@@ -128,7 +128,7 @@ export class NotificacionesService {
     return notif;
   }
 
-  async enviarNotificacionActividad(dto: EnviarNotifiacionDto) {
+  async enviarNotificacionActividad(dto: EnviarNotificacionDto) {
     if (!dto.idDestinatario) return new Error('No se encontró el destinatario');
     const remitente = await this.organizacionService.findOne(dto.idRemitente);
     const socios = await this.sociosService.findByActividad(dto.idDestinatario);
@@ -153,7 +153,7 @@ export class NotificacionesService {
     return notif;
   }
 
-  async enviarNotificacionTurnoActividad(dto: EnviarNotifiacionDto) {
+  async enviarNotificacionTurnoActividad(dto: EnviarNotificacionDto) {
     if (!dto.idDestinatario) return new Error('No se encontró el destinatario');
     const remitente = await this.organizacionService.findOne(dto.idRemitente);
     const socios = await this.sociosService.findByTurnoActividad(
@@ -167,7 +167,7 @@ export class NotificacionesService {
       idRemitente: dto.idRemitente,
       nombreRemitente: remitente.nombre,
       tipoRemitente: TipoRemitente.ORGANIZACION,
-      tipoDestinatario: TipoDestinatario.ACTIVIDAD,
+      tipoDestinatario: TipoDestinatario.TURNO_ACTIVIDAD,
     });
 
     this.getUniqueUsers(usuarios).forEach((user) => {
@@ -180,7 +180,7 @@ export class NotificacionesService {
     return notif;
   }
 
-  async enviarNotificacionSocio(dto: EnviarNotifiacionDto) {
+  async enviarNotificacionSocio(dto: EnviarNotificacionDto) {
     if (!dto.idDestinatario) return new Error('No se encontró el destinatario');
     const remitente = await this.organizacionService.findOne(dto.idRemitente);
     const usuario = await this.usuariosService.findOne(dto.idDestinatario);
@@ -191,7 +191,7 @@ export class NotificacionesService {
       idRemitente: dto.idRemitente,
       nombreRemitente: remitente.nombre,
       tipoRemitente: TipoRemitente.ORGANIZACION,
-      tipoDestinatario: TipoDestinatario.ACTIVIDAD,
+      tipoDestinatario: TipoDestinatario.SOCIO,
     });
 
     this.notificacionUsuarioRepository.save({

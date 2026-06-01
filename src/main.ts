@@ -6,7 +6,7 @@ import { config } from './config/config';
 import * as basicAuth from 'express-basic-auth';
 
 async function bootstrap() {
-  Logger.log(`App starting in ${config.NODE_ENV} enviroment`);
+  Logger.log(`App starting in ${config.NODE_ENV} environment`);
 
   const app = await NestFactory.create(AppModule);
   app.enableCors();

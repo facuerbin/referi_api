@@ -83,7 +83,6 @@ export class SeguridadController {
         return res.status(200).send({ ...result });
       })
       .catch((error) => {
-        console.log(error);
         return res.status(400).send({ error: error.message });
       });
   }

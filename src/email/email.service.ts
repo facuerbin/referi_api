@@ -68,7 +68,7 @@ export class EmailService {
     const rand = Math.floor(Math.random() * 9999);
     this.cacheManager.set<validateCache>(
       userId,
-      { number: rand, attemps: 0 },
+      { number: rand, attempts: 0 },
       300000,
     );
     return rand;
@@ -85,8 +85,8 @@ export class EmailService {
       return true;
     }
 
-    cached.attemps++;
-    if (cached.attemps <= 3) {
+    cached.attempts++;
+    if (cached.attempts <= 3) {
       this.cacheManager.set<validateCache>(userId, cached);
     } else {
       this.cacheManager.del(userId);
@@ -97,5 +97,5 @@ export class EmailService {
 
 export interface validateCache {
   number: number;
-  attemps: number;
+  attempts: number;
 }

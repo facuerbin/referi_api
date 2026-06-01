@@ -17,7 +17,6 @@ import { CreateSocioDto } from './dto/create.socio.dto';
 import { UpdateSocioDto } from './dto/update.socio.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
-import { DefaultDeserializer } from 'v8';
 import { DateQuery } from './dto/date.query.dto';
 import { ReporteInscriptosActividadMesDto } from './dto/reporte.inscriptos.actividad.mes.dto';
 

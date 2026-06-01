@@ -58,7 +58,6 @@ export class AdminService {
       )
         return;
       await this.backupRepository.softDelete(file.id);
-      console.log(file);
       try {
         const fileRoute = `./backups/${file.nombreArchivo}`;
         unlink(fileRoute, (err) => this.logger.error(err));
@@ -81,7 +80,7 @@ export class AdminService {
     return new Promise((resolve, reject) => {
       exec(cmd, (error, stdout, stderr) => {
         if (error) {
-          console.warn(error);
+          this.logger.error(error);
         }
         const file = createReadStream(join(process.cwd(), fileRoute));
         this.backupRepository.save({
@@ -131,6 +130,6 @@ export class AdminService {
   @Cron('0 0 6/12 * * *')
   async scheduledDbDump() {
     await this.backup(true);
-    this.logger.log('Backup created succesfully.');
+    this.logger.log('Backup created successfully.');
   }
 }

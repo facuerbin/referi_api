@@ -1,6 +1,6 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
-import nodemailer = require('nodemailer');
-import nodemailerSendgrid = require('nodemailer-sendgrid');
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import * as sgMail from '@sendgrid/mail';
 import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import { config } from 'src/config/config';
 import * as CacheManager from 'cache-manager';
@@ -8,29 +8,25 @@ import { UsuariosService } from 'src/api/usuarios/usuarios.service';
 
 @Injectable()
 export class EmailService {
-  transport = nodemailer.createTransport(
-    nodemailerSendgrid({
-      apiKey: config.MAIL_API_KEY,
-    }),
-  );
-
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager.Cache,
     private userService: UsuariosService,
-  ) {}
+  ) {
+    sgMail.setApiKey(config.MAIL_API_KEY);
+  }
 
   sendConfirmationEmail(user: Usuario) {
     const rand = this.generateConfirmationNumber(user.id);
     const content = `<h1>¡Bienvenido a Referí!</h1>
     Su código de verificación es ${rand}`;
-    return this.transport
-      .sendMail({
+    return sgMail
+      .send({
         from: 'no-reply@referiapp.com.ar',
         to: `${user.nombre} ${user.apellido} referiapp.com.ar@gmail.com`,
         subject: 'Código de confirmación - Referí',
         html: content,
       })
-      .then(async () => {
+      .then(() => {
         Logger.log('Email sent to user ' + user.id);
         return true;
       })
@@ -46,14 +42,14 @@ export class EmailService {
     <p>Acá está tu nueva contraseña.</p>
     <h3>Contraseña: <b>${password}</b></h3>
     <p>No compartas esta contraseña con nadie.</p>`;
-    return this.transport
-      .sendMail({
+    return sgMail
+      .send({
         from: 'no-reply@referiapp.com.ar',
         to: `${user.nombre} ${user.apellido} referiapp.com.ar@gmail.com`,
         subject: 'Nueva contraseña - Referí',
         html: content,
       })
-      .then(async () => {
+      .then(() => {
         Logger.log('Recovery email sent to user ' + user.id);
         return true;
       })

@@ -50,7 +50,7 @@ export class AdminService {
       },
     });
 
-    const oneMonth = 2628000000000; //ms
+    const oneMonth = 2628000000; //ms
     backups.forEach(async (file) => {
       if (
         new Date(file.fechaCreacion).getTime() >=

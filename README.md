@@ -1,150 +1,97 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Referí — API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST del sistema de gestión de clubes y socios Referí. Desarrollada como proyecto final de la carrera Ingeniería en Sistemas de Información.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Funcionalidades
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Socios** — Alta, baja y modificación. Importación y exportación por CSV. Reportes por rango etario, estado y actividad.
+- **Actividades** — ABM de actividades, turnos y horarios. Inscripción y baja de socios a turnos.
+- **Tarifas** — Definición de tarifas por actividad con frecuencias de cobro.
+- **Pagos** — Registro de pagos, historial por socio y organización, seguimiento de cuotas vencidas.
+- **Asistencias** — Planillas de asistencia diarias. Registro por DNI o código QR.
+- **Notificaciones** — Envío de notificaciones a socios, deudores, o inscriptos en una actividad o turno.
+- **Organización** — Gestión de espacios físicos, personal y roles con permisos.
+- **Reportes** — Inscriptos por mes, distribución por estado, deuda e ingresos por actividad.
+- **Backups** — Generación y restauración de backups de la base de datos. Backup automático cada 12 horas.
 
-## Installation
+---
 
-```bash
-$ npm install
-```
+## Requisitos
 
-## Running the app
+- Node.js 16+
+- MySQL 8+
+
+---
+
+## Configuración
+
+Copiar el archivo de ejemplo y completar los valores:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp src/config/development.env.example src/config/development.env
 ```
 
-## Test
+| Variable | Descripción | Default |
+|---|---|---|
+| `DB_HOST` | Host de MySQL | `localhost` |
+| `DB_PORT` | Puerto de MySQL | `3306` |
+| `DB_NAME` | Nombre de la base de datos | `referi_dev` |
+| `DB_USER_NAME` | Usuario de MySQL | `root` |
+| `DB_USER_PASSWORD` | Contraseña de MySQL | `toor` |
+| `JWT_SECRET` | Clave para firmar tokens JWT | `somethingSecret` |
+| `MAIL_API_KEY` | API key de SendGrid | — |
+| `API_DOC_PASS` | Contraseña para acceder a Swagger | — |
+
+En desarrollo, la base de datos se sincroniza automáticamente con las entidades. En producción se usan migraciones.
+
+---
+
+## Instalación y ejecución
 
 ```bash
-# unit tests
-$ npm run test
+npm install
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run start:dev      # desarrollo con hot-reload
+npm run start:prod     # producción (requiere build previo)
+npm run build
 ```
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Tests
 
-## Stay in touch
+```bash
+npm test               # unit tests
+npm run test:cov       # cobertura
+npm run test:e2e
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## Migraciones (producción)
 
-Nest is [MIT licensed](LICENSE).
+```bash
+npm run migration:generate
+npm run migration:run
+```
 
-Partners
+---
 
-Consultar credencial
-Descargar credencial
-Consultar mis actividades
-Importar socios
-ABM Socios
-Renovar credenciales
+## Documentación de la API
 
-Notifications
+Swagger disponible en `/v1/docs` una vez levantado el servidor. Requiere autenticación básica:
 
-Enviar notificaciones organizaciones
-Enviar notificaciones socios
-Enviar notificaciones masivas
+- **Usuario:** `referiapp`
+- **Contraseña:** valor de `API_DOC_PASS`
 
-Payments
+---
 
-Realizar pago
-Consultar historial de pagos
-Registrar pago
-Concluir periodo de facturación
-Cambiar estado a deudores
+## Tecnologías
 
-Rates
-
-ABM tarifas
-
-Activities
-
-Consultar actividades disponibles
-Consultar detalle actividad
-Inscribir a una actividad
-Solicitar baja a actividad
-ABM Actividades
-Concluir actividades
-Asignar tarifa
-
-Users
-
-Iniciar sesión
-Cerrar sesión
-Recuperar contraseña
-Consultar perfil
-Actualizar perfil
-Registrarse en el sistema
-ABM Personal
-ABM Roles
-Solicitar alta organización
-
-Organization
-
-Consultar organizaciones disponibles
-Consultar detalle de organización
-ABM Información de pago
-ABM Espacios físicos
-Actualizar información organización
-Solicitar baja
-Consultar establecimientos registrados
-
-Visitors
-
-Registrar personas que ingresen al establecimiento
-
-Reports
-
-Consultar dashboard
-
-Backup
-
-Creación de backups
-Recuperación de datos
-
-Bussiness Rules
-
-Definir reglas de negocio que aplican a todos los usuarios del sistema.
-ABM Estado inscripción
+- **NestJS 9** con arquitectura modular
+- **TypeORM** con MySQL
+- **Passport JWT** para autenticación
+- **SendGrid** para envío de emails
+- **Swagger / OpenAPI** para documentación

@@ -7,7 +7,6 @@ import {
   Delete,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';

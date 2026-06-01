@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { Organizacion } from '../organizaciones/entities/organizacion.entity';
@@ -41,7 +40,7 @@ export class AsistenciasService {
       createAsistenciaDto.emailUsuario,
     );
 
-    Promise.all([planilla, usuario]).then((result) => {
+    return Promise.all([planilla, usuario]).then((result) => {
       const planilla = result[0];
       const usuario = result[1];
       return this.asistenteRepository.save({

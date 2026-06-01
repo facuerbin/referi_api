@@ -58,7 +58,7 @@ export class SociosController {
         'Content-Type': 'text/csv',
         'Content-Disposition': 'attachment; filename="backup.csv"',
       });
-      return new StreamableFile(buffer);
+      return new StreamableFile(new Uint8Array(buffer));
     } catch (e) {
       return res.status(400).send({ error: e });
     }

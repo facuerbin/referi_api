@@ -119,7 +119,7 @@ export class AdminService {
     const dbPassword = config.DB_USER_PASSWORD;
     const fileName = file?.originalname;
     const filePath = join(process.cwd(), 'backups', fileName);
-    writeFileSync(filePath, file.buffer, 'utf-8');
+    writeFileSync(filePath, new Uint8Array(file.buffer));
     const cmd = `mysql -u ${dbUser} -p${dbPassword} ${dbName} < ${filePath}`;
     exec(cmd, (error, stdout, stderr) => {
       if (error) return error;

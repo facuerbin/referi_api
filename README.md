@@ -21,7 +21,7 @@ API REST del sistema de gestión de clubes y socios Referí. Desarrollada como p
 ## Requisitos
 
 - Node.js 20+
-- MySQL 8+
+- MySQL 8+ (o Docker para levantarlo con `docker compose up -d`)
 
 ---
 
@@ -51,6 +51,9 @@ En desarrollo, la base de datos se sincroniza automáticamente con las entidades
 ## Instalación y ejecución
 
 ```bash
+# Levantar la base de datos (requiere Docker)
+docker compose up -d
+
 npm install
 
 npm run start:dev      # desarrollo con hot-reload

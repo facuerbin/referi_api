@@ -104,7 +104,7 @@ async function seed() {
 
   // upsert the rol rows first (no relations)
   await rolRepo.upsert([
-    { id: '82e1a2fd-eb51-408d-86fe-44a180853f0e', nombre: 'ADMINISTRADOR', descripcion: 'Es el dueño de la organización, tiene control total sobre la misma.' },
+    { id: '82e1a2fd-eb51-408d-86fe-44a180853f0e', nombre: 'PROPIETARIO', descripcion: 'Es el dueño de la organización, tiene control total sobre la misma.' },
     { id: 'de62dd9d-fdb4-44ce-ac41-cbfdd7f348ad', nombre: 'PORTERO',       descripcion: 'Se encarga de registrar el ingreso a la organización y puede registrar nuevos socios.' },
     { id: '4adacacf-f41c-431e-b2df-429f9fc1d4b6', nombre: 'ADMINISTRATIVO',descripcion: 'Puede manejar todos los aspectos del negocio a excepción de los datos sensibles de la institución.' },
     { id: 'ec430664-fabf-481f-be1d-af53e187abc5', nombre: 'CONTABLE',      descripcion: 'Puede manejar lo referido a tarifas y pagos de la institución.' },
@@ -116,7 +116,7 @@ async function seed() {
   const byId = (id: string) => roles.find(r => r.id === id)!;
 
   await rolRepo.save([
-    { ...byId('82e1a2fd-eb51-408d-86fe-44a180853f0e'), permisos: [socios, actividades, reportes, asistencia, tarifas, notif, pagos, org] },
+    { ...byId('82e1a2fd-eb51-408d-86fe-44a180853f0e'), permisos: [socios, actividades, reportes, asistencia, tarifas, notif, pagos, org] }, // PROPIETARIO
     { ...byId('de62dd9d-fdb4-44ce-ac41-cbfdd7f348ad'), permisos: [socios, asistencia] },
     { ...byId('4adacacf-f41c-431e-b2df-429f9fc1d4b6'), permisos: [socios, actividades, reportes, asistencia, tarifas, notif, pagos] },
     { ...byId('ec430664-fabf-481f-be1d-af53e187abc5'), permisos: [tarifas, pagos] },

@@ -18,13 +18,13 @@ export class PersonalOrganizacion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Organizacion, (organizacion) => organizacion.empleados)
+  @ManyToOne(() => Organizacion, (organizacion) => organizacion.empleados, { nullable: false })
   organizacion: Organizacion;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.organizaciones)
+  @ManyToOne(() => Usuario, (usuario) => usuario.organizaciones, { nullable: false })
   personal: Usuario;
 
-  @ManyToOne(() => Rol, (rol) => rol.empleados)
+  @ManyToOne(() => Rol, (rol) => rol.empleados, { nullable: false })
   rol: Rol;
 
   // Timestamps

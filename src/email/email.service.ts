@@ -8,6 +8,8 @@ import { UsuariosService } from 'src/api/usuarios/usuarios.service';
 
 @Injectable()
 export class EmailService {
+  private readonly logger = new Logger(EmailService.name);
+
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager.Cache,
     private userService: UsuariosService,
@@ -17,27 +19,46 @@ export class EmailService {
 
   sendConfirmationEmail(user: Usuario) {
     const rand = this.generateConfirmationNumber(user.id);
+
+    if (config.SKIP_EMAIL) {
+      this.logger.log(`[SKIP_EMAIL] Verification code for user ${user.id} (${user.email}): ${rand}`);
+      return Promise.resolve(true);
+    }
+
+    const to = config.DEBUG_EMAIL
+      ? config.DEBUG_EMAIL
+      : `${user.nombre} ${user.apellido} <${user.email}>`;
+
     const content = `<h1>¡Bienvenido a Referí!</h1>
     Su código de verificación es ${rand}`;
     return sgMail
       .send({
         from: 'no-reply@referiapp.com.ar',
-        to: `${user.nombre} ${user.apellido} referiapp.com.ar@gmail.com`,
+        to,
         subject: 'Código de confirmación - Referí',
         html: content,
       })
       .then(() => {
-        Logger.log('Email sent to user ' + user.id);
+        this.logger.log('Email sent to user ' + user.id);
         return true;
       })
       .catch((error) => {
-        Logger.error('Failed to send email to user ' + user.id);
-        Logger.error(error);
+        this.logger.error('Failed to send email to user ' + user.id);
+        this.logger.error(error);
         return false;
       });
   }
 
   sendRecoverPasswordEmail(user: Usuario, password) {
+    if (config.SKIP_EMAIL) {
+      this.logger.log(`[SKIP_EMAIL] Recovery password for user ${user.id} (${user.email}): ${password}`);
+      return Promise.resolve(true);
+    }
+
+    const to = config.DEBUG_EMAIL
+      ? config.DEBUG_EMAIL
+      : `${user.nombre} ${user.apellido} <${user.email}>`;
+
     const content = `<h1>¡Hola ${user.nombre}!</h1>
     <p>Acá está tu nueva contraseña.</p>
     <h3>Contraseña: <b>${password}</b></h3>
@@ -45,17 +66,17 @@ export class EmailService {
     return sgMail
       .send({
         from: 'no-reply@referiapp.com.ar',
-        to: `${user.nombre} ${user.apellido} referiapp.com.ar@gmail.com`,
+        to,
         subject: 'Nueva contraseña - Referí',
         html: content,
       })
       .then(() => {
-        Logger.log('Recovery email sent to user ' + user.id);
+        this.logger.log('Recovery email sent to user ' + user.id);
         return true;
       })
       .catch((error) => {
-        Logger.error('Failed to send recovery email to user ' + user.id);
-        Logger.error(error);
+        this.logger.error('Failed to send recovery email to user ' + user.id);
+        this.logger.error(error);
         return false;
       });
   }

@@ -21,6 +21,10 @@ export const config: Iconfig = {
 
   JWT_SECRET: process.env.JWT_SECRET || 'somethingSecret',
   MAIL_API_KEY: process.env.MAIL_API_KEY || '',
+  // When set, all emails are redirected to this address instead of the real recipient (debug only)
+  DEBUG_EMAIL: process.env.DEBUG_EMAIL || '',
+  // When true, no emails are sent — verification codes are printed to the console instead
+  SKIP_EMAIL: process.env.SKIP_EMAIL === 'true',
 
   API_DOC_PASS: process.env.API_DOC_PASS || 'SOMEPASSWORD',
 };
@@ -38,6 +42,8 @@ export interface Iconfig {
   DB_USER_PASSWORD: string;
   JWT_SECRET: string;
   MAIL_API_KEY: string;
+  DEBUG_EMAIL: string;
+  SKIP_EMAIL: boolean;
 
   API_DOC_PASS: string;
 }

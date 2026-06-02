@@ -20,7 +20,7 @@ API REST del sistema de gestión de clubes y socios Referí. Desarrollada como p
 
 ## Requisitos
 
-- Node.js 20+
+- Node.js 22+
 - MySQL 8+ (o Docker para levantarlo con `docker compose up -d`)
 
 ---
@@ -42,6 +42,8 @@ cp src/config/development.env.example src/config/development.env
 | `DB_USER_PASSWORD` | Contraseña de MySQL | `toor` |
 | `JWT_SECRET` | Clave para firmar tokens JWT | `somethingSecret` |
 | `MAIL_API_KEY` | API key de SendGrid | — |
+| `DEBUG_EMAIL` | Redirige todos los emails a esta dirección (debug) | — |
+| `SKIP_EMAIL` | Si es `true`, no envía emails — los códigos se imprimen en consola | `true` |
 | `API_DOC_PASS` | Contraseña para acceder a Swagger | — |
 
 En desarrollo, la base de datos se sincroniza automáticamente con las entidades. En producción se usan migraciones.
@@ -51,15 +53,22 @@ En desarrollo, la base de datos se sincroniza automáticamente con las entidades
 ## Instalación y ejecución
 
 ```bash
-# Levantar la base de datos (requiere Docker)
+# 1. Levantar la base de datos (requiere Docker)
 docker compose up -d
 
+# 2. Instalar dependencias
 npm install
 
+# 3. Cargar datos iniciales (roles, permisos, tipos, estados, frecuencias)
+npm run seed
+
+# 4. Iniciar el servidor
 npm run start:dev      # desarrollo con hot-reload
 npm run start:prod     # producción (requiere build previo)
 npm run build
 ```
+
+El seed es idempotente — puede ejecutarse más de una vez sin generar duplicados.
 
 ---
 

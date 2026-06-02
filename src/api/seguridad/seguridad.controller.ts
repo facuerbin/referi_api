@@ -101,10 +101,4 @@ export class SeguridadController {
         return res.status(400).send({ error: error });
       });
   }
-
-  @Get('logout')
-   
-  logout(@Body() recover: RecoverPasswordDto, @Res() res) {
-    return 'Logout';
-  }
 }

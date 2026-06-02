@@ -42,9 +42,13 @@ cp src/config/development.env.example src/config/development.env
 | `DB_USER_PASSWORD` | Contraseña de MySQL | `toor` |
 | `JWT_SECRET` | Clave para firmar tokens JWT | `somethingSecret` |
 | `MAIL_API_KEY` | API key de SendGrid | — |
-| `DEBUG_EMAIL` | Redirige todos los emails a esta dirección (debug) | — |
-| `SKIP_EMAIL` | Si es `true`, no envía emails — los códigos se imprimen en consola | `true` |
+| `DEBUG_EMAIL` | Redirige todos los emails a esta dirección en lugar del destinatario real (debug) | — |
+| `SKIP_EMAIL` | Si es `true`, omite el envío de emails y muestra códigos de verificación en consola | `true` |
 | `API_DOC_PASS` | Contraseña para acceder a Swagger | — |
+
+En desarrollo, `SKIP_EMAIL=true` permite registrar y verificar usuarios sin configurar SendGrid. Los códigos de verificación se imprimen en la consola del servidor.
+
+En producción, configurar `MAIL_API_KEY` con una API key de SendGrid y verificar el dominio remitente (`no-reply@referiapp.com.ar`) en el panel de SendGrid.
 
 En desarrollo, la base de datos se sincroniza automáticamente con las entidades. En producción se usan migraciones.
 
@@ -69,6 +73,8 @@ npm run build
 ```
 
 El seed es idempotente — puede ejecutarse más de una vez sin generar duplicados.
+
+> **Nota:** si el seed no se ejecuta antes del primer inicio, el registro de usuarios fallará al asignar el rol `PROPIETARIO`.
 
 ---
 
@@ -104,7 +110,7 @@ Swagger disponible en `/v1/docs` una vez levantado el servidor. Requiere autenti
 
 - **NestJS 11** con arquitectura modular
 - **TypeScript 5**
-- **TypeORM** con MySQL
+- **TypeORM** con MySQL 8
 - **Passport JWT** para autenticación
 - **SendGrid** para envío de emails
 - **Swagger / OpenAPI** para documentación

@@ -12,7 +12,6 @@ import { PagosService } from '../pagos/pagos.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
 import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
-import { UpdateSocioDto } from './dto/update.socio.dto';
 import {
   EstadoInscripcion,
   Estado,
@@ -301,10 +300,6 @@ export class SociosService {
         usuario: true,
       },
     });
-  }
-
-  update(id: number, updateSocioDto: UpdateSocioDto) {
-    return `This action updates a #${id} socio`;
   }
 
   async removeByActividadSocio(

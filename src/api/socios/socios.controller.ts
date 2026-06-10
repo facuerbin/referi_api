@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
@@ -13,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
-import { UpdateSocioDto } from './dto/update.socio.dto';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
 import { DateQuery } from './dto/date.query.dto';
@@ -126,11 +124,6 @@ export class SociosController {
       .findOne(id)
       .then((result) => res.status(200).send({ data: result }))
       .catch((error) => res.status(400).send({ error }));
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSocioDto: UpdateSocioDto) {
-    return this.sociosService.update(+id, updateSocioDto);
   }
 
   @Delete(':id')

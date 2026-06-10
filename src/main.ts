@@ -4,6 +4,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { config } from './config/config';
 import * as basicAuth from 'express-basic-auth';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { ErrorInterceptor } from './common/interceptors/error.interceptor';
 
 async function bootstrap() {
   Logger.log(`App starting in ${config.NODE_ENV} environment`);
@@ -12,6 +14,7 @@ async function bootstrap() {
   app.enableCors();
 
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalInterceptors(new ErrorInterceptor(), new LoggingInterceptor());
 
   app.enableVersioning({
     type: VersioningType.URI,

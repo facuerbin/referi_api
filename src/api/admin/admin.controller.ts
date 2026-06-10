@@ -11,6 +11,7 @@ import {
   StreamableFile,
   UseGuards,
   Body,
+  Logger,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -25,11 +26,23 @@ import { LoginDto } from '../seguridad/dto/login.dto';
 @ApiTags('Admin')
 @Controller({ path: 'admin', version: '1' })
 export class AdminController {
+  private readonly logger = new Logger(AdminController.name);
+
   constructor(private readonly adminService: AdminService) {}
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    return this.adminService.adminLogin(loginDto.email, loginDto.password);
+    this.logger.log(`POST /login - Admin login attempt for ${loginDto.email}`);
+    try {
+      const result = await this.adminService.adminLogin(loginDto.email, loginDto.password);
+      if (result === 'UNAUTHORIZED') {
+        this.logger.warn(`POST /login - Unauthorized login for ${loginDto.email}`);
+      }
+      return result;
+    } catch (error) {
+      this.logger.error(`POST /login - Error: ${error.message}`);
+      throw error;
+    }
   }
 
   @ApiBearerAuth()
@@ -58,19 +71,34 @@ export class AdminController {
     )
     file: Express.Multer.File,
   ) {
-    return this.adminService.restoreFromFile(file);
+    this.logger.log(`POST /restore - Uploading backup file: ${file.originalname} (${file.size} bytes)`);
+    try {
+      const result = this.adminService.restoreFromFile(file);
+      this.logger.log(`POST /restore - File upload and restore initiated`);
+      return result;
+    } catch (error) {
+      this.logger.error(`POST /restore - Error: ${error.message}`);
+      throw error;
+    }
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('backup')
   async createBackup(@Res({ passthrough: true }) res: Response) {
-    const backup = await this.adminService.backup(false);
-    res.set({
-      'Content-Type': 'application/sql',
-      'Content-Disposition': `attachment; filename="referi_${Date.now()}.sql"`,
-    });
-    return backup;
+    this.logger.log(`POST /backup - Starting manual database backup`);
+    try {
+      const backup = await this.adminService.backup(false);
+      res.set({
+        'Content-Type': 'application/sql',
+        'Content-Disposition': `attachment; filename="referi_${Date.now()}.sql"`,
+      });
+      this.logger.log(`POST /backup - Backup created and ready for download`);
+      return backup;
+    } catch (error) {
+      this.logger.error(`POST /backup - Error: ${error.message}`);
+      throw error;
+    }
   }
 
   @ApiBearerAuth()
@@ -80,14 +108,33 @@ export class AdminController {
     @Param('path') path: string,
     @Res({ passthrough: true }) res: Response,
   ): StreamableFile {
-    const file = createReadStream(join(process.cwd(), 'backups', path));
-    return new StreamableFile(file);
+    this.logger.log(`GET /backups/:path - Downloading backup: ${path}`);
+    try {
+      const file = createReadStream(join(process.cwd(), 'backups', path));
+      res.set({
+        'Content-Type': 'application/sql',
+        'Content-Disposition': `attachment; filename="${path}"`,
+      });
+      this.logger.log(`GET /backups/:path - Backup file ready for download: ${path}`);
+      return new StreamableFile(file);
+    } catch (error) {
+      this.logger.error(`GET /backups/:path - Error reading backup: ${error.message}`);
+      throw error;
+    }
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get('backups')
   getBackupsList() {
-    return this.adminService.listBackups();
+    this.logger.log(`GET /backups - Listing all backups`);
+    try {
+      const result = this.adminService.listBackups();
+      this.logger.log(`GET /backups - Backups list retrieved`);
+      return result;
+    } catch (error) {
+      this.logger.error(`GET /backups - Error: ${error.message}`);
+      throw error;
+    }
   }
 }

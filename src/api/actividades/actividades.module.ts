@@ -10,6 +10,7 @@ import { TipoActividad } from './entities/tipo.actividad.entity';
 import { OrganizacionesModule } from '../organizaciones/organizaciones.module';
 import { TarifasModule } from '../tarifas/tarifas.module';
 import { TurnoHorario } from './entities/turno.horario.entity';
+import { SociosModule } from '../socios/socios.module';
 
 @Module({
   controllers: [ActividadesController],
@@ -25,6 +26,7 @@ import { TurnoHorario } from './entities/turno.horario.entity';
     ]),
     OrganizacionesModule,
     forwardRef(() => TarifasModule),
+    forwardRef(() => SociosModule),
   ],
   exports: [ActividadesService],
 })

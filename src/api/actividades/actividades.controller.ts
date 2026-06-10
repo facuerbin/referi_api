@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ActividadesService } from './actividades.service';
+import { SociosService } from '../socios/socios.service';
 import { BajaActividadDto } from './dto/baja.actividad.dto';
 import { CreateActividadDto } from './dto/create.actividad.dto';
 import { CreateEstadoActividadDto } from './dto/create.estado.actividad.dto';
@@ -21,12 +22,28 @@ import { UpdateActividadDto } from './dto/update.actividad.dto';
 @ApiTags('Actividades')
 @Controller({ path: 'actividades', version: '1' })
 export class ActividadesController {
-  constructor(private readonly actividadesService: ActividadesService) {}
+  constructor(
+    private readonly actividadesService: ActividadesService,
+    private readonly sociosService: SociosService,
+  ) {}
 
   // Dar de baja de una actividad
   @Delete()
-  solicitarBaja(@Body() bajaActividadDto: BajaActividadDto) {
-    return 'Solicitar baja actividad';
+  async solicitarBaja(@Body() bajaActividadDto: BajaActividadDto, @Res() res) {
+    try {
+      const result = await this.sociosService.removeByActividadSocio(
+        bajaActividadDto.idSocio,
+        bajaActividadDto.idActividad,
+        bajaActividadDto.idOrganizacion,
+      );
+      if (result instanceof Error) {
+        res.status(400).send({ error: result.message });
+      } else {
+        res.status(200).send(result);
+      }
+    } catch (error) {
+      res.status(400).send({ error: error.message || error });
+    }
   }
 
   @Post()

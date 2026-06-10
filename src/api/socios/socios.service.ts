@@ -307,6 +307,31 @@ export class SociosService {
     return `This action updates a #${id} socio`;
   }
 
+  async removeByActividadSocio(
+    idSocio: string,
+    idActividad: string,
+    idOrganizacion: string,
+  ) {
+    const socio = await this.inscripcionRepository.findOne({
+      where: {
+        usuario: { id: idSocio },
+        organizacion: { id: idOrganizacion },
+        turnoActividad: { actividad: { id: idActividad } },
+        fechaBaja: IsNull(),
+      },
+      relations: {
+        turnoActividad: { actividad: true },
+        estados: true,
+      },
+    });
+
+    if (!socio) {
+      return new Error('Inscripción no encontrada');
+    }
+
+    return this.remove(socio.id);
+  }
+
   async remove(id: string) {
     const socio = await this.findOne(id);
     if (socio.estados[0].nombre != Estado.ACTIVO.toUpperCase()) {

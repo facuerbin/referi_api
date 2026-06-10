@@ -5,9 +5,9 @@ import { In, Repository } from 'typeorm';
 import { Inscripcion } from '../socios/entities/inscripcion.entity';
 import { SociosService } from '../socios/socios.service';
 import { TarifasService } from '../tarifas/tarifas.service';
-import { MedioDePago, RegistrarPagoDto } from './dto/registrar.pago.dto';
+import { RegistrarPagoDto } from './dto/registrar.pago.dto';
 import { Cuota } from './entities/cuota.entity';
-import { Pago } from './entities/pago.entity';
+import { Pago, MedioDePago } from './entities/pago.entity';
 
 @Injectable()
 export class PagosService {
@@ -37,7 +37,7 @@ export class PagosService {
       numeroComprobante: registrarPagoDto.numeroDeComprobante
         ? registrarPagoDto.numeroDeComprobante
         : null,
-      medioDePago: MedioDePago[registrarPagoDto.medioDePago],
+      medioDePago: registrarPagoDto.medioDePago as MedioDePago,
       usuario: user,
       organizacion: org,
       cuotas: cuotas,

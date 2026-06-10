@@ -40,8 +40,8 @@ export class Pago {
   @DeleteDateColumn({ name: 'fecha_baja' }) 'fechaBaja': Date;
 }
 
-enum MedioDePago {
-  EFECTIVO = 'Efectivo',
-  TRANSFERENCIA = 'Transferencia Bancaria',
-  PASARELADEPAGOS = 'MercadoPago',
+export enum MedioDePago {
+  EFECTIVO = 'EFECTIVO',
+  TRANSFERENCIA = 'TRANSFERENCIA BANCARIA',
+  ELECTRONICO = 'MERCADOPAGO',
 }

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { MedioDePago } from '../entities/pago.entity';
 
 export class RegistrarPagoDto {
   @ApiProperty()
@@ -9,10 +10,4 @@ export class RegistrarPagoDto {
 
   @ApiProperty()
   idsCuota: string[];
-}
-
-export enum MedioDePago {
-  EFECTIVO = 'EFECTIVO',
-  TRANSFERENCIA = 'TRANSFERENCIA BANCARIA',
-  ELECTRONICO = 'MERCADOPAGO',
 }

@@ -11,7 +11,7 @@ import { EstadoInscripcion, Estado } from '../api/socios/entities/estado.inscrip
 import { Frecuencia } from '../api/tarifas/entities/frecuencia.entity';
 
 const dataSource = new DataSource({
-  type: 'mysql',
+  type: 'postgres',
   namingStrategy: new SnakeNamingStrategy(),
   host: config.DB_HOST,
   port: config.DB_PORT,

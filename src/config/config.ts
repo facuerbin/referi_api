@@ -14,9 +14,9 @@ export const config: Iconfig = {
   PORT: Number(process.env.PORT) || 3000,
 
   DB_HOST: process.env.DB_HOST || 'localhost',
-  DB_PORT: Number(process.env.DB_PORT) || 3306,
+  DB_PORT: Number(process.env.DB_PORT) || 5433,
   DB_NAME: process.env.DB_NAME || 'referi_dev',
-  DB_USER_NAME: process.env.DB_USER_NAME || 'root',
+  DB_USER_NAME: process.env.DB_USER_NAME || 'postgres',
   DB_USER_PASSWORD: process.env.DB_USER_PASSWORD || 'toor',
 
   JWT_SECRET: process.env.JWT_SECRET || 'somethingSecret',

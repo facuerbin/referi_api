@@ -10,9 +10,9 @@ import { IsNull, Repository } from 'typeorm';
 import { Backup } from './entities/backup.entity';
 import { Cron } from '@nestjs/schedule';
 import { config } from 'src/config/config';
-import { createReadStream, readFileSync, unlink, writeFileSync } from 'fs';
-import { join } from 'path';
-import { exec } from 'child_process';
+import { createReadStream, unlink, writeFileSync } from 'fs';
+import { basename, join } from 'path';
+import { execFile } from 'child_process';
 import { JwtService } from '@nestjs/jwt';
 import { Admin } from './entities/admin.entity';
 import { compare } from 'bcrypt';
@@ -111,110 +111,82 @@ export class AdminService {
   backup(scheduled: boolean) {
     const dbName = config.DB_NAME;
     const dbUser = config.DB_USER_NAME;
-    const dbPassword = config.DB_USER_PASSWORD;
+    const dbHost = config.DB_HOST;
+    const dbPort = config.DB_PORT;
     const fileName = `${dbName}_${Date.now()}.sql`;
     const fileRoute = `./backups/${fileName}`;
-    const cmd = `mysqldump -u ${dbUser} -p${dbPassword} --no-tablespaces ${dbName} > ${fileRoute}`;
     const startTime = Date.now();
 
     const label = scheduled ? '[SCHEDULED]' : '[MANUAL]';
     this.logger.log(`${label} Starting database backup to ${fileName}`);
 
     return new Promise((resolve, reject) => {
-      exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-          this.logger.error(
-            `${label} Backup command failed: ${error.message}`,
-            error.stack,
-          );
-          reject(error);
-          return;
-        }
-        try {
-          const duration = Date.now() - startTime;
-          const file = createReadStream(join(process.cwd(), fileRoute));
-          this.backupRepository.save({
-            nombreArchivo: fileName,
-            programado: scheduled,
-          }).catch(err => {
+      execFile(
+        'pg_dump',
+        ['-h', dbHost, '-p', String(dbPort), '-U', dbUser, '-f', fileRoute, dbName],
+        { env: { ...process.env, PGPASSWORD: config.DB_USER_PASSWORD } },
+        (error) => {
+          if (error) {
             this.logger.error(
-              `${label} Failed to save backup record: ${err.message}`,
+              `${label} Backup command failed: ${error.message}`,
+              error.stack,
+            );
+            reject(error);
+            return;
+          }
+          try {
+            const duration = Date.now() - startTime;
+            const file = createReadStream(join(process.cwd(), fileRoute));
+            this.backupRepository.save({
+              nombreArchivo: fileName,
+              programado: scheduled,
+            }).catch(err => {
+              this.logger.error(
+                `${label} Failed to save backup record: ${err.message}`,
+                err.stack,
+              );
+            });
+            this.logger.log(`${label} Backup completed successfully (${duration}ms) - ${fileName}`);
+            resolve(new StreamableFile(file));
+          } catch (err) {
+            this.logger.error(
+              `${label} Error processing backup: ${err.message}`,
               err.stack,
             );
-          });
-          this.logger.log(`${label} Backup completed successfully (${duration}ms) - ${fileName}`);
-          resolve(new StreamableFile(file));
-        } catch (err) {
-          this.logger.error(
-            `${label} Error processing backup: ${err.message}`,
-            err.stack,
-          );
-          reject(err);
-        }
-      });
+            reject(err);
+          }
+        },
+      );
     });
-  }
-
-  restore(fileName: string) {
-    const dbName = config.DB_NAME;
-    const dbUser = config.DB_USER_NAME;
-    const dbPassword = config.DB_USER_PASSWORD;
-
-    if (fileName.includes('/')) {
-      this.logger.warn(`[RESTORE] Invalid file name (contains path): ${fileName}`);
-      return new Error('File name not supported');
-    }
-
-    try {
-      this.logger.log(`[RESTORE] Starting database restore from ${fileName}`);
-      const startTime = Date.now();
-      const fileRoute = readFileSync(
-        join(process.cwd(), './backups/' + fileName),
-      );
-      const cmd = `mysql -u ${dbUser} -p${dbPassword} ${dbName} < ${fileRoute}`;
-      return exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-          this.logger.error(
-            `[RESTORE] Restore failed: ${error.message}`,
-            error.stack,
-          );
-          return error;
-        }
-        const duration = Date.now() - startTime;
-        this.logger.log(`[RESTORE] Database restored successfully from ${fileName} (${duration}ms)`);
-        return 'Database restored';
-      });
-    } catch (error) {
-      this.logger.error(
-        `[RESTORE] File ${fileName} not found or error: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
   }
 
   restoreFromFile(file: Express.Multer.File) {
     try {
       const dbName = config.DB_NAME;
       const dbUser = config.DB_USER_NAME;
-      const dbPassword = config.DB_USER_PASSWORD;
-      const fileName = file?.originalname;
+      const dbHost = config.DB_HOST;
+      const dbPort = config.DB_PORT;
+      const fileName = basename(file?.originalname ?? '');
       this.logger.log(`[RESTORE_FILE] Uploading and restoring from file: ${fileName}`);
       const startTime = Date.now();
       const filePath = join(process.cwd(), 'backups', fileName);
       writeFileSync(filePath, new Uint8Array(file.buffer));
-      const cmd = `mysql -u ${dbUser} -p${dbPassword} ${dbName} < ${filePath}`;
-      exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-          this.logger.error(
-            `[RESTORE_FILE] Restore from file failed: ${error.message}`,
-            error.stack,
-          );
-          return error;
-        }
-        const duration = Date.now() - startTime;
-        this.logger.log(`[RESTORE_FILE] Database restored from file ${fileName} (${duration}ms)`);
-      });
+      execFile(
+        'psql',
+        ['-h', dbHost, '-p', String(dbPort), '-U', dbUser, '-d', dbName, '-f', filePath],
+        { env: { ...process.env, PGPASSWORD: config.DB_USER_PASSWORD } },
+        (error) => {
+          if (error) {
+            this.logger.error(
+              `[RESTORE_FILE] Restore from file failed: ${error.message}`,
+              error.stack,
+            );
+            return;
+          }
+          const duration = Date.now() - startTime;
+          this.logger.log(`[RESTORE_FILE] Database restored from file ${fileName} (${duration}ms)`);
+        },
+      );
       return 'Database restored';
     } catch (error) {
       this.logger.error(

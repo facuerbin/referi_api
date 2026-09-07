@@ -2,6 +2,7 @@ import { Actividad } from './../api/actividades/entities/actividad.entity';
 import { TurnoActividad } from '../api/actividades/entities/turno.actividad.entity';
 import { EstadoActividad } from './../api/actividades/entities/estado.actividad.entity';
 import { Horario } from './../api/actividades/entities/horario.entity';
+import { TurnoHorario } from '../api/actividades/entities/turno.horario.entity';
 import { TipoActividad } from './../api/actividades/entities/tipo.actividad.entity';
 import { Asistente } from './../api/asistencias/entities/asistente.entity';
 import { PlanillaAsistencia } from './../api/asistencias/entities/planilla.asistencia.entity';
@@ -30,7 +31,7 @@ import { Backup } from 'src/api/admin/entities/backup.entity';
 import { Admin } from 'src/api/admin/entities/admin.entity';
 
 const OrmConfig = new DataSource({
-  type: 'mysql',
+  type: 'postgres',
   namingStrategy: new SnakeNamingStrategy(),
   host: config.DB_HOST,
   port: config.DB_PORT,
@@ -43,6 +44,7 @@ const OrmConfig = new DataSource({
     EstadoActividad,
     TipoActividad,
     Horario,
+    TurnoHorario,
     Asistente,
     PlanillaAsistencia,
     Espacio,
@@ -66,8 +68,8 @@ const OrmConfig = new DataSource({
     Admin,
   ],
   synchronize: config.NODE_ENV === 'development' ? true : false,
-  migrations: ['dist/db/*.js'],
+  migrations: ['dist/db/migrations/*.js'],
   migrationsRun: true,
 });
 
-OrmConfig.initialize();
+export default OrmConfig;

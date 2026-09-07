@@ -53,7 +53,7 @@ import { Admin } from './api/admin/entities/admin.entity';
     }),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       namingStrategy: new SnakeNamingStrategy(),
       host: config.DB_HOST,
       port: config.DB_PORT,

@@ -27,6 +27,11 @@ export const config: Iconfig = {
   SKIP_EMAIL: process.env.SKIP_EMAIL === 'true',
 
   API_DOC_PASS: process.env.API_DOC_PASS || 'SOMEPASSWORD',
+
+  // Used only by `npm run seed` to create/update the admin login (see admin.controller.ts).
+  // Leave unset to skip admin seeding.
+  ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',
+  ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',
 };
 
 export interface Iconfig {
@@ -46,4 +51,7 @@ export interface Iconfig {
   SKIP_EMAIL: boolean;
 
   API_DOC_PASS: string;
+
+  ADMIN_EMAIL: string;
+  ADMIN_PASSWORD: string;
 }

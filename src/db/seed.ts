@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { hash } from 'bcrypt';
 import { config } from '../config/config';
 import { Rol } from '../api/organizaciones/entities/rol.entity';
 import { Permiso } from '../api/organizaciones/entities/permiso.entity';
@@ -9,6 +10,7 @@ import { TipoActividad } from '../api/actividades/entities/tipo.actividad.entity
 import { EstadoActividad } from '../api/actividades/entities/estado.actividad.entity';
 import { EstadoInscripcion, Estado } from '../api/socios/entities/estado.inscripcion.entity';
 import { Frecuencia } from '../api/tarifas/entities/frecuencia.entity';
+import { Admin } from '../api/admin/entities/admin.entity';
 
 const dataSource = new DataSource({
   type: 'postgres',
@@ -33,6 +35,7 @@ async function seed() {
   const estadoActRepo  = dataSource.getRepository(EstadoActividad);
   const estadoInsRepo  = dataSource.getRepository(EstadoInscripcion);
   const frecuenciaRepo = dataSource.getRepository(Frecuencia);
+  const adminRepo      = dataSource.getRepository(Admin);
 
   await tipoOrgRepo.upsert([
     { id: '1807b271-5872-4356-9ac9-551266e6973f', nombre: 'Club' },
@@ -122,6 +125,19 @@ async function seed() {
     { ...byId('ec430664-fabf-481f-be1d-af53e187abc5'), permisos: [tarifas, pagos] },
   ]);
   console.log('✔ permiso_rol');
+
+  if (config.ADMIN_EMAIL && config.ADMIN_PASSWORD) {
+    const existingAdmin = await adminRepo.findOne({ where: { email: config.ADMIN_EMAIL } });
+    if (existingAdmin) {
+      console.log(`✔ admin (already exists: ${config.ADMIN_EMAIL}, skipped)`);
+    } else {
+      const password = await hash(config.ADMIN_PASSWORD, 10);
+      await adminRepo.save({ email: config.ADMIN_EMAIL, password });
+      console.log(`✔ admin (created: ${config.ADMIN_EMAIL})`);
+    }
+  } else {
+    console.log('⚠ Skipped admin seeding: set ADMIN_EMAIL and ADMIN_PASSWORD in the env file to create an admin login.');
+  }
 
   console.log('\nSeed complete.');
   await dataSource.destroy();

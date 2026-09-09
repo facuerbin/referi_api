@@ -35,16 +35,18 @@ cp src/config/development.env.example src/config/development.env
 
 | Variable | Descripción | Default |
 |---|---|---|
-| `DB_HOST` | Host de MySQL | `localhost` |
-| `DB_PORT` | Puerto de MySQL | `3306` |
+| `DB_HOST` | Host de Postgres | `localhost` |
+| `DB_PORT` | Puerto de Postgres | `5433` |
 | `DB_NAME` | Nombre de la base de datos | `referi_dev` |
-| `DB_USER_NAME` | Usuario de MySQL | `root` |
-| `DB_USER_PASSWORD` | Contraseña de MySQL | `toor` |
+| `DB_USER_NAME` | Usuario de Postgres | `postgres` |
+| `DB_USER_PASSWORD` | Contraseña de Postgres | `toor` |
 | `JWT_SECRET` | Clave para firmar tokens JWT | `somethingSecret` |
 | `MAIL_API_KEY` | API key de SendGrid | — |
 | `DEBUG_EMAIL` | Redirige todos los emails a esta dirección en lugar del destinatario real (debug) | — |
 | `SKIP_EMAIL` | Si es `true`, omite el envío de emails y muestra códigos de verificación en consola | `true` |
 | `API_DOC_PASS` | Contraseña para acceder a Swagger | — |
+| `ADMIN_EMAIL` | Si se define junto con `ADMIN_PASSWORD`, `npm run seed` crea (o deja intacto, si ya existe) el login de `/v1/admin/login` | — |
+| `ADMIN_PASSWORD` | Contraseña del login de admin, hasheada con bcrypt al correr el seed | — |
 
 En desarrollo, `SKIP_EMAIL=true` permite registrar y verificar usuarios sin configurar SendGrid. Los códigos de verificación se imprimen en la consola del servidor.
 
@@ -64,7 +66,7 @@ docker compose up -d
 npm install
 
 # 3. Cargar datos iniciales (roles, permisos, tipos, estados, frecuencias)
-npm run seed
+NODE_ENV=development npm run seed
 
 # 4. Iniciar el servidor
 npm run start:dev      # desarrollo con hot-reload

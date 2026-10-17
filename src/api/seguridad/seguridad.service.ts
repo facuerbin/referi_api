@@ -32,7 +32,8 @@ export class SeguridadService {
     if (!checkPassword) throw new HttpException('PASSWORD_INCORRECT', 403);
 
     const access_token = this.generateToken(user);
-    return { user, access_token };
+    const { password: _password, ...safeUser } = user;
+    return { user: safeUser, access_token };
   }
 
   async register(user: RegisterDto) {
@@ -41,7 +42,8 @@ export class SeguridadService {
     user = { ...user, password: hashPassword };
     const createdUser = await this.usersService.create(user);
     const access_token = this.generateToken(createdUser);
-    return { ...createdUser, access_token };
+    const { password: _password, ...safeUser } = createdUser;
+    return { ...safeUser, access_token };
   }
 
   async registerFromOrganization(dto: RegisterFromOrgDto) {

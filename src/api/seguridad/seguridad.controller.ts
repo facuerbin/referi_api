@@ -7,7 +7,7 @@ import {
   Param,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { SeguridadService } from './seguridad.service';
 import { RegisterDto } from './dto/register.dto';
@@ -16,6 +16,10 @@ import { VerifyEmailDto } from './dto/verify.email.dto';
 import { RecoverPasswordDto } from './dto/recover.password.dto';
 import { ChangePasswordDto } from './dto/change.password.dto';
 import { RegisterFromOrgDto } from './dto/register.user.from.organization.dto';
+import {
+  LoginResponseSchema,
+  RegisterResponseSchema,
+} from './response/auth.response.dto';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
@@ -26,6 +30,12 @@ export class SeguridadController {
   ) {}
 
   @Post('login')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Autentica al usuario y retorna sus datos (sin la contraseña) junto al access_token.',
+    type: LoginResponseSchema,
+  })
   async login(@Body() loginDto: LoginDto, @Res() res) {
     const data = await this.seguridadService.login(
       loginDto.email,
@@ -35,6 +45,12 @@ export class SeguridadController {
   }
 
   @Post('register')
+  @ApiResponse({
+    status: 201,
+    description:
+      'Registra al usuario y retorna sus datos (sin la contraseña) junto al access_token.',
+    type: RegisterResponseSchema,
+  })
   async registerUser(@Body() user: RegisterDto) {
     const createdUser = await this.seguridadService.register(user);
     this.emailService.sendConfirmationEmail(createdUser);

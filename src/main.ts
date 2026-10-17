@@ -25,7 +25,7 @@ async function bootstrap() {
     basicAuth({
       challenge: true,
       users: {
-        referiapp: config.API_DOC_PASS,
+        [config.API_DOC_USER]: config.API_DOC_PASS,
       },
     }),
   );

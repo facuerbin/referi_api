@@ -80,9 +80,9 @@ export class NotificacionesService {
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     this.logger.debug(`[FIND_ONE] Fetching notification ${id}`);
-    return this.notificacionRepository.findOne({
+    const notificacion = await this.notificacionRepository.findOne({
       where: {
         id,
       },
@@ -90,6 +90,16 @@ export class NotificacionesService {
         destinatarios: { destinatario: true },
       },
     });
+
+    if (!notificacion) return notificacion;
+
+    return {
+      ...notificacion,
+      destinatarios: notificacion.destinatarios.map((d) => {
+        const { password: _password, ...safeDestinatario } = d.destinatario;
+        return { ...d, destinatario: safeDestinatario };
+      }),
+    };
   }
 
   async enviarNotificacionDeudores(dto: EnviarNotificacionDto) {

@@ -90,7 +90,8 @@ describe('SeguridadService', () => {
 
       const result = await service.login('a@b.com', 'correct');
 
-      expect(result.user).toBe(mockUser);
+      expect(result.user).toEqual({ id: 'user-1', verificado: false });
+      expect(result.user).not.toHaveProperty('password');
       expect(result.access_token).toBe('mock-token');
     });
   });
@@ -109,6 +110,12 @@ describe('SeguridadService', () => {
       usersService.create.mockResolvedValue(mockUser);
       const result = await service.register({ email: 'a@b.com', password: 'pw' } as any);
       expect(result.access_token).toBe('mock-token');
+    });
+
+    it('does not leak the password hash in the result', async () => {
+      usersService.create.mockResolvedValue(mockUser);
+      const result = await service.register({ email: 'a@b.com', password: 'pw' } as any);
+      expect(result).not.toHaveProperty('password');
     });
   });
 

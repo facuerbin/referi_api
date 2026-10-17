@@ -4,7 +4,6 @@ export class DestinatarioNotificacion {
   destinatario: {
     id: string;
     email: string;
-    password: string;
     nombre: string;
     apellido: string;
     dni: number;

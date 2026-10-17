@@ -17,7 +17,9 @@ export class EmailService {
     sgMail.setApiKey(config.MAIL_API_KEY);
   }
 
-  sendConfirmationEmail(user: Usuario) {
+  sendConfirmationEmail(
+    user: Pick<Usuario, 'id' | 'email' | 'nombre' | 'apellido'>,
+  ) {
     const rand = this.generateConfirmationNumber(user.id);
 
     if (config.SKIP_EMAIL) {

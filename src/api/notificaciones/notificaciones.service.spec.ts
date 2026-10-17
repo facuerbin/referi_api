@@ -147,6 +147,33 @@ describe('NotificacionesService', () => {
     });
   });
 
+  describe('findOne', () => {
+    it('does not leak the password hash of destinatarios', async () => {
+      notifRepo.findOne.mockResolvedValue({
+        id: 'notif-1',
+        titulo: 'Test',
+        destinatarios: [
+          {
+            id: 'nu-1',
+            fechaLectura: null,
+            destinatario: { id: 'u-1', email: 'a@b.com', password: 'hashed_password' },
+          },
+        ],
+      } as any);
+
+      const result = await service.findOne('notif-1');
+
+      expect(result.destinatarios[0].destinatario).not.toHaveProperty('password');
+      expect(result.destinatarios[0].destinatario).toEqual({ id: 'u-1', email: 'a@b.com' });
+    });
+
+    it('returns null when the notification does not exist', async () => {
+      notifRepo.findOne.mockResolvedValue(null);
+      const result = await service.findOne('missing');
+      expect(result).toBeNull();
+    });
+  });
+
   describe('readNotification', () => {
     it('sets fechaLectura and saves the notification', async () => {
       const mockUserNotif = { id: 'un-1', notificacion: {}, fechaLectura: null } as any;

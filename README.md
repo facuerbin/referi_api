@@ -44,6 +44,7 @@ cp src/config/development.env.example src/config/development.env
 | `MAIL_API_KEY` | API key de SendGrid | — |
 | `DEBUG_EMAIL` | Redirige todos los emails a esta dirección en lugar del destinatario real (debug) | — |
 | `SKIP_EMAIL` | Si es `true`, omite el envío de emails y muestra códigos de verificación en consola | `true` |
+| `API_DOC_USER` | Usuario para acceder a Swagger | `referiapp` |
 | `API_DOC_PASS` | Contraseña para acceder a Swagger | — |
 | `ADMIN_EMAIL` | Si se define junto con `ADMIN_PASSWORD`, `npm run seed` crea (o deja intacto, si ya existe) el login de `/v1/admin/login` | — |
 | `ADMIN_PASSWORD` | Contraseña del login de admin, hasheada con bcrypt al correr el seed | — |
@@ -103,7 +104,7 @@ npm run migration:run
 
 Swagger disponible en `/v1/docs` una vez levantado el servidor. Requiere autenticación básica:
 
-- **Usuario:** `referiapp`
+- **Usuario:** valor de `API_DOC_USER` (default `referiapp`)
 - **Contraseña:** valor de `API_DOC_PASS`
 
 ---

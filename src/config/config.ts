@@ -26,6 +26,7 @@ export const config: Iconfig = {
   // When true, no emails are sent — verification codes are printed to the console instead
   SKIP_EMAIL: process.env.SKIP_EMAIL === 'true',
 
+  API_DOC_USER: process.env.API_DOC_USER || 'referiapp',
   API_DOC_PASS: process.env.API_DOC_PASS || 'SOMEPASSWORD',
 
   // Used only by `npm run seed` to create/update the admin login (see admin.controller.ts).
@@ -50,6 +51,7 @@ export interface Iconfig {
   DEBUG_EMAIL: string;
   SKIP_EMAIL: boolean;
 
+  API_DOC_USER: string;
   API_DOC_PASS: string;
 
   ADMIN_EMAIL: string;

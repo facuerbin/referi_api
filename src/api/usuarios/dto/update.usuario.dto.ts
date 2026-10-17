@@ -1,34 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Domicilio } from '../entities/domicilio.entity';
 
+// Every field is optional: PATCH only applies the properties actually present in
+// the body. `password`, `verificado` and `dni` are deliberately absent — the
+// service refuses to update them (password has its own endpoint, verificado is
+// driven by email confirmation, and dni is identity data set at registration).
 export class UpdateUsuarioDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   email: string;
 
-  @ApiProperty()
-  password: string;
-
-  @ApiProperty()
+  @ApiProperty({ required: false })
   nombre: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   apellido: string;
-
-  @ApiProperty()
-  dni: number;
 
   @ApiProperty({ required: false })
   telefono: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   fechaNacimiento: Date;
 
   @ApiProperty({ required: false })
   fotoPerfil: string;
 
-  @ApiProperty({ required: false })
-  verificado: boolean;
-
-  @ApiProperty({ type: Domicilio })
+  // Merged into the user's existing address row; an `id` here is ignored.
+  @ApiProperty({ required: false, type: Domicilio })
   domicilio: Domicilio;
 }

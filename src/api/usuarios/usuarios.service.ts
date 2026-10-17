@@ -61,6 +61,7 @@ export class UsuariosService {
   async update(id: string, updateUsuarioDto: Partial<UpdateUsuarioDto>) {
     const user = await this.usuarioRepository.findOne({
       where: { id: id, fechaBaja: IsNull() },
+      relations: { domicilio: true },
     });
 
     for (const property in updateUsuarioDto) {
@@ -81,8 +82,22 @@ export class UsuariosService {
         }
       }
 
+      // Merge into the existing Domicilio row. Assigning the incoming object
+      // directly would drop its id and unlink the user's current address, and an
+      // incoming id would let a caller redirect the write to someone else's row.
+      if (property == 'domicilio' && updateUsuarioDto.domicilio) {
+        const { id: _ignoredId, ...incoming } = updateUsuarioDto.domicilio;
+        user.domicilio = await this.domicilioRepository.save({
+          ...(user.domicilio ?? {}),
+          ...incoming,
+        });
+        continue;
+      }
+
       if (
-        !['fechaBaja', 'id', 'verificado', 'password'].includes(property) &&
+        !['fechaBaja', 'id', 'verificado', 'password', 'dni'].includes(
+          property,
+        ) &&
         updateUsuarioDto[property]
       ) {
         user[property] = updateUsuarioDto[property];

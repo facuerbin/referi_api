@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
+import { UsuarioResponseSchema } from './response/usuario.response.dto';
 
 @ApiBearerAuth()
 @ApiTags('Usuarios')
@@ -61,6 +62,12 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Actualiza los datos del usuario y retorna el usuario completo (sin la contraseña, con su domicilio).',
+    type: UsuarioResponseSchema,
+  })
   update(
     @Param('id') id: string,
     @Body() updateUsuarioDto: UpdateUsuarioDto,
@@ -68,7 +75,10 @@ export class UsuariosController {
   ) {
     this.usuariosService
       .update(id, updateUsuarioDto)
-      .then((result) => res.status(200).send({ data: result }))
+      .then((result) => {
+        delete result.password;
+        return res.status(200).send({ data: result });
+      })
       .catch((error) => res.status(400).send({ error: error }));
   }
 

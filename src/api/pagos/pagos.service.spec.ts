@@ -2,10 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { PagosService } from './pagos.service';
 import { Cuota } from './entities/cuota.entity';
-import { Pago } from './entities/pago.entity';
+import { Pago, MedioDePago } from './entities/pago.entity';
 import { SociosService } from '../socios/socios.service';
 import { TarifasService } from '../tarifas/tarifas.service';
-import { MedioDePago } from './dto/registrar.pago.dto';
 
 describe('PagosService', () => {
   let service: PagosService;

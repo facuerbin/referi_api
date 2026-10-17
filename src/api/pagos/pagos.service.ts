@@ -7,7 +7,7 @@ import { SociosService } from '../socios/socios.service';
 import { TarifasService } from '../tarifas/tarifas.service';
 import { RegistrarPagoDto } from './dto/registrar.pago.dto';
 import { Cuota } from './entities/cuota.entity';
-import { Pago, MedioDePago } from './entities/pago.entity';
+import { Pago } from './entities/pago.entity';
 
 @Injectable()
 export class PagosService {
@@ -37,7 +37,7 @@ export class PagosService {
       numeroComprobante: registrarPagoDto.numeroDeComprobante
         ? registrarPagoDto.numeroDeComprobante
         : null,
-      medioDePago: registrarPagoDto.medioDePago as MedioDePago,
+      medioDePago: registrarPagoDto.medioDePago,
       usuario: user,
       organizacion: org,
       cuotas: cuotas,

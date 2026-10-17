@@ -12,7 +12,12 @@ import {
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiProduces, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Inscripcion } from './entities/inscripcion.entity';
+import {
+  ApiDataResponse,
+  ApiErrorResponse,
+} from '../../common/swagger/api-data-response.decorator';
 import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
 import { DateQuery } from './dto/date.query.dto';
 import { ReporteInscriptosActividadMesDto } from './dto/reporte.inscriptos.actividad.mes.dto';
@@ -23,6 +28,11 @@ export class SociosController {
   constructor(private readonly sociosService: SociosService) {}
 
   @Post()
+  @ApiDataResponse(Inscripcion, {
+    description:
+      'Inscribe a un usuario en un turno de actividad y genera sus cuotas.',
+  })
+  @ApiErrorResponse(400, 'Turno inexistente, sin cupo, o usuario ya inscripto.')
   create(@Body() createSocioDto: CreateSocioDto, @Res() res) {
     this.sociosService
       .create(createSocioDto)
@@ -33,7 +43,10 @@ export class SociosController {
   }
 
   @Get('organizacion/:idOrganizacion')
-   
+  @ApiDataResponse(Inscripcion, {
+    isArray: true,
+    description: 'Inscripciones de una organización, con usuario y actividad.',
+  })
   findByOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -45,6 +58,13 @@ export class SociosController {
   }
 
   @Get('organizacion/:idOrganizacion/backup')
+  @ApiProduces('text/csv')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Descarga las inscripciones de la organización como CSV (`attachment; filename="backup.csv"`).',
+  })
+  @ApiErrorResponse(400, 'Organización inexistente.')
   async backupSocios(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res({ passthrough: true }) res,
@@ -63,6 +83,11 @@ export class SociosController {
   }
 
   @Post('organizacion/:idOrganizacion/backup')
+  @ApiDataResponse(Inscripcion, {
+    isArray: true,
+    description: 'Restaura inscripciones desde un backup CSV previamente generado.',
+  })
+  @ApiErrorResponse(400, 'CSV inválido u organización inexistente.')
   async restoreSocios(
     @Param('idOrganizacion') idOrganizacion: string,
     @Body() csvArray: string[][],
@@ -77,6 +102,11 @@ export class SociosController {
   }
 
   @Get('organizacion/:idOrganizacion/deudores')
+  @ApiDataResponse(Inscripcion, {
+    isArray: true,
+    description:
+      'Inscripciones con cuotas impagas vencidas. Es la fuente de destinatarios de las notificaciones a deudores.',
+  })
    
   findDeudoresByOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
@@ -89,6 +119,10 @@ export class SociosController {
   }
 
   @Get('actividad/turno/:idTurnoActividad')
+  @ApiDataResponse(Inscripcion, {
+    isArray: true,
+    description: 'Inscriptos a un turno de actividad.',
+  })
    
   findByTurnoActividad(
     @Param('idTurnoActividad') idTurnoActividad: string,
@@ -101,6 +135,10 @@ export class SociosController {
   }
 
   @Get('actividad/:idActividad')
+  @ApiDataResponse(Inscripcion, {
+    isArray: true,
+    description: 'Inscriptos a una actividad (todos sus turnos).',
+  })
    
   findByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.sociosService
@@ -110,6 +148,11 @@ export class SociosController {
   }
 
   @Get('usuario/:idUsuario')
+  @ApiDataResponse(Inscripcion, {
+    isArray: true,
+    description:
+      'Inscripciones de un usuario, con el turno, la actividad, los horarios y la organización.',
+  })
    
   findBySocio(@Param('idUsuario') idUsuario: string, @Res() res) {
     this.sociosService
@@ -119,6 +162,8 @@ export class SociosController {
   }
 
   @Get(':id')
+  @ApiDataResponse(Inscripcion, { description: 'Detalle de una inscripción.' })
+  @ApiErrorResponse(400, 'Inscripción inexistente.')
   findOne(@Param('id') id: string, @Res() res) {
     this.sociosService
       .findOne(id)
@@ -127,6 +172,12 @@ export class SociosController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Da de baja la inscripción (borrado lógico). Responde sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Inscripción inexistente.')
   remove(@Param('id') id: string, @Res() res) {
     return this.sociosService
       .remove(id)
@@ -135,6 +186,12 @@ export class SociosController {
   }
 
   @Post('reporte/inscriptos-mes')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Inscriptos por mes en un rango de fechas. Responde el objeto del reporte sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Organización o actividad inexistente.')
   reporteSociosPorMes(@Body() dto: ReporteInscriptosMesDto, @Res() res) {
     this.sociosService
       .inscriptosPorMes(dto)
@@ -143,6 +200,12 @@ export class SociosController {
   }
 
   @Post('reporte/actividad-inscriptos-mes')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Inscriptos por mes para una actividad. Responde el objeto del reporte sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Organización o actividad inexistente.')
   reporteSociosPorActividadMes(
     @Body() dto: ReporteInscriptosActividadMesDto,
     @Res() res,
@@ -154,6 +217,12 @@ export class SociosController {
   }
 
   @Get('reporte/rango-etario/:idOrg')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Distribución de socios por rango etario. Responde el objeto del reporte sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Organización o actividad inexistente.')
   reporteRangoEtarioSocios(@Param('idOrg') idOrg: string, @Res() res) {
     this.sociosService
       .rangoEtarioSociosOrganizacion(idOrg)
@@ -162,6 +231,12 @@ export class SociosController {
   }
 
   @Get('reporte/rango-etario-actividad/:idActividad')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Distribución por rango etario para una actividad. Responde el objeto del reporte sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Organización o actividad inexistente.')
   reporteRangoEtarioSociosActividad(
     @Param('idActividad') idActividad: string,
     @Res() res,
@@ -173,6 +248,12 @@ export class SociosController {
   }
 
   @Get('reporte/distribucion-estados/:idOrg')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Distribución de socios por estado de inscripción. Responde el objeto del reporte sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Organización o actividad inexistente.')
   reporteEstadoSocios(@Param('idOrg') idOrg: string, @Res() res) {
     this.sociosService
       .sociosPorEstadoOrganizacion(idOrg)
@@ -181,6 +262,12 @@ export class SociosController {
   }
 
   @Get('reporte/deudores-por-actividad/:idOrg')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Cantidad de deudores agrupada por actividad. Responde el objeto del reporte sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Organización o actividad inexistente.')
   reporteDeudoresPorActividad(@Param('idOrg') idOrg: string, @Res() res) {
     this.sociosService
       .sociosDeudoresPorActividad(idOrg)

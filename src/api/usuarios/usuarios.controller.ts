@@ -13,6 +13,11 @@ import { UpdateUsuarioDto } from './dto/update.usuario.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 import { UsuarioResponseSchema } from './response/usuario.response.dto';
+import { UsuarioSinPasswordSchema } from '../seguridad/response/auth.response.dto';
+import {
+  ApiDataResponse,
+  ApiErrorResponse,
+} from '../../common/swagger/api-data-response.decorator';
 
 @ApiBearerAuth()
 @ApiTags('Usuarios')
@@ -22,6 +27,11 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiDataResponse(UsuarioSinPasswordSchema, {
+    isArray: true,
+    description: 'Lista de usuarios activos, sin el hash de contraseña.',
+  })
+  @ApiErrorResponse(400, 'Error al listar usuarios.')
   findAll(@Res() res) {
     this.usuariosService
       .findAll()
@@ -36,7 +46,10 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-   
+  @ApiDataResponse(UsuarioSinPasswordSchema, {
+    description: 'Usuario por id, con su domicilio y sin el hash de contraseña.',
+  })
+  @ApiErrorResponse(401, 'Usuario inexistente o token inválido.')
   findOne(@Param('id') id: string, @Res() res) {
     this.usuariosService
       .findOne(id)
@@ -49,7 +62,13 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/email/:email')
-   
+  @ApiResponse({
+    status: 200,
+    description:
+      'Usuario por email, sin el hash de contraseña. Responde sin envoltorio `data`, a diferencia del resto del módulo.',
+    type: UsuarioSinPasswordSchema,
+  })
+  @ApiErrorResponse(401, 'Usuario inexistente o token inválido.')
   findByEmail(@Param('email') email: string, @Res() res) {
     this.usuariosService
       .findByEmail(email)
@@ -84,6 +103,11 @@ export class UsuariosController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Da de baja al usuario (borrado lógico).',
+    schema: { properties: { data: { type: 'object' } } },
+  })
   remove(@Param('id') id: string, @Res() res) {
     this.usuariosService
       .remove(id)

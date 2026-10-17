@@ -82,6 +82,19 @@ export class UsuariosService {
         }
       }
 
+      // Changing the email invalidates verification: the new address has not
+      // been confirmed, so the account must not stay verified. Checked against
+      // the stored value so a no-op update doesn't unverify the user.
+      if (
+        property == 'email' &&
+        updateUsuarioDto.email &&
+        updateUsuarioDto.email !== user.email
+      ) {
+        user.email = updateUsuarioDto.email;
+        user.verificado = false;
+        continue;
+      }
+
       // Merge into the existing Domicilio row. Assigning the incoming object
       // directly would drop its id and unlink the user's current address, and an
       // incoming id would let a caller redirect the write to someone else's row.

@@ -106,8 +106,9 @@ describe('NotificacionesService', () => {
     });
 
     it('returns an error when idDestinatario is missing', async () => {
-      const result = await service.enviarNotificacionActividad({ ...baseDto, idDestinatario: undefined });
-      expect(result).toBeInstanceOf(Error);
+      await expect(
+        service.enviarNotificacionActividad({ ...baseDto, idDestinatario: undefined }),
+      ).rejects.toThrow('No se encontró el destinatario');
     });
   });
 
@@ -124,8 +125,9 @@ describe('NotificacionesService', () => {
     });
 
     it('returns an error when idDestinatario is missing', async () => {
-      const result = await service.enviarNotificacionTurnoActividad({ ...baseDto, idDestinatario: undefined });
-      expect(result).toBeInstanceOf(Error);
+      await expect(
+        service.enviarNotificacionTurnoActividad({ ...baseDto, idDestinatario: undefined }),
+      ).rejects.toThrow('No se encontró el destinatario');
     });
   });
 
@@ -142,8 +144,9 @@ describe('NotificacionesService', () => {
     });
 
     it('returns an error when idDestinatario is missing', async () => {
-      const result = await service.enviarNotificacionSocio({ ...baseDto, idDestinatario: undefined });
-      expect(result).toBeInstanceOf(Error);
+      await expect(
+        service.enviarNotificacionSocio({ ...baseDto, idDestinatario: undefined }),
+      ).rejects.toThrow('No se encontró el destinatario');
     });
   });
 

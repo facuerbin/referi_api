@@ -9,8 +9,16 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ActividadesService } from './actividades.service';
+import { Actividad } from './entities/actividad.entity';
+import { TipoActividad } from './entities/tipo.actividad.entity';
+import { EstadoActividad } from './entities/estado.actividad.entity';
+import { TurnoActividad } from './entities/turno.actividad.entity';
+import {
+  ApiDataResponse,
+  ApiErrorResponse,
+} from '../../common/swagger/api-data-response.decorator';
 import { SociosService } from '../socios/socios.service';
 import { BajaActividadDto } from './dto/baja.actividad.dto';
 import { CreateActividadDto } from './dto/create.actividad.dto';
@@ -29,6 +37,12 @@ export class ActividadesController {
 
   // Dar de baja de una actividad
   @Delete()
+  @ApiResponse({
+    status: 200,
+    description:
+      'Da de baja la inscripción del socio en la actividad. Responde el resultado sin envoltorio `data`.',
+  })
+  @ApiErrorResponse(400, 'Inscripción inexistente o datos inválidos.')
   async solicitarBaja(@Body() bajaActividadDto: BajaActividadDto, @Res() res) {
     try {
       const result = await this.sociosService.removeByActividadSocio(
@@ -47,6 +61,12 @@ export class ActividadesController {
   }
 
   @Post()
+  @ApiResponse({
+    status: 200,
+    description: 'Actividad creada. Responde sin envoltorio `data`.',
+    type: Actividad,
+  })
+  @ApiErrorResponse(400, 'Datos de actividad inválidos.')
   create(@Body() createActividadeDto: CreateActividadDto, @Res() res) {
     this.actividadesService
       .createActividad(createActividadeDto)
@@ -55,6 +75,8 @@ export class ActividadesController {
   }
 
   @Post('tipo')
+  @ApiDataResponse(TipoActividad, { description: 'Tipo de actividad creado.' })
+  @ApiErrorResponse(400, 'Datos inválidos.')
   createTipoActividad(
     @Body() createTipoActividadDto: CreateTipoActividadDto,
     @Res() res,
@@ -66,6 +88,10 @@ export class ActividadesController {
   }
 
   @Get('tipo/:idTipo')
+  @ApiDataResponse(Actividad, {
+    isArray: true,
+    description: 'Actividades de un tipo determinado.',
+  })
   findActividadByTipo(@Param('idTipo') idTipo: string, @Res() res) {
     this.actividadesService
       .findActividadByTipo(idTipo)
@@ -74,6 +100,10 @@ export class ActividadesController {
   }
 
   @Get('tipo')
+  @ApiDataResponse(TipoActividad, {
+    isArray: true,
+    description: 'Tipos de actividad disponibles.',
+  })
   listTipoActividad(@Res() res) {
     this.actividadesService
       .listTipoActividad()
@@ -82,6 +112,8 @@ export class ActividadesController {
   }
 
   @Post('estado')
+  @ApiDataResponse(EstadoActividad, { description: 'Estado creado.' })
+  @ApiErrorResponse(400, 'Datos inválidos.')
   createEstadoActividad(
     @Body() createEstadoActividadDto: CreateEstadoActividadDto,
     @Res() res,
@@ -93,6 +125,10 @@ export class ActividadesController {
   }
 
   @Get('estado')
+  @ApiDataResponse(EstadoActividad, {
+    isArray: true,
+    description: 'Estados de actividad disponibles.',
+  })
   listEstadoActividad(@Res() res) {
     this.actividadesService
       .listEstadoActividad()
@@ -101,6 +137,10 @@ export class ActividadesController {
   }
 
   @Post('turno')
+  @ApiDataResponse(TurnoActividad, {
+    description: 'Turno de actividad creado, con sus horarios.',
+  })
+  @ApiErrorResponse(400, 'Horario o espacio inválido.')
   createTurnoActividad(
     @Body() createTurnoActividadDto: CreateTurnoActividadDto,
     @Res() res,
@@ -112,6 +152,13 @@ export class ActividadesController {
   }
 
   @Get(':idActividad')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Detalle de una actividad con su organización, tipo, turnos y tarifas. Responde sin envoltorio `data`. Nota: `tarifas` es una relación lazy de TypeORM y se serializa bajo la clave `__tarifas__`.',
+    type: Actividad,
+  })
+  @ApiErrorResponse(400, 'Actividad inexistente.')
   detailActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.actividadesService
       .detailActividad(idActividad)
@@ -122,6 +169,11 @@ export class ActividadesController {
   }
 
   @Get('turno/:idTurno')
+  @ApiDataResponse(TurnoActividad, {
+    description:
+      'Detalle de un turno con su actividad, estado y horarios (espacio y horario incluidos).',
+  })
+  @ApiErrorResponse(400, 'Turno inexistente.')
   detailTurno(@Param('idTurno') idTurno: string, @Res() res) {
     this.actividadesService
       .detailTurno(idTurno)
@@ -130,6 +182,10 @@ export class ActividadesController {
   }
 
   @Get('organizacion/:idOrganizacion')
+  @ApiDataResponse(Actividad, {
+    isArray: true,
+    description: 'Actividades de una organización.',
+  })
   findActividadByOrg(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -141,6 +197,12 @@ export class ActividadesController {
   }
 
   @Patch(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Actividad actualizada. Responde sin envoltorio `data`.',
+    type: Actividad,
+  })
+  @ApiErrorResponse(400, 'Datos inválidos o actividad inexistente.')
   update(
     @Param('id') id: string,
     @Body() updateActividadeDto: UpdateActividadDto,
@@ -153,11 +215,20 @@ export class ActividadesController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Da de baja la actividad (borrado lógico).',
+  })
   remove(@Param('id') id: string) {
     return this.actividadesService.remove(id);
   }
 
   @Get('reporte/ingresos-por-actividad/:idOrganizacion')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Reporte de ingresos agrupados por actividad para una organización. Responde un array sin envoltorio `data`.',
+  })
   async reporteIngresosActividad(
     @Param('idOrganizacion') idOrganizacion: string,
   ) {
@@ -169,6 +240,11 @@ export class ActividadesController {
   }
 
   @Get('reporte/deuda-por-actividad/:idOrganizacion')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Reporte de deuda agrupada por actividad para una organización. Responde un array sin envoltorio `data`.',
+  })
   async reporteDeudaActividad(@Param('idOrganizacion') idOrganizacion: string) {
     const results =
       await this.actividadesService.deudaPorActividadPorOrganizacion(

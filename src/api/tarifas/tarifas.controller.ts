@@ -12,8 +12,14 @@ import {
 import { TarifasService } from './tarifas.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
 import { UpdateTarifaDto } from './dto/update-tarifa.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFrecuenciaDto } from './dto/create.frecuencia.dto';
+import { Tarifa } from './entities/tarifa.entity';
+import { Frecuencia } from './entities/frecuencia.entity';
+import {
+  ApiDataResponse,
+  ApiErrorResponse,
+} from '../../common/swagger/api-data-response.decorator';
 
 @ApiTags('Tarifas')
 @Controller({ path: 'tarifas', version: '1' })
@@ -21,6 +27,12 @@ export class TarifasController {
   constructor(private readonly tarifasService: TarifasService) {}
 
   @Post()
+  @ApiResponse({
+    status: 200,
+    description: 'Tarifa creada. Responde sin envoltorio `data`.',
+    type: Tarifa,
+  })
+  @ApiErrorResponse(400, 'Datos de tarifa inválidos.')
   create(@Body() createTarifaDto: CreateTarifaDto, @Res() res) {
     this.tarifasService
       .create(createTarifaDto)
@@ -29,6 +41,8 @@ export class TarifasController {
   }
 
   @Post('frecuencia')
+  @ApiDataResponse(Frecuencia, { description: 'Frecuencia de cobro creada.' })
+  @ApiErrorResponse(400, 'Datos de frecuencia inválidos.')
   createFrecuencia(
     @Body() createFrecuenciaDto: CreateFrecuenciaDto,
     @Res() res,
@@ -40,6 +54,10 @@ export class TarifasController {
   }
 
   @Get('frecuencia')
+  @ApiDataResponse(Frecuencia, {
+    isArray: true,
+    description: 'Frecuencias de cobro disponibles.',
+  })
    
   findAllFrecuencias(@Res() res) {
     this.tarifasService
@@ -49,7 +67,7 @@ export class TarifasController {
   }
 
   @Get()
-   
+  @ApiDataResponse(Tarifa, { isArray: true, description: 'Todas las tarifas.' })
   findAll(@Res() res) {
     this.tarifasService
       .findAll()
@@ -58,6 +76,10 @@ export class TarifasController {
   }
 
   @Get('/organizacion/:idOrg')
+  @ApiDataResponse(Tarifa, {
+    isArray: true,
+    description: 'Tarifas de las actividades de una organización.',
+  })
    
   findAllByOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.tarifasService
@@ -67,6 +89,10 @@ export class TarifasController {
   }
 
   @Get('/actividad/:idActividad')
+  @ApiDataResponse(Tarifa, {
+    isArray: true,
+    description: 'Tarifas de una actividad.',
+  })
    
   findAllByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.tarifasService
@@ -76,7 +102,7 @@ export class TarifasController {
   }
 
   @Get(':id')
-   
+  @ApiDataResponse(Tarifa, { description: 'Detalle de una tarifa.' })
   findOne(@Param('id') id: string, @Res() res) {
     this.tarifasService
       .findOne(id)
@@ -85,6 +111,8 @@ export class TarifasController {
   }
 
   @Patch(':id')
+  @ApiDataResponse(Tarifa, { description: 'Tarifa actualizada.' })
+  @ApiErrorResponse(400, 'Datos inválidos o tarifa inexistente.')
   update(
     @Param('id') id: string,
     @Body() updateTarifaDto: UpdateTarifaDto,
@@ -97,6 +125,12 @@ export class TarifasController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Tarifa dada de baja (borrado lógico).',
+    schema: { properties: { data: { type: 'object' } } },
+  })
+  @ApiErrorResponse(400, 'Tarifa inexistente.')
   remove(@Param('id') id: string, @Res() res) {
     return this.tarifasService
       .remove(id)

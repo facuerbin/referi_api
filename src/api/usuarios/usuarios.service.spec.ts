@@ -132,6 +132,39 @@ describe('UsuariosService', () => {
       expect(saved.dni).toBe(12345678);
     });
 
+    it('marks the account unverified when the email changes', async () => {
+      usuarioRepo.findOne.mockResolvedValue({
+        ...mockUser,
+        email: 'old@test.com',
+        verificado: true,
+      });
+      usuarioRepo.save.mockResolvedValue({});
+
+      await service.update('user-1', { email: 'new@test.com' } as any);
+
+      const saved = usuarioRepo.save.mock.calls[0][0];
+      expect(saved.email).toBe('new@test.com');
+      expect(saved.verificado).toBe(false);
+    });
+
+    it('keeps the account verified when the email is unchanged', async () => {
+      usuarioRepo.findOne.mockResolvedValue({
+        ...mockUser,
+        email: 'same@test.com',
+        verificado: true,
+      });
+      usuarioRepo.save.mockResolvedValue({});
+
+      await service.update('user-1', {
+        email: 'same@test.com',
+        nombre: 'Carlos',
+      } as any);
+
+      const saved = usuarioRepo.save.mock.calls[0][0];
+      expect(saved.verificado).toBe(true);
+      expect(saved.nombre).toBe('Carlos');
+    });
+
     it('loads the domicilio relation so the response is a complete user', async () => {
       usuarioRepo.findOne.mockResolvedValue({ ...mockUser });
       usuarioRepo.save.mockResolvedValue({});

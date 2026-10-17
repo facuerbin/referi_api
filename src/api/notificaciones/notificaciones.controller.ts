@@ -13,6 +13,11 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EnviarNotificacionDto } from './dto/enviar.notificacion.dto';
 import { Notificacion, TipoDestinatario } from './entities/notificacion.entity';
 import { NotificationResponseSchema } from './response/notification.response.dto';
+import { NotificacionUsuario } from './entities/notificaciones.usuario.entity';
+import {
+  ApiDataResponse,
+  ApiErrorResponse,
+} from '../../common/swagger/api-data-response.decorator';
 
 @ApiTags('Notificaciones')
 @Controller({ path: 'notificaciones', version: '1' })
@@ -22,11 +27,26 @@ export class NotificacionesController {
   constructor(private readonly notificacionesService: NotificacionesService) {}
 
   @Post('read/:id')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Marca la notificación como leída (fija `fechaLectura`) y responde el registro actualizado, sin envoltorio `data`.',
+    type: NotificacionUsuario,
+  })
+  @ApiErrorResponse(400, 'Notificación inexistente.')
   readNotification(@Param('id') id: string) {
     return this.notificacionesService.readNotification(id);
   }
 
   @Post('socios')
+  @ApiDataResponse(Notificacion, {
+    description:
+      'Envía una notificación al grupo indicado por `tipoDestinatario` (Deudores, Socios, Inscriptos a Actividad, Inscriptos a un Turno o Socio) y responde la notificación creada.',
+  })
+  @ApiErrorResponse(
+    400,
+    'tipoDestinatario inválido, falta idDestinatario, u organización inexistente.',
+  )
   enviarNotificacionesSocios(@Body() dto: EnviarNotificacionDto, @Res() res) {
     this.logger.log(
       `POST /socios - Received notification request, type: ${dto.tipoDestinatario}`,
@@ -112,6 +132,12 @@ export class NotificacionesController {
   }
 
   @Get('socios/:idUsuario')
+  @ApiDataResponse(NotificacionUsuario, {
+    isArray: true,
+    description:
+      'Notificaciones de un usuario. Cada elemento incluye `fechaLectura` y la `notificacion` anidada; el destinatario no se expande.',
+  })
+  @ApiErrorResponse(400, 'Error al consultar las notificaciones.')
   findAllByUser(@Param('idUsuario') idUser: string, @Res() res) {
     this.logger.log(`GET /socios/:idUsuario - Fetching all notifications for user ${idUser}`);
     this.notificacionesService
@@ -129,6 +155,12 @@ export class NotificacionesController {
   }
 
   @Get('socios/:idUsuario/new')
+  @ApiDataResponse(NotificacionUsuario, {
+    isArray: true,
+    description:
+      'Notificaciones sin leer de un usuario (`fechaLectura` nula), con la `notificacion` anidada.',
+  })
+  @ApiErrorResponse(400, 'Error al consultar las notificaciones.')
   getUnreadNotifications(@Param('idUsuario') idUser: string, @Res() res) {
     this.logger.log(`GET /socios/:idUsuario/new - Fetching unread notifications for user ${idUser}`);
     this.notificacionesService

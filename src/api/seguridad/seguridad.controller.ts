@@ -20,6 +20,8 @@ import {
   LoginResponseSchema,
   RegisterResponseSchema,
 } from './response/auth.response.dto';
+import { Inscripcion } from '../socios/entities/inscripcion.entity';
+import { ApiErrorResponse } from '../../common/swagger/api-data-response.decorator';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
@@ -58,11 +60,23 @@ export class SeguridadController {
   }
 
   @Post('verify')
+  @ApiResponse({
+    status: 201,
+    description:
+      'Valida el código enviado por email. Responde 2xx tanto para un código correcto como incorrecto: hay que leer `verified` para saber el resultado. Con un código incorrecto se reenvía un código nuevo.',
+    schema: { properties: { verified: { type: 'boolean' } } },
+  })
   verifyEmail(@Body() verification: VerifyEmailDto) {
     return this.seguridadService.verifyEmail(verification);
   }
 
   @Get('verify/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Indica si la cuenta ya está verificada.',
+    schema: { properties: { verified: { type: 'boolean' } } },
+  })
+  @ApiErrorResponse(400, 'Error al consultar el estado de verificación.')
   checkVerify(@Param('id') id: string, @Res() res) {
     this.seguridadService
       .checkVerified(id)
@@ -75,6 +89,13 @@ export class SeguridadController {
   }
 
   @Post('recover')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Genera una contraseña nueva, la envía por email y responde `{ data: "Password email sent" }`.',
+    schema: { properties: { data: { type: 'string' } } },
+  })
+  @ApiErrorResponse(401, 'Email inexistente o solicitud inválida.')
   recuperarContrasenia(@Body() recover: RecoverPasswordDto, @Res() res) {
     this.seguridadService
       .recoverPassword(recover)
@@ -91,6 +112,13 @@ export class SeguridadController {
   }
 
   @Post('socio')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Inscribe a un usuario en un turno de actividad desde el panel de la organización, creando el usuario si el email no existe. Responde la inscripción sin envoltorio `data`.',
+    type: Inscripcion,
+  })
+  @ApiErrorResponse(400, 'Turno inexistente o datos inválidos.')
   asociarNuevoUsuario(@Body() dto: RegisterFromOrgDto, @Res() res) {
     this.seguridadService
       .registerFromOrganization(dto)
@@ -103,6 +131,12 @@ export class SeguridadController {
   }
 
   @Post('change_password')
+  @ApiResponse({
+    status: 200,
+    description: 'Cambia la contraseña y responde `{ data: "Password updated" }`.',
+    schema: { properties: { data: { type: 'string' } } },
+  })
+  @ApiErrorResponse(401, 'Contraseña actual incorrecta o usuario inexistente.')
   cambiarContrasenia(@Body() dto: ChangePasswordDto, @Res() res) {
     this.seguridadService
       .changePassword(dto)

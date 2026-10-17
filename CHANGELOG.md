@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+
+- `PATCH /v1/usuarios/:id` now clears `verificado` when the email address changes, so
+  an account cannot be moved to an unconfirmed address while staying verified. A no-op
+  update that resends the same address leaves verification intact.
+
+### Fixed
+
+- Four stale test assertions that had been failing against current behaviour: three in
+  `notificaciones.service.spec.ts` expected a returned `Error` where the service throws,
+  and one in `admin.service.spec.ts` asserted a log message that changed when scheduler
+  logging was added. The suite is now fully green (97 tests).
+
+### Changed
+
+- Swagger (`/v1/docs`) now documents a response for **all 93 endpoints** across the 11
+  controllers, up from 4. Because every handler writes its response manually via
+  `@Res()`, Nest could not infer any of these — each shape had to be declared.
+  Added `ApiDataResponse` / `ApiErrorResponse` helpers so the `{ data: ... }` envelope
+  doesn't need a wrapper class per model.
+- The docs now call out the places where the response shape is **inconsistent**, since
+  that has already caused client bugs: most endpoints wrap in `{ data: ... }`, but
+  `auth/register`, `usuarios/email/:email`, `pagos` (POST and GET `:id`), `tarifas`
+  (POST), `actividades` (POST/PATCH/detail), `organizaciones` (POST, detail,
+  `:id/espacio`), `asistencias/:id`, `socios` (DELETE and all reports) and
+  `notificaciones/read/:id` respond unwrapped.
+- Documented two behaviours that are easy to get wrong from the outside:
+  `POST /v1/auth/verify` answers 2xx for both correct and incorrect codes (callers must
+  read `verified`), and `POST /v1/admin/login` can respond with the string
+  `"UNAUTHORIZED"` rather than an error status.
+- Documented that `POST /v1/uploads` only stores a file while `POST /v1/uploads/user`
+  also persists it as the authenticated user's `fotoPerfil`, and that `actividades`
+  detail serialises its lazy `tarifas` relation under the `__tarifas__` key.
+
+### Known gaps
+
+- Changing the email clears `verificado` but does **not** yet send a confirmation code
+  to the new address. `EmailService` cannot be injected into `UsuariosService` without a
+  circular module dependency (`EmailModule` already imports `UsuariosModule`). The clean
+  fix is a dedicated `POST /v1/auth/change_email` in the seguridad module, which already
+  owns `EmailService` and the verification flow — mirroring `change_password`.
+
 ## [0.2.2] - 2026-10-17
 
 ### Security

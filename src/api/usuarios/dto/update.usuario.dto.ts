@@ -6,7 +6,11 @@ import { Domicilio } from '../entities/domicilio.entity';
 // service refuses to update them (password has its own endpoint, verificado is
 // driven by email confirmation, and dni is identity data set at registration).
 export class UpdateUsuarioDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    required: false,
+    description:
+      'Cambiar el email marca la cuenta como no verificada (verificado: false): la nueva dirección debe confirmarse antes de volver a estar verificada.',
+  })
   email: string;
 
   @ApiProperty({ required: false })

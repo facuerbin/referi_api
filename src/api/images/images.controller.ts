@@ -14,7 +14,15 @@ import {
   Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiProduces,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ApiErrorResponse } from '../../common/swagger/api-data-response.decorator';
 import { createReadStream, existsSync, unlink } from 'fs';
 import { join } from 'path';
 import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
@@ -36,6 +44,11 @@ export class ImagesController {
     type: FileUploadDto,
   })
   @Post('')
+  @ApiResponse({
+    status: 201,
+    description:
+      'Sólo almacena el archivo y responde el objeto de Multer (`filename`, `path`, `mimetype`, …). **No** actualiza el `fotoPerfil` del usuario: para eso usar `POST /uploads/user`. Responde `{ error }` si el tipo de archivo no es válido.',
+  })
   @UseInterceptors(FileInterceptor('file', saveImageOptions))
   uploadFile(
     @UploadedFile(
@@ -59,6 +72,11 @@ export class ImagesController {
     type: FileUploadDto,
   })
   @Post('user')
+  @ApiResponse({
+    status: 201,
+    description:
+      'Almacena el archivo y lo guarda como `fotoPerfil` del usuario autenticado (tomado del token, no del cuerpo). Responde el objeto de Multer; el valor persistido es `uploads/<filename>`.',
+  })
   @UseInterceptors(FileInterceptor('file', saveImageOptions))
   uploadUserFile(
     @UploadedFile(
@@ -82,6 +100,12 @@ export class ImagesController {
   }
 
   @Get(':path')
+  @ApiProduces('image/jpeg', 'image/png')
+  @ApiResponse({
+    status: 200,
+    description:
+      'Devuelve el archivo de imagen por nombre. Endpoint público: no requiere token.',
+  })
   findImage(
     @Param('path') path: string,
     @Res({ passthrough: true }) res: Response,
@@ -91,6 +115,16 @@ export class ImagesController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Elimina una imagen del disco.',
+    schema: { properties: { msg: { type: 'string' } } },
+  })
+  @ApiErrorResponse(
+    401,
+    'Nombre de archivo no permitido (sólo .jpg/.png/.jpeg, sin "../") o archivo inexistente.',
+  )
+  @ApiErrorResponse(500, 'Error del servidor al eliminar el archivo.')
   remove(@Param('id') id: string, @Res() res) {
     if (
       (!id.includes('.jpg') && !id.includes('.png') && !id.includes('.jpeg')) ||

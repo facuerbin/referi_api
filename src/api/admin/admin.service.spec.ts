@@ -113,7 +113,10 @@ describe('AdminService', () => {
       await service.scheduledDbDump();
 
       expect(service.backup).toHaveBeenCalledWith(true);
-      expect(Logger.prototype.log).toHaveBeenCalledWith('Backup created successfully.');
+      // The message carries a [SCHEDULER] prefix and a duration, so match loosely.
+      expect(Logger.prototype.log).toHaveBeenCalledWith(
+        expect.stringContaining('Backup created successfully'),
+      );
     });
   });
 });

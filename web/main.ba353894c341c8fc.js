@@ -10098,7 +10098,13 @@ let AuthService = /*#__PURE__*/(() => {
       var _this10 = this;
       return (0,_media_facu_dev_Referi_Referi_WebApp_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
         const url = '' + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__.environment.appUrl + src_environments_environment__WEBPACK_IMPORTED_MODULE_4__.environment.apiVersionUri + '/organizaciones';
-        const organization = (yield axios__WEBPACK_IMPORTED_MODULE_5__["default"].post(url, organizationForm)).data;
+        // Signup calls createUser() first, which stores the token this needs.
+        const token = _this10.getToken();
+        const organization = (yield axios__WEBPACK_IMPORTED_MODULE_5__["default"].post(url, organizationForm, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })).data;
         _this10.cookieService.set('org', organization.id);
         _this10.organization = organization;
         return _this10.organization;

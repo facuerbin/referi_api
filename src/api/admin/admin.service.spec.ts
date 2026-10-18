@@ -14,14 +14,17 @@ jest.mock('bcrypt', () => ({
 import { compare } from 'bcrypt';
 const mockedCompare = compare as jest.MockedFunction<typeof compare>;
 
-
 describe('AdminService', () => {
   let service: AdminService;
   let backupRepo: { find: jest.Mock; save: jest.Mock; softDelete: jest.Mock };
   let adminRepo: { findOne: jest.Mock };
   let jwtService: jest.Mocked<JwtService>;
 
-  const mockAdmin = { id: 'admin-1', email: 'admin@referi.com', password: 'hashed' } as any;
+  const mockAdmin = {
+    id: 'admin-1',
+    email: 'admin@referi.com',
+    password: 'hashed',
+  } as any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -66,7 +69,11 @@ describe('AdminService', () => {
       const result = await service.adminLogin('admin@referi.com', 'correct');
 
       expect(jwtService.sign).toHaveBeenCalledWith(
-        expect.objectContaining({ sub: 'admin-1', role: 'admin', iss: 'Referi' }),
+        expect.objectContaining({
+          sub: 'admin-1',
+          role: 'admin',
+          iss: 'Referi',
+        }),
       );
       expect(result).toBe('admin-token');
     });
@@ -75,7 +82,11 @@ describe('AdminService', () => {
   describe('listBackups', () => {
     it('returns the list of active backups', async () => {
       const now = new Date();
-      const recentBackup = { id: 'b-1', fechaCreacion: now, nombreArchivo: 'backup.sql' };
+      const recentBackup = {
+        id: 'b-1',
+        fechaCreacion: now,
+        nombreArchivo: 'backup.sql',
+      };
       backupRepo.find.mockResolvedValue([recentBackup]);
 
       const result = await service.listBackups();
@@ -85,7 +96,11 @@ describe('AdminService', () => {
     it('soft-deletes backups older than one month', async () => {
       const old = new Date();
       old.setMonth(old.getMonth() - 2);
-      const oldBackup = { id: 'b-old', fechaCreacion: old, nombreArchivo: 'old.sql' };
+      const oldBackup = {
+        id: 'b-old',
+        fechaCreacion: old,
+        nombreArchivo: 'old.sql',
+      };
       backupRepo.find.mockResolvedValue([oldBackup]);
       backupRepo.softDelete.mockResolvedValue({ affected: 1 });
 
@@ -96,7 +111,11 @@ describe('AdminService', () => {
 
     it('does not soft-delete backups newer than one month', async () => {
       const recent = new Date();
-      const recentBackup = { id: 'b-new', fechaCreacion: recent, nombreArchivo: 'new.sql' };
+      const recentBackup = {
+        id: 'b-new',
+        fechaCreacion: recent,
+        nombreArchivo: 'new.sql',
+      };
       backupRepo.find.mockResolvedValue([recentBackup]);
 
       await service.listBackups();

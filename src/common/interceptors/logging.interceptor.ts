@@ -18,9 +18,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const { method, url, body } = request;
     const startTime = Date.now();
 
-    this.logger.log(
-      `[${method}] ${url} - Request started`,
-    );
+    this.logger.log(`[${method}] ${url} - Request started`);
     if (Object.keys(body || {}).length > 0) {
       this.logger.debug(`Request body: ${JSON.stringify(body)}`);
     }

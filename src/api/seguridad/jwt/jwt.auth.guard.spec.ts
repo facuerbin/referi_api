@@ -6,7 +6,7 @@ const context = () =>
   ({
     getHandler: () => () => undefined,
     getClass: () => class {},
-  } as unknown as ExecutionContext);
+  }) as unknown as ExecutionContext;
 
 describe('JwtAuthGuard', () => {
   it('lets a @Public() route through without authenticating', () => {
@@ -17,7 +17,9 @@ describe('JwtAuthGuard', () => {
   });
 
   it('defers to passport when the route is not marked public', () => {
-    const reflector = { getAllAndOverride: () => undefined } as unknown as Reflector;
+    const reflector = {
+      getAllAndOverride: () => undefined,
+    } as unknown as Reflector;
     const guard = new JwtAuthGuard(reflector);
     const passport = jest
       .spyOn(

@@ -108,8 +108,7 @@ import { Admin } from './api/admin/entities/admin.entity';
     ImagesModule,
     AdminModule,
   ],
-  // Auth is deny-by-default: every route requires a valid JWT unless marked
-  // @Public(). Previously each handler opted in, and most never did.
+  // Deny-by-default: every route needs a valid JWT unless marked @Public().
   providers: [EmailService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

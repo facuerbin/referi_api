@@ -6,6 +6,7 @@ export class VerifyEmailDto {
   @IsEmail()
   email: string;
 
+  // Numeric on the wire; the service stringifies it before comparing.
   @ApiProperty()
   @IsInt()
   code: number;

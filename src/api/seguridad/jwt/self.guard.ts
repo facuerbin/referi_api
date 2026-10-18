@@ -6,8 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-// Must run after JwtAuthGuard, which is what populates request.user.
-// Assumes the target user is the `:id` route param; fails closed if absent.
+// Runs after JwtAuthGuard, which populates request.user.
 @Injectable()
 export class SelfGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {

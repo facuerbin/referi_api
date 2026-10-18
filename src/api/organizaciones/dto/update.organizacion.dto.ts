@@ -1,22 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
+import { Type } from 'class-transformer';
+import { IsEmail, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { DomicilioDto } from '../../../common/dto/domicilio.dto';
 
 export class UpdateOrganizacionDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   nombre: string;
 
-  @ApiProperty({ required: true })
-  direccion: Domicilio;
+  @ApiProperty({ required: false, type: DomicilioDto })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => DomicilioDto)
+  direccion: DomicilioDto;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   logo: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   descripcion: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   telefono: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsEmail()
   email: string;
 }

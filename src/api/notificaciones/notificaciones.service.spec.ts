@@ -1,7 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotificacionesService } from './notificaciones.service';
-import { Notificacion, TipoDestinatario, TipoRemitente } from './entities/notificacion.entity';
+import {
+  Notificacion,
+  TipoDestinatario,
+  TipoRemitente,
+} from './entities/notificacion.entity';
 import { NotificacionUsuario } from './entities/notificaciones.usuario.entity';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { SociosService } from '../socios/socios.service';
@@ -70,7 +74,9 @@ describe('NotificacionesService', () => {
   describe('enviarNotificacionSocios', () => {
     it('saves notification with TipoDestinatario.SOCIOS', async () => {
       orgService.findOne.mockResolvedValue(mockRemitente);
-      sociosService.findByOrg.mockResolvedValue([{ usuario: { id: 'u-1' } }] as any);
+      sociosService.findByOrg.mockResolvedValue([
+        { usuario: { id: 'u-1' } },
+      ] as any);
       notifRepo.save.mockResolvedValue({ id: 'notif-1' });
 
       await service.enviarNotificacionSocios(baseDto);
@@ -83,7 +89,9 @@ describe('NotificacionesService', () => {
   describe('enviarNotificacionDeudores', () => {
     it('saves notification with TipoDestinatario.DEUDORES', async () => {
       orgService.findOne.mockResolvedValue(mockRemitente);
-      sociosService.findDeudoresByOrg.mockResolvedValue([{ usuario: { id: 'u-1' } }] as any);
+      sociosService.findDeudoresByOrg.mockResolvedValue([
+        { usuario: { id: 'u-1' } },
+      ] as any);
       notifRepo.save.mockResolvedValue({ id: 'notif-1', destinatarios: [] });
 
       await service.enviarNotificacionDeudores(baseDto);
@@ -96,7 +104,9 @@ describe('NotificacionesService', () => {
   describe('enviarNotificacionActividad', () => {
     it('saves notification with TipoDestinatario.ACTIVIDAD', async () => {
       orgService.findOne.mockResolvedValue(mockRemitente);
-      sociosService.findByActividad.mockResolvedValue([{ usuario: { id: 'u-1' } }] as any);
+      sociosService.findByActividad.mockResolvedValue([
+        { usuario: { id: 'u-1' } },
+      ] as any);
       notifRepo.save.mockResolvedValue({ id: 'notif-1' });
 
       await service.enviarNotificacionActividad(baseDto);
@@ -107,7 +117,10 @@ describe('NotificacionesService', () => {
 
     it('returns an error when idDestinatario is missing', async () => {
       await expect(
-        service.enviarNotificacionActividad({ ...baseDto, idDestinatario: undefined }),
+        service.enviarNotificacionActividad({
+          ...baseDto,
+          idDestinatario: undefined,
+        }),
       ).rejects.toThrow('No se encontró el destinatario');
     });
   });
@@ -115,7 +128,9 @@ describe('NotificacionesService', () => {
   describe('enviarNotificacionTurnoActividad', () => {
     it('saves notification with TipoDestinatario.TURNO_ACTIVIDAD', async () => {
       orgService.findOne.mockResolvedValue(mockRemitente);
-      sociosService.findByTurnoActividad.mockResolvedValue([{ usuario: { id: 'u-1' } }] as any);
+      sociosService.findByTurnoActividad.mockResolvedValue([
+        { usuario: { id: 'u-1' } },
+      ] as any);
       notifRepo.save.mockResolvedValue({ id: 'notif-1' });
 
       await service.enviarNotificacionTurnoActividad(baseDto);
@@ -126,7 +141,10 @@ describe('NotificacionesService', () => {
 
     it('returns an error when idDestinatario is missing', async () => {
       await expect(
-        service.enviarNotificacionTurnoActividad({ ...baseDto, idDestinatario: undefined }),
+        service.enviarNotificacionTurnoActividad({
+          ...baseDto,
+          idDestinatario: undefined,
+        }),
       ).rejects.toThrow('No se encontró el destinatario');
     });
   });
@@ -145,7 +163,10 @@ describe('NotificacionesService', () => {
 
     it('returns an error when idDestinatario is missing', async () => {
       await expect(
-        service.enviarNotificacionSocio({ ...baseDto, idDestinatario: undefined }),
+        service.enviarNotificacionSocio({
+          ...baseDto,
+          idDestinatario: undefined,
+        }),
       ).rejects.toThrow('No se encontró el destinatario');
     });
   });
@@ -159,15 +180,24 @@ describe('NotificacionesService', () => {
           {
             id: 'nu-1',
             fechaLectura: null,
-            destinatario: { id: 'u-1', email: 'a@b.com', password: 'hashed_password' },
+            destinatario: {
+              id: 'u-1',
+              email: 'a@b.com',
+              password: 'hashed_password',
+            },
           },
         ],
       } as any);
 
       const result = await service.findOne('notif-1');
 
-      expect(result.destinatarios[0].destinatario).not.toHaveProperty('password');
-      expect(result.destinatarios[0].destinatario).toEqual({ id: 'u-1', email: 'a@b.com' });
+      expect(result.destinatarios[0].destinatario).not.toHaveProperty(
+        'password',
+      );
+      expect(result.destinatarios[0].destinatario).toEqual({
+        id: 'u-1',
+        email: 'a@b.com',
+      });
     });
 
     it('returns null when the notification does not exist', async () => {
@@ -179,9 +209,16 @@ describe('NotificacionesService', () => {
 
   describe('readNotification', () => {
     it('sets fechaLectura and saves the notification', async () => {
-      const mockUserNotif = { id: 'un-1', notificacion: {}, fechaLectura: null } as any;
+      const mockUserNotif = {
+        id: 'un-1',
+        notificacion: {},
+        fechaLectura: null,
+      } as any;
       notifUserRepo.findOne.mockResolvedValue(mockUserNotif);
-      notifUserRepo.save.mockResolvedValue({ ...mockUserNotif, fechaLectura: new Date() });
+      notifUserRepo.save.mockResolvedValue({
+        ...mockUserNotif,
+        fechaLectura: new Date(),
+      });
 
       await service.readNotification('un-1');
 

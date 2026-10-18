@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Notificacion } from './notificacion.entity';

@@ -5,7 +5,6 @@ import {
   Body,
   Param,
   Res,
-  UseInterceptors,
   Logger,
 } from '@nestjs/common';
 import { NotificacionesService } from './notificaciones.service';
@@ -52,9 +51,7 @@ export class NotificacionesController {
     this.logger.log(
       `POST /socios - Received notification request, type: ${dto.tipoDestinatario}`,
     );
-    this.logger.debug(
-      `POST /socios - Full payload: ${JSON.stringify(dto)}`,
-    );
+    this.logger.debug(`POST /socios - Full payload: ${JSON.stringify(dto)}`);
 
     const validTypes = Object.values(TipoDestinatario) as string[];
     if (!validTypes.includes(dto.tipoDestinatario as string)) {
@@ -124,9 +121,7 @@ export class NotificacionesController {
             res.status(200).send({ data: result });
           })
           .catch((error) => {
-            this.logger.error(
-              `POST /socios [SOCIO] - Error: ${error.message}`,
-            );
+            this.logger.error(`POST /socios [SOCIO] - Error: ${error.message}`);
             res.status(400).send({ error: error.message });
           });
     }
@@ -140,17 +135,19 @@ export class NotificacionesController {
   })
   @ApiErrorResponse(400, 'Error al consultar las notificaciones.')
   findAllByUser(@Param('idUsuario') idUser: string, @Res() res) {
-    this.logger.log(`GET /socios/:idUsuario - Fetching all notifications for user ${idUser}`);
+    this.logger.log(
+      `GET /socios/:idUsuario - Fetching all notifications for user ${idUser}`,
+    );
     this.notificacionesService
       .findAllByUser(idUser)
       .then((result) => {
-        this.logger.log(`GET /socios/:idUsuario - Found ${result.length} notifications`);
+        this.logger.log(
+          `GET /socios/:idUsuario - Found ${result.length} notifications`,
+        );
         res.status(200).send({ data: result });
       })
       .catch((error) => {
-        this.logger.error(
-          `GET /socios/:idUsuario - Error: ${error.message}`,
-        );
+        this.logger.error(`GET /socios/:idUsuario - Error: ${error.message}`);
         res.status(400).send({ error: error.message });
       });
   }
@@ -163,11 +160,15 @@ export class NotificacionesController {
   })
   @ApiErrorResponse(400, 'Error al consultar las notificaciones.')
   getUnreadNotifications(@Param('idUsuario') idUser: string, @Res() res) {
-    this.logger.log(`GET /socios/:idUsuario/new - Fetching unread notifications for user ${idUser}`);
+    this.logger.log(
+      `GET /socios/:idUsuario/new - Fetching unread notifications for user ${idUser}`,
+    );
     this.notificacionesService
       .getUnreadNotifications(idUser)
       .then((result) => {
-        this.logger.log(`GET /socios/:idUsuario/new - Found ${result.length} unread notifications`);
+        this.logger.log(
+          `GET /socios/:idUsuario/new - Found ${result.length} unread notifications`,
+        );
         res.status(200).send({ data: result });
       })
       .catch((error) => {

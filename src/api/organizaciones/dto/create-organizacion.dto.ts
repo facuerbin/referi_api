@@ -1,25 +1,46 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
+import { Type } from 'class-transformer';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { DomicilioDto } from '../../../common/dto/domicilio.dto';
 
 export class CreateOrganizacionDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   nombre: string;
 
-  @ApiProperty()
-  direccion: Domicilio;
+  @ApiProperty({ type: DomicilioDto })
+  @ValidateNested()
+  @Type(() => DomicilioDto)
+  direccion: DomicilioDto;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   tipoOrganizacion: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   logo: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   descripcion: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   telefono: string;
 
   @ApiProperty()
+  @IsEmail()
   email: string;
 }

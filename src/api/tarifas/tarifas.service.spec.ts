@@ -8,7 +8,12 @@ import { ActividadesService } from '../actividades/actividades.service';
 
 describe('TarifasService', () => {
   let service: TarifasService;
-  let tarifaRepo: { findOne: jest.Mock; find: jest.Mock; save: jest.Mock; softDelete: jest.Mock };
+  let tarifaRepo: {
+    findOne: jest.Mock;
+    find: jest.Mock;
+    save: jest.Mock;
+    softDelete: jest.Mock;
+  };
   let frecuenciaRepo: { findOne: jest.Mock; find: jest.Mock; save: jest.Mock };
   let orgService: jest.Mocked<OrganizacionesService>;
   let actividadService: jest.Mocked<ActividadesService>;
@@ -19,7 +24,12 @@ describe('TarifasService', () => {
         TarifasService,
         {
           provide: getRepositoryToken(Tarifa),
-          useValue: { findOne: jest.fn(), find: jest.fn(), save: jest.fn(), softDelete: jest.fn() },
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+            save: jest.fn(),
+            softDelete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Frecuencia),
@@ -56,16 +66,23 @@ describe('TarifasService', () => {
       tarifaRepo.save.mockResolvedValue({ id: 'tarifa-1' });
 
       const dto = {
-        nombre: 'Cuota mensual', monto: 5000, esOpcional: false,
-        nombreFrecuencia: 'mensual', idOrganizacion: 'org-1', idActividad: 'act-1',
+        nombre: 'Cuota mensual',
+        monto: 5000,
+        esOpcional: false,
+        nombreFrecuencia: 'mensual',
+        idOrganizacion: 'org-1',
+        idActividad: 'act-1',
       } as any;
 
       await service.create(dto);
 
       expect(tarifaRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          nombre: 'Cuota mensual', monto: 5000,
-          frecuencia: mockFrecuencia, organizacion: mockOrg, actividad: mockActividad,
+          nombre: 'Cuota mensual',
+          monto: 5000,
+          frecuencia: mockFrecuencia,
+          organizacion: mockOrg,
+          actividad: mockActividad,
         }),
       );
     });
@@ -76,10 +93,16 @@ describe('TarifasService', () => {
       actividadService.detailActividad.mockResolvedValue({} as any);
       tarifaRepo.save.mockResolvedValue({});
 
-      await service.create({ nombreFrecuencia: 'mensual', idOrganizacion: '', idActividad: '' } as any);
+      await service.create({
+        nombreFrecuencia: 'mensual',
+        idOrganizacion: '',
+        idActividad: '',
+      } as any);
 
       expect(frecuenciaRepo.findOne).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expect.objectContaining({ nombre: 'MENSUAL' }) }),
+        expect.objectContaining({
+          where: expect.objectContaining({ nombre: 'MENSUAL' }),
+        }),
       );
     });
   });
@@ -90,7 +113,10 @@ describe('TarifasService', () => {
 
       await service.createFrecuencia({ nombre: 'quincenal', cantDias: 15 });
 
-      expect(frecuenciaRepo.save).toHaveBeenCalledWith({ nombre: 'QUINCENAL', cantDias: 15 });
+      expect(frecuenciaRepo.save).toHaveBeenCalledWith({
+        nombre: 'QUINCENAL',
+        cantDias: 15,
+      });
     });
   });
 
@@ -111,7 +137,11 @@ describe('TarifasService', () => {
       tarifaRepo.findOne.mockResolvedValue({ id: 'tarifa-1', fechaBaja: null });
       tarifaRepo.save.mockResolvedValue({});
 
-      await service.update('tarifa-1', { id: 'hacked', fechaBaja: new Date(), nombre: 'X' } as any);
+      await service.update('tarifa-1', {
+        id: 'hacked',
+        fechaBaja: new Date(),
+        nombre: 'X',
+      } as any);
 
       const saved = tarifaRepo.save.mock.calls[0][0];
       expect(saved.id).toBe('tarifa-1');
@@ -119,7 +149,11 @@ describe('TarifasService', () => {
     });
 
     it('ignores falsy values in the update dto', async () => {
-      tarifaRepo.findOne.mockResolvedValue({ id: 'tarifa-1', nombre: 'Original', monto: 500 });
+      tarifaRepo.findOne.mockResolvedValue({
+        id: 'tarifa-1',
+        nombre: 'Original',
+        monto: 500,
+      });
       tarifaRepo.save.mockResolvedValue({});
 
       await service.update('tarifa-1', { nombre: '', monto: 0 } as any);

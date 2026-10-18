@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Res,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Res } from '@nestjs/common';
 import { PagosService } from './pagos.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RegistrarPagoDto } from './dto/registrar.pago.dto';
@@ -46,7 +36,6 @@ export class PagosController {
     description: 'Pagos registrados para una inscripción.',
   })
   @ApiErrorResponse(400, 'Error al consultar los pagos.')
-   
   listPagosInscripto(@Param('idInscripto') idInscripto: string, @Res() res) {
     return this.pagosService
       .consultarPagosInscripto(idInscripto)
@@ -60,7 +49,6 @@ export class PagosController {
     description: 'Pagos registrados en una organización.',
   })
   @ApiErrorResponse(400, 'Error al consultar los pagos.')
-   
   listPagosOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -79,7 +67,6 @@ export class PagosController {
     description: 'Pagos realizados por un usuario.',
   })
   @ApiErrorResponse(400, 'Error al consultar los pagos.')
-   
   listPagosUsuario(@Param('idUsuario') idUsuario: string, @Res() res) {
     return this.pagosService
       .consultarPagosUsuario(idUsuario)
@@ -93,7 +80,6 @@ export class PagosController {
     description: 'Cuotas de una inscripción.',
   })
   @ApiErrorResponse(400, 'Error al consultar las cuotas.')
-   
   listCuotasInscripto(@Param('idInscripto') idInscripto: string, @Res() res) {
     return this.pagosService
       .consultarCuotasInscripto(idInscripto)
@@ -107,7 +93,6 @@ export class PagosController {
     description: 'Cuotas emitidas en una organización.',
   })
   @ApiErrorResponse(400, 'Error al consultar las cuotas.')
-   
   listCuotasOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -125,7 +110,6 @@ export class PagosController {
       'Cuotas de un usuario, con su tarifa, actividad y pago asociado cuando existe.',
   })
   @ApiErrorResponse(400, 'Error al consultar las cuotas.')
-   
   listCuotasUsuario(@Param('idUsuario') idUsuario: string, @Res() res) {
     return this.pagosService
       .consultarCuotasUsuario(idUsuario)

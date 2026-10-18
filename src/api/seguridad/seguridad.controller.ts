@@ -5,7 +5,7 @@ import {
   Res,
   Get,
   Param,
-  UseInterceptors,
+  Logger,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
@@ -98,23 +98,15 @@ export class SeguridadController {
   @ApiResponse({
     status: 200,
     description:
-      'Genera una contraseña nueva, la envía por email y responde `{ data: "Password email sent" }`.',
+      'Genera una contraseña nueva y la envía por email. Responde siempre `200` con `{ data: "Password email sent" }`, incluso si el email no tiene cuenta o si falla el envío: cualquier diferencia revelaría qué direcciones están registradas.',
     schema: { properties: { data: { type: 'string' } } },
   })
-  @ApiErrorResponse(401, 'Email inexistente o solicitud inválida.')
   recuperarContrasenia(@Body() recover: RecoverPasswordDto, @Res() res) {
+    // Deliberately unconditional — see the Swagger description above.
     this.seguridadService
       .recoverPassword(recover)
-      .then((result) => {
-        if (result) {
-          return res.status(200).send({ data: 'Password email sent' });
-        } else {
-          return res.status(401).send({ error: 'Invalid request' });
-        }
-      })
-      .catch((error) => {
-        return res.status(400).send({ error: error });
-      });
+      .catch((error) => Logger.error(error))
+      .then(() => res.status(200).send({ data: 'Password email sent' }));
   }
 
   @ApiBearerAuth()
@@ -141,7 +133,8 @@ export class SeguridadController {
   @Post('change_password')
   @ApiResponse({
     status: 200,
-    description: 'Cambia la contraseña y responde `{ data: "Password updated" }`.',
+    description:
+      'Cambia la contraseña y responde `{ data: "Password updated" }`.',
     schema: { properties: { data: { type: 'string' } } },
   })
   @ApiErrorResponse(401, 'Contraseña actual incorrecta o usuario inexistente.')

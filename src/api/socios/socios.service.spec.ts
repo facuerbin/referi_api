@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { SociosService } from './socios.service';
 import { Inscripcion } from './entities/inscripcion.entity';
-import { EstadoInscripcion, Estado } from './entities/estado.inscripcion.entity';
+import {
+  EstadoInscripcion,
+  Estado,
+} from './entities/estado.inscripcion.entity';
 import { ActividadesService } from '../actividades/actividades.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
 import { PagosService } from '../pagos/pagos.service';
@@ -22,7 +25,11 @@ describe('SociosService', () => {
         },
         {
           provide: getRepositoryToken(EstadoInscripcion),
-          useValue: { find: jest.fn(), findOne: jest.fn(), findOneBy: jest.fn() },
+          useValue: {
+            find: jest.fn(),
+            findOne: jest.fn(),
+            findOneBy: jest.fn(),
+          },
         },
         {
           provide: ActividadesService,
@@ -56,8 +63,10 @@ describe('SociosService', () => {
 
       const result = await service.inscriptosPorMes({
         idOrganizacion: 'org-1',
-        fromYear: 2024, fromMonth: 1,
-        toYear: 2024, toMonth: 2,
+        fromYear: 2024,
+        fromMonth: 1,
+        toYear: 2024,
+        toMonth: 2,
       });
 
       expect(result['2024-01']).toBe(2);
@@ -69,8 +78,10 @@ describe('SociosService', () => {
 
       const result = await service.inscriptosPorMes({
         idOrganizacion: 'org-1',
-        fromYear: 2024, fromMonth: 1,
-        toYear: 2024, toMonth: 3,
+        fromYear: 2024,
+        fromMonth: 1,
+        toYear: 2024,
+        toMonth: 3,
       });
 
       expect(result).toEqual({});
@@ -85,8 +96,10 @@ describe('SociosService', () => {
 
       const result = await service.inscriptosPorMes({
         idOrganizacion: 'org-1',
-        fromYear: 2024, fromMonth: 3,
-        toYear: 2024, toMonth: 3,
+        fromYear: 2024,
+        fromMonth: 3,
+        toYear: 2024,
+        toMonth: 3,
       });
 
       expect(result['2024-03']).toBe(3);
@@ -167,8 +180,10 @@ describe('SociosService', () => {
 
       const result = await service.inscriptosPorActividadPorMes({
         idActividad: 'act-1',
-        fromYear: 2024, fromMonth: 5,
-        toYear: 2024, toMonth: 6,
+        fromYear: 2024,
+        fromMonth: 5,
+        toYear: 2024,
+        toMonth: 6,
       });
 
       expect(result['2024-05']).toBe(2);

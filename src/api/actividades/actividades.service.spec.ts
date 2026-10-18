@@ -12,7 +12,12 @@ import { OrganizacionesService } from '../organizaciones/organizaciones.service'
 describe('ActividadesService', () => {
   let service: ActividadesService;
   let horarioRepo: { findOne: jest.Mock; save: jest.Mock };
-  let actividadRepo: { findOne: jest.Mock; save: jest.Mock; find: jest.Mock; softDelete: jest.Mock };
+  let actividadRepo: {
+    findOne: jest.Mock;
+    save: jest.Mock;
+    find: jest.Mock;
+    softDelete: jest.Mock;
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,7 +25,12 @@ describe('ActividadesService', () => {
         ActividadesService,
         {
           provide: getRepositoryToken(Actividad),
-          useValue: { findOne: jest.fn(), find: jest.fn(), save: jest.fn(), softDelete: jest.fn() },
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+            save: jest.fn(),
+            softDelete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(TipoActividad),
@@ -79,7 +89,12 @@ describe('ActividadesService', () => {
 
       const result = await service.findHorario(dia, hora, minutos, duracion);
 
-      expect(horarioRepo.save).toHaveBeenCalledWith({ diaSemana: dia, horaInicio: hora, minutosInicio: minutos, duracion });
+      expect(horarioRepo.save).toHaveBeenCalledWith({
+        diaSemana: dia,
+        horaInicio: hora,
+        minutosInicio: minutos,
+        duracion,
+      });
       expect(result).toBe(created);
     });
 
@@ -90,7 +105,12 @@ describe('ActividadesService', () => {
       await service.findHorario(Dias.MARTES, 18, 30, 90);
 
       expect(horarioRepo.findOne).toHaveBeenCalledWith({
-        where: { diaSemana: Dias.MARTES, horaInicio: 18, minutosInicio: 30, duracion: 90 },
+        where: {
+          diaSemana: Dias.MARTES,
+          horaInicio: 18,
+          minutosInicio: 30,
+          duracion: 90,
+        },
       });
     });
   });
@@ -116,7 +136,12 @@ describe('ActividadesService', () => {
     it('returns 0 when no cuotas have been paid', async () => {
       actividadRepo.findOne.mockResolvedValue({
         tarifas: [
-          { cuotas: [{ pago: null, monto: 100 }, { pago: null, monto: 200 }] },
+          {
+            cuotas: [
+              { pago: null, monto: 100 },
+              { pago: null, monto: 200 },
+            ],
+          },
         ],
       });
 
@@ -141,7 +166,11 @@ describe('ActividadesService', () => {
             {
               cuotas: [
                 { pago: null, monto: 200, fechaVencimiento: futureDate },
-                { pago: { id: 'p1' }, monto: 300, fechaVencimiento: futureDate },
+                {
+                  pago: { id: 'p1' },
+                  monto: 300,
+                  fechaVencimiento: futureDate,
+                },
                 { pago: null, monto: 100, fechaVencimiento: pastDate },
               ],
             },

@@ -1,6 +1,15 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsInt, IsDateString } from 'class-validator';
-import { Domicilio } from 'src/api/usuarios/entities/domicilio.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import {
+  IsDateString,
+  IsEmail,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { DomicilioDto } from '../../../common/dto/domicilio.dto';
 
 export class RegisterDto {
   @ApiProperty()
@@ -9,21 +18,27 @@ export class RegisterDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   password: string;
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   nombre: string;
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   apellido: string;
 
   @ApiProperty()
+  @Type(() => Number)
   @IsInt()
   dni: number;
 
   @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   telefono: string;
 
   @ApiProperty()
@@ -31,8 +46,13 @@ export class RegisterDto {
   fechaNacimiento: Date;
 
   @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
   fotoPerfil: string;
 
-  @ApiProperty({ type: PartialType<Domicilio> })
-  domicilio: Partial<Domicilio>;
+  // Required: UsuariosService.create() reads its fields unconditionally.
+  @ApiProperty({ type: DomicilioDto })
+  @ValidateNested()
+  @Type(() => DomicilioDto)
+  domicilio: DomicilioDto;
 }

@@ -47,8 +47,14 @@ describe('PagosService', () => {
     const mockUser = { id: 'user-1', nombre: 'Juan' } as any;
     const mockOrg = { id: 'org-1' } as any;
     const mockCuotas = [
-      { id: 'cuota-1', inscripcion: { usuario: mockUser, organizacion: mockOrg } },
-      { id: 'cuota-2', inscripcion: { usuario: mockUser, organizacion: mockOrg } },
+      {
+        id: 'cuota-1',
+        inscripcion: { usuario: mockUser, organizacion: mockOrg },
+      },
+      {
+        id: 'cuota-2',
+        inscripcion: { usuario: mockUser, organizacion: mockOrg },
+      },
     ] as any;
 
     it('saves a payment with the user and organization from the first cuota', async () => {
@@ -62,7 +68,11 @@ describe('PagosService', () => {
       });
 
       expect(pagoRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ usuario: mockUser, organizacion: mockOrg, cuotas: mockCuotas }),
+        expect.objectContaining({
+          usuario: mockUser,
+          organizacion: mockOrg,
+          cuotas: mockCuotas,
+        }),
       );
     });
 
@@ -70,7 +80,11 @@ describe('PagosService', () => {
       cuotaRepo.find.mockResolvedValue(mockCuotas);
       pagoRepo.save.mockResolvedValue({});
 
-      await service.registrarPago({ idsCuota: ['cuota-1'], medioDePago: MedioDePago.EFECTIVO, numeroDeComprobante: null });
+      await service.registrarPago({
+        idsCuota: ['cuota-1'],
+        medioDePago: MedioDePago.EFECTIVO,
+        numeroDeComprobante: null,
+      });
 
       const saved = pagoRepo.save.mock.calls[0][0];
       expect(saved.numeroComprobante).toBeNull();
@@ -80,7 +94,11 @@ describe('PagosService', () => {
       cuotaRepo.find.mockResolvedValue(mockCuotas);
       pagoRepo.save.mockResolvedValue({});
 
-      await service.registrarPago({ idsCuota: ['cuota-1'], medioDePago: MedioDePago.EFECTIVO, numeroDeComprobante: '42' });
+      await service.registrarPago({
+        idsCuota: ['cuota-1'],
+        medioDePago: MedioDePago.EFECTIVO,
+        numeroDeComprobante: '42',
+      });
 
       const saved = pagoRepo.save.mock.calls[0][0];
       expect(saved.numeroComprobante).toBe('42');
@@ -91,7 +109,11 @@ describe('PagosService', () => {
       pagoRepo.save.mockResolvedValue({});
 
       const before = Date.now();
-      await service.registrarPago({ idsCuota: ['cuota-1'], medioDePago: MedioDePago.EFECTIVO, numeroDeComprobante: null });
+      await service.registrarPago({
+        idsCuota: ['cuota-1'],
+        medioDePago: MedioDePago.EFECTIVO,
+        numeroDeComprobante: null,
+      });
       const after = Date.now();
 
       const saved = pagoRepo.save.mock.calls[0][0];
@@ -101,10 +123,11 @@ describe('PagosService', () => {
   });
 
   describe('createCuotas', () => {
-    const makeInscripcion = (actividadId: string) => ({
-      id: 'insc-1',
-      turnoActividad: { actividad: { id: actividadId } },
-    } as any);
+    const makeInscripcion = (actividadId: string) =>
+      ({
+        id: 'insc-1',
+        turnoActividad: { actividad: { id: actividadId } },
+      }) as any;
 
     it('returns empty array when no tarifas exist for the actividad', async () => {
       tarifasService.findByActividad.mockResolvedValue([]);

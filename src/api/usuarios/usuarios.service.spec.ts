@@ -6,7 +6,12 @@ import { Domicilio } from './entities/domicilio.entity';
 
 describe('UsuariosService', () => {
   let service: UsuariosService;
-  let usuarioRepo: { findOne: jest.Mock; save: jest.Mock; find: jest.Mock; softDelete: jest.Mock };
+  let usuarioRepo: {
+    findOne: jest.Mock;
+    save: jest.Mock;
+    find: jest.Mock;
+    softDelete: jest.Mock;
+  };
   let domicilioRepo: { save: jest.Mock };
 
   const mockUser = {
@@ -26,7 +31,12 @@ describe('UsuariosService', () => {
         UsuariosService,
         {
           provide: getRepositoryToken(Usuario),
-          useValue: { findOne: jest.fn(), save: jest.fn(), find: jest.fn(), softDelete: jest.fn() },
+          useValue: {
+            findOne: jest.fn(),
+            save: jest.fn(),
+            find: jest.fn(),
+            softDelete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Domicilio),
@@ -44,11 +54,20 @@ describe('UsuariosService', () => {
 
   describe('create', () => {
     const dto = {
-      nombre: 'Ana', apellido: 'García', email: 'ana@test.com',
-      password: 'hashed', dni: 12345678, telefono: '1234',
+      nombre: 'Ana',
+      apellido: 'García',
+      email: 'ana@test.com',
+      password: 'hashed',
+      dni: 12345678,
+      telefono: '1234',
       fechaNacimiento: new Date('1990-01-01'),
       fotoPerfil: '',
-      domicilio: { calle: 'Av. Siempre', numero: 123, ciudad: 'Rosario', provincia: 'Santa Fe' },
+      domicilio: {
+        calle: 'Av. Siempre',
+        numero: 123,
+        ciudad: 'Rosario',
+        provincia: 'Santa Fe',
+      },
     } as any;
 
     it('saves the domicilio before the user', async () => {
@@ -179,7 +198,12 @@ describe('UsuariosService', () => {
     it('merges address fields into the existing domicilio row, keeping its id', async () => {
       usuarioRepo.findOne.mockResolvedValue({
         ...mockUser,
-        domicilio: { id: 'dom-1', calle: 'Vieja', numero: 1, ciudad: 'Rosario' },
+        domicilio: {
+          id: 'dom-1',
+          calle: 'Vieja',
+          numero: 1,
+          ciudad: 'Rosario',
+        },
       });
       domicilioRepo.save.mockImplementation((d) => Promise.resolve(d));
       usuarioRepo.save.mockResolvedValue({});

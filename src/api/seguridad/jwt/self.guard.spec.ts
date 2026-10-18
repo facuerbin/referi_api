@@ -1,10 +1,14 @@
-import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SelfGuard } from './self.guard';
 
 const contextFor = (request: unknown): ExecutionContext =>
   ({
     switchToHttp: () => ({ getRequest: () => request }),
-  } as ExecutionContext);
+  }) as ExecutionContext;
 
 describe('SelfGuard', () => {
   const guard = new SelfGuard();

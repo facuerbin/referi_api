@@ -1,6 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
+import { Inscripcion } from '../socios/entities/inscripcion.entity';
 import { Organizacion } from '../organizaciones/entities/organizacion.entity';
 import { OrganizacionesService } from '../organizaciones/organizaciones.service';
 import { UsuariosService } from '../usuarios/usuarios.service';
@@ -16,6 +21,8 @@ export class AsistenciasService {
     private asistenteRepository: Repository<Asistente>,
     @InjectRepository(PlanillaAsistencia)
     private planillaRepository: Repository<PlanillaAsistencia>,
+    @InjectRepository(Inscripcion)
+    private inscripcionRepository: Repository<Inscripcion>,
     private organizacionesService: OrganizacionesService,
     private usuariosService: UsuariosService,
   ) {}
@@ -43,6 +50,9 @@ export class AsistenciasService {
     return Promise.all([planilla, usuario]).then((result) => {
       const planilla = result[0];
       const usuario = result[1];
+      if (!usuario) {
+        throw new NotFoundException('No existe un usuario con ese email');
+      }
       return this.asistenteRepository.save({
         hora: new Date(),
         dni: usuario.dni,
@@ -57,6 +67,8 @@ export class AsistenciasService {
 
   async registerAppAttendance(idOrg: string, idUsuario: string) {
     const organizacion = await this.getOrganizacion(idOrg);
+    await this.assertInscripto(idUsuario, idOrg);
+
     const planilla = this.getPlanilla(organizacion);
     const usuario = this.usuariosService.findOne(idUsuario);
 
@@ -72,6 +84,17 @@ export class AsistenciasService {
         idUsuario: usuario.id,
       });
     });
+  }
+
+  // The QR proves which organización was scanned, not who scanned it.
+  private async assertInscripto(idUsuario: string, idOrg: string) {
+    const inscripciones = await this.inscripcionRepository.count({
+      where: { usuario: { id: idUsuario }, organizacion: { id: idOrg } },
+    });
+
+    if (!inscripciones) {
+      throw new ForbiddenException('No está inscripto en esta organización');
+    }
   }
 
   findAll(listPlanillaDto: ListPlanillaDto) {

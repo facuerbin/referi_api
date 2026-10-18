@@ -23,7 +23,9 @@ export class EmailService {
     const rand = this.generateConfirmationNumber(user.id);
 
     if (config.SKIP_EMAIL) {
-      this.logger.log(`[SKIP_EMAIL] Verification code for user ${user.id} (${user.email}): ${rand}`);
+      this.logger.log(
+        `[SKIP_EMAIL] Verification code for user ${user.id} (${user.email}): ${rand}`,
+      );
       return Promise.resolve(true);
     }
 
@@ -53,7 +55,9 @@ export class EmailService {
 
   sendRecoverPasswordEmail(user: Usuario, password) {
     if (config.SKIP_EMAIL) {
-      this.logger.log(`[SKIP_EMAIL] Recovery password for user ${user.id} (${user.email}): ${password}`);
+      this.logger.log(
+        `[SKIP_EMAIL] Recovery password for user ${user.id} (${user.email}): ${password}`,
+      );
       return Promise.resolve(true);
     }
 

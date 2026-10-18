@@ -76,7 +76,9 @@ export class AdminService {
           new Date().getTime() - oneMonth
         )
           return;
-        this.logger.log(`[LIST_BACKUPS] Deleting old backup: ${file.nombreArchivo}`);
+        this.logger.log(
+          `[LIST_BACKUPS] Deleting old backup: ${file.nombreArchivo}`,
+        );
         await this.backupRepository.softDelete(file.id);
         deletedCount++;
         try {
@@ -87,7 +89,9 @@ export class AdminService {
                 `[LIST_BACKUPS] Failed to delete file ${file.nombreArchivo}: ${err.message}`,
               );
             } else {
-              this.logger.log(`[LIST_BACKUPS] Deleted old backup file: ${file.nombreArchivo}`);
+              this.logger.log(
+                `[LIST_BACKUPS] Deleted old backup file: ${file.nombreArchivo}`,
+              );
             }
           });
         } catch (e) {
@@ -123,7 +127,17 @@ export class AdminService {
     return new Promise((resolve, reject) => {
       execFile(
         'pg_dump',
-        ['-h', dbHost, '-p', String(dbPort), '-U', dbUser, '-f', fileRoute, dbName],
+        [
+          '-h',
+          dbHost,
+          '-p',
+          String(dbPort),
+          '-U',
+          dbUser,
+          '-f',
+          fileRoute,
+          dbName,
+        ],
         { env: { ...process.env, PGPASSWORD: config.DB_USER_PASSWORD } },
         (error) => {
           if (error) {
@@ -137,16 +151,20 @@ export class AdminService {
           try {
             const duration = Date.now() - startTime;
             const file = createReadStream(join(process.cwd(), fileRoute));
-            this.backupRepository.save({
-              nombreArchivo: fileName,
-              programado: scheduled,
-            }).catch(err => {
-              this.logger.error(
-                `${label} Failed to save backup record: ${err.message}`,
-                err.stack,
-              );
-            });
-            this.logger.log(`${label} Backup completed successfully (${duration}ms) - ${fileName}`);
+            this.backupRepository
+              .save({
+                nombreArchivo: fileName,
+                programado: scheduled,
+              })
+              .catch((err) => {
+                this.logger.error(
+                  `${label} Failed to save backup record: ${err.message}`,
+                  err.stack,
+                );
+              });
+            this.logger.log(
+              `${label} Backup completed successfully (${duration}ms) - ${fileName}`,
+            );
             resolve(new StreamableFile(file));
           } catch (err) {
             this.logger.error(
@@ -167,13 +185,26 @@ export class AdminService {
       const dbHost = config.DB_HOST;
       const dbPort = config.DB_PORT;
       const fileName = basename(file?.originalname ?? '');
-      this.logger.log(`[RESTORE_FILE] Uploading and restoring from file: ${fileName}`);
+      this.logger.log(
+        `[RESTORE_FILE] Uploading and restoring from file: ${fileName}`,
+      );
       const startTime = Date.now();
       const filePath = join(process.cwd(), 'backups', fileName);
       writeFileSync(filePath, new Uint8Array(file.buffer));
       execFile(
         'psql',
-        ['-h', dbHost, '-p', String(dbPort), '-U', dbUser, '-d', dbName, '-f', filePath],
+        [
+          '-h',
+          dbHost,
+          '-p',
+          String(dbPort),
+          '-U',
+          dbUser,
+          '-d',
+          dbName,
+          '-f',
+          filePath,
+        ],
         { env: { ...process.env, PGPASSWORD: config.DB_USER_PASSWORD } },
         (error) => {
           if (error) {
@@ -184,7 +215,9 @@ export class AdminService {
             return;
           }
           const duration = Date.now() - startTime;
-          this.logger.log(`[RESTORE_FILE] Database restored from file ${fileName} (${duration}ms)`);
+          this.logger.log(
+            `[RESTORE_FILE] Database restored from file ${fileName} (${duration}ms)`,
+          );
         },
       );
       return 'Database restored';
@@ -200,11 +233,15 @@ export class AdminService {
   @Cron('0 0 6/12 * * *')
   async scheduledDbDump() {
     try {
-      this.logger.log('[SCHEDULER] Starting scheduled database backup (runs at 6 AM and 6 PM daily)');
+      this.logger.log(
+        '[SCHEDULER] Starting scheduled database backup (runs at 6 AM and 6 PM daily)',
+      );
       const startTime = Date.now();
       await this.backup(true);
       const duration = Date.now() - startTime;
-      this.logger.log(`[SCHEDULER] Backup created successfully (${duration}ms)`);
+      this.logger.log(
+        `[SCHEDULER] Backup created successfully (${duration}ms)`,
+      );
     } catch (error) {
       this.logger.error(
         `[SCHEDULER] Scheduled backup failed: ${error.message}`,

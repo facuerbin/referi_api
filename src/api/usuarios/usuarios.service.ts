@@ -5,6 +5,7 @@ import { join } from 'path';
 import { IsNull, Repository } from 'typeorm';
 import { RegisterDto } from '../seguridad/dto/register.dto';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';
+import { DomicilioDto } from '../../common/dto/domicilio.dto';
 import { Domicilio } from './entities/domicilio.entity';
 import { Usuario } from './entities/usuario.entity';
 
@@ -35,12 +36,6 @@ export class UsuariosService {
         ? userObject.fotoPerfil
         : 'uploads/profile.jpeg',
       domicilio: domicilio,
-    });
-  }
-
-  findAll() {
-    return this.usuarioRepository.find({
-      where: { fechaBaja: IsNull() },
     });
   }
 
@@ -82,9 +77,7 @@ export class UsuariosService {
         }
       }
 
-      // Changing the email invalidates verification: the new address has not
-      // been confirmed, so the account must not stay verified. Checked against
-      // the stored value so a no-op update doesn't unverify the user.
+      // Compared to the stored value so a no-op update doesn't unverify.
       if (
         property == 'email' &&
         updateUsuarioDto.email &&
@@ -95,11 +88,10 @@ export class UsuariosService {
         continue;
       }
 
-      // Merge into the existing Domicilio row. Assigning the incoming object
-      // directly would drop its id and unlink the user's current address, and an
-      // incoming id would let a caller redirect the write to someone else's row.
+      // Merge, or the row's id is dropped and the user's address unlinked.
       if (property == 'domicilio' && updateUsuarioDto.domicilio) {
-        const { id: _ignoredId, ...incoming } = updateUsuarioDto.domicilio;
+        const { id: _ignoredId, ...incoming } =
+          updateUsuarioDto.domicilio as DomicilioDto & { id?: string };
         user.domicilio = await this.domicilioRepository.save({
           ...(user.domicilio ?? {}),
           ...incoming,

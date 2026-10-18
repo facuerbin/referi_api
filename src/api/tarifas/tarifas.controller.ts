@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Res,
-  UseInterceptors,
 } from '@nestjs/common';
 import { TarifasService } from './tarifas.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
@@ -59,7 +58,6 @@ export class TarifasController {
     isArray: true,
     description: 'Frecuencias de cobro disponibles.',
   })
-   
   findAllFrecuencias(@Res() res) {
     this.tarifasService
       .findAllFrecuencias()
@@ -81,7 +79,6 @@ export class TarifasController {
     isArray: true,
     description: 'Tarifas de las actividades de una organización.',
   })
-   
   findAllByOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.tarifasService
       .findByOrg(idOrg)
@@ -94,7 +91,6 @@ export class TarifasController {
     isArray: true,
     description: 'Tarifas de una actividad.',
   })
-   
   findAllByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.tarifasService
       .findByActividad(idActividad)

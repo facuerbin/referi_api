@@ -22,7 +22,11 @@ describe('SeguridadService', () => {
   let jwtService: jest.Mocked<JwtService>;
   let emailService: jest.Mocked<EmailService>;
 
-  const mockUser = { id: 'user-1', password: 'hashed_password', verificado: false } as any;
+  const mockUser = {
+    id: 'user-1',
+    password: 'hashed_password',
+    verificado: false,
+  } as any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -74,14 +78,20 @@ describe('SeguridadService', () => {
   describe('login', () => {
     it('throws 404 when user is not found', async () => {
       usersService.findByEmail.mockResolvedValue(null);
-      await expect(service.login('a@b.com', 'pw')).rejects.toThrow(HttpException);
-      await expect(service.login('a@b.com', 'pw')).rejects.toThrow('USER_NOT_FOUND');
+      await expect(service.login('a@b.com', 'pw')).rejects.toThrow(
+        HttpException,
+      );
+      await expect(service.login('a@b.com', 'pw')).rejects.toThrow(
+        'USER_NOT_FOUND',
+      );
     });
 
     it('throws 403 when password is incorrect', async () => {
       usersService.findByEmail.mockResolvedValue(mockUser);
       mockedCompare.mockResolvedValue(false as never);
-      await expect(service.login('a@b.com', 'wrong')).rejects.toThrow('PASSWORD_INCORRECT');
+      await expect(service.login('a@b.com', 'wrong')).rejects.toThrow(
+        'PASSWORD_INCORRECT',
+      );
     });
 
     it('returns user and access_token on success', async () => {
@@ -108,13 +118,19 @@ describe('SeguridadService', () => {
 
     it('returns access_token in the result', async () => {
       usersService.create.mockResolvedValue(mockUser);
-      const result = await service.register({ email: 'a@b.com', password: 'pw' } as any);
+      const result = await service.register({
+        email: 'a@b.com',
+        password: 'pw',
+      } as any);
       expect(result.access_token).toBe('mock-token');
     });
 
     it('does not leak the password hash in the result', async () => {
       usersService.create.mockResolvedValue(mockUser);
-      const result = await service.register({ email: 'a@b.com', password: 'pw' } as any);
+      const result = await service.register({
+        email: 'a@b.com',
+        password: 'pw',
+      } as any);
       expect(result).not.toHaveProperty('password');
     });
   });
@@ -131,7 +147,11 @@ describe('SeguridadService', () => {
       usersService.findOne.mockResolvedValue(mockUser);
       mockedCompare.mockResolvedValue(false as never);
       await expect(
-        service.changePassword({ id: 'user-1', oldPassword: 'wrong', newPassword: 'new' }),
+        service.changePassword({
+          id: 'user-1',
+          oldPassword: 'wrong',
+          newPassword: 'new',
+        }),
       ).rejects.toThrow('PASSWORD_INCORRECT');
     });
 
@@ -140,10 +160,53 @@ describe('SeguridadService', () => {
       mockedCompare.mockResolvedValue(true as never);
       usersService.save.mockResolvedValue(mockUser);
 
-      await service.changePassword({ id: 'user-1', oldPassword: 'old', newPassword: 'new' });
+      await service.changePassword({
+        id: 'user-1',
+        oldPassword: 'old',
+        newPassword: 'new',
+      });
 
       expect(mockedHash).toHaveBeenCalledWith('new', 10);
       expect(usersService.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('recoverPassword', () => {
+    it('answers the same way for an unknown email, without touching the database', async () => {
+      usersService.findByEmail.mockResolvedValue(null);
+
+      await expect(
+        service.recoverPassword({ email: 'nobody@b.com' } as any),
+      ).resolves.toBe(true);
+
+      expect(usersService.save).not.toHaveBeenCalled();
+      expect(emailService.sendRecoverPasswordEmail).not.toHaveBeenCalled();
+    });
+
+    it('saves a new hashed password and emails it when the user exists', async () => {
+      usersService.findByEmail.mockResolvedValue(mockUser);
+      usersService.save.mockResolvedValue(mockUser);
+      emailService.sendRecoverPasswordEmail.mockResolvedValue(true as never);
+
+      await service.recoverPassword({ email: 'a@b.com' } as any);
+
+      expect(usersService.save).toHaveBeenCalled();
+      const [savedUser] = usersService.save.mock.calls[0];
+      expect(savedUser.password).toBe('hashed_password');
+
+      const [, mailedPassword] =
+        emailService.sendRecoverPasswordEmail.mock.calls[0];
+      expect(mailedPassword).not.toBe('hashed_password');
+      expect(mailedPassword).toHaveLength(10);
+    });
+
+    it('resolves instead of rejecting when sending fails', async () => {
+      usersService.findByEmail.mockResolvedValue(mockUser);
+      usersService.save.mockRejectedValue(new Error('smtp down'));
+
+      await expect(
+        service.recoverPassword({ email: 'a@b.com' } as any),
+      ).resolves.toBe(false);
     });
   });
 
@@ -154,10 +217,16 @@ describe('SeguridadService', () => {
     });
 
     it('returns the verificado value of the user', async () => {
-      usersService.findOne.mockResolvedValue({ ...mockUser, verificado: true } as any);
+      usersService.findOne.mockResolvedValue({
+        ...mockUser,
+        verificado: true,
+      } as any);
       expect(await service.checkVerified('user-1')).toBe(true);
 
-      usersService.findOne.mockResolvedValue({ ...mockUser, verificado: false } as any);
+      usersService.findOne.mockResolvedValue({
+        ...mockUser,
+        verificado: false,
+      } as any);
       expect(await service.checkVerified('user-1')).toBe(false);
     });
   });
@@ -170,7 +239,9 @@ describe('SeguridadService', () => {
     });
 
     it('does not return the same value every time', () => {
-      const passwords = new Set(Array.from({ length: 20 }, () => service.generateRandomPassword()));
+      const passwords = new Set(
+        Array.from({ length: 20 }, () => service.generateRandomPassword()),
+      );
       expect(passwords.size).toBeGreaterThan(1);
     });
   });
@@ -178,7 +249,10 @@ describe('SeguridadService', () => {
   describe('generateToken', () => {
     it('signs a JWT with sub and iss payload', () => {
       service.generateToken({ id: 'user-abc' } as any);
-      expect(jwtService.sign).toHaveBeenCalledWith({ sub: 'user-abc', iss: 'Referi' });
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        sub: 'user-abc',
+        iss: 'Referi',
+      });
     });
   });
 

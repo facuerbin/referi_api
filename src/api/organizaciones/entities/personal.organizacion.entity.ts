@@ -2,7 +2,6 @@ import { Usuario } from 'src/api/usuarios/entities/usuario.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
@@ -18,10 +17,14 @@ export class PersonalOrganizacion {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Organizacion, (organizacion) => organizacion.empleados, { nullable: false })
+  @ManyToOne(() => Organizacion, (organizacion) => organizacion.empleados, {
+    nullable: false,
+  })
   organizacion: Organizacion;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.organizaciones, { nullable: false })
+  @ManyToOne(() => Usuario, (usuario) => usuario.organizaciones, {
+    nullable: false,
+  })
   personal: Usuario;
 
   @ManyToOne(() => Rol, (rol) => rol.empleados, { nullable: false })

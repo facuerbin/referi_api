@@ -1,146 +1,357 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class InitialSchema1788748714548 implements MigrationInterface {
-    name = 'InitialSchema1788748714548'
+  name = 'InitialSchema1788748714548';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "asistente" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "hora" TIME NOT NULL, "nombre" character varying NOT NULL, "apellido" character varying NOT NULL, "dni" integer NOT NULL, "id_usuario" character varying, "planilla_id" uuid NOT NULL, CONSTRAINT "PK_00b17598d32cea756432549b138" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "planilla_asistencia" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha" TIMESTAMP NOT NULL, "organizacion_id" uuid, CONSTRAINT "fechaOrganizacion" UNIQUE ("fecha", "organizacion_id"), CONSTRAINT "PK_ef27ea7dc2e08496c9a55055666" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "estado_actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "estado" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_9bb72bdc3c99ccc7dcc95e567e8" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "espacio" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "capacidad" integer NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid, CONSTRAINT "PK_5215162f1cedd62e2d253d3cb29" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "horario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "dia_semana" character varying NOT NULL, "hora_inicio" integer NOT NULL, "minutos_inicio" integer NOT NULL, "duracion" integer NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_3c89ff4250bf835ce1f861313c7" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "turno_horario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "espacio_id" uuid, "horario_id" uuid, "turno_actividad_id" uuid, CONSTRAINT "PK_fd744643f9854fe6cf8c5c0bb84" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "turno_actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "actividad_id" uuid, "estado_id" uuid, CONSTRAINT "PK_c6e9ee8d22896d323f22e078345" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "frecuencia" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "cant_dias" integer NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "UQ_56fe9d0257c88e27c288f14c45d" UNIQUE ("nombre"), CONSTRAINT "PK_36beda0d00f4f11199f2af2b1b0" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "tarifa" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "monto" integer NOT NULL, "es_opcional" boolean NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "frecuencia_id" uuid NOT NULL, "organizacion_id" uuid, "actividad_id" uuid, CONSTRAINT "PK_d213dfbdddef2bfd7b47b6c1e24" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "cuota" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "monto" integer NOT NULL, "periodo_inicio" TIMESTAMP NOT NULL, "periodo_fin" TIMESTAMP NOT NULL, "fecha_vencimiento" TIMESTAMP NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "pago_id" uuid, "tarifa_id" uuid, "inscripcion_id" uuid, CONSTRAINT "PK_21216e076b96f35b05898b34902" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "estado_inscripcion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_d23f22e75914d75b739440eb7d5" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "inscripcion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "usuario_id" uuid, "organizacion_id" uuid, "turno_actividad_id" uuid, CONSTRAINT "PK_bdff6201e066cec231d770912bb" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "permiso" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "modulo" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_8f675309c577bd8f4d826994e95" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "rol" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "descripcion" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "UQ_9792c580a992d554ee1621c5b45" UNIQUE ("nombre"), CONSTRAINT "PK_c93a22388638fac311781c7f2dd" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "personal_organizacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid NOT NULL, "personal_id" uuid NOT NULL, "rol_id" uuid NOT NULL, CONSTRAINT "PK_9f7b63b3811fb684d62bbaabb80" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "domicilio" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "calle" character varying NOT NULL, "numero" integer NOT NULL, "ciudad" character varying NOT NULL DEFAULT ' ', "provincia" character varying NOT NULL DEFAULT ' ', CONSTRAINT "PK_e0f4488f333668f8c221e2c10a4" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "notificacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "id_remitente" character varying NOT NULL, "nombre_remitente" character varying NOT NULL, "tipo_remitente" character varying NOT NULL, "tipo_destinatario" character varying NOT NULL, "titulo" character varying NOT NULL, "cuerpo" character varying NOT NULL, "fecha" TIMESTAMP NOT NULL, CONSTRAINT "PK_b4402a54386266ca21a86420f77" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "notificacion_usuario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_lectura" TIMESTAMP, "destinatario_id" uuid, "notificacion_id" uuid, CONSTRAINT "PK_6c7a40c0a97e2d62f07156c2943" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "usuario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password" character varying NOT NULL, "nombre" character varying NOT NULL, "apellido" character varying NOT NULL, "dni" integer NOT NULL, "telefono" character varying, "verificado" boolean NOT NULL DEFAULT false, "fecha_nacimiento" TIMESTAMP NOT NULL, "foto_perfil" character varying NOT NULL DEFAULT 'uploads/profile.jpeg', "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "domicilio_id" uuid, CONSTRAINT "UQ_2863682842e688ca198eb25c124" UNIQUE ("email"), CONSTRAINT "REL_7bce5750a27d1caf74356a0aa6" UNIQUE ("domicilio_id"), CONSTRAINT "PK_a56c58e5cabaa04fb2c98d2d7e2" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "pago" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_pago" TIMESTAMP NOT NULL, "numero_comprobante" character varying, "medio_de_pago" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid, "usuario_id" uuid, CONSTRAINT "PK_6be14be998d5e41f10e58c0e651" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "informacion_pago" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "access_token" character varying NOT NULL, "fecha_hasta" TIMESTAMP NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_65d2013a28d6f64625d67ee8b79" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "tipo_organizacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_411d8dcedf242080c714d65ce27" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "organizacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "logo" character varying NOT NULL DEFAULT 'uploads/placeholder.png', "descripcion" character varying NOT NULL, "telefono" character varying NOT NULL, "email" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "direccion_id" uuid, "informacion_pago_id" uuid, "tipo_id" uuid, CONSTRAINT "REL_d4e85ea60a09bb1a7ca487475a" UNIQUE ("direccion_id"), CONSTRAINT "PK_a02a7a5d4ac603d02ffc5db8fb8" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "tipo_actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tipo" character varying NOT NULL, "img_url" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "UQ_f62ddb1c594127c0f7c9200ae64" UNIQUE ("tipo"), CONSTRAINT "PK_70470b38790d4676ef3dd5bff25" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "descripcion" character varying NOT NULL, "cupo" integer NOT NULL, "img_url" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid, "tipo_id" uuid, CONSTRAINT "PK_ae34007f8c81abaf44d8992662d" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "backup" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre_archivo" character varying NOT NULL, "programado" boolean NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_a36efb941271c1c6cbbbcbd057d" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "admin" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_e032310bcef831fb83101899b10" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "inscripcion_estados_estado_inscripcion" ("inscripcion_id" uuid NOT NULL, "estado_inscripcion_id" uuid NOT NULL, CONSTRAINT "PK_f312c50c4c98d5a3eb251759aa0" PRIMARY KEY ("inscripcion_id", "estado_inscripcion_id"))`);
-        await queryRunner.query(`CREATE INDEX "IDX_0c373fc2181979ccf37929d955" ON "inscripcion_estados_estado_inscripcion" ("inscripcion_id") `);
-        await queryRunner.query(`CREATE INDEX "IDX_bf3459c1437606cc240d4c08f3" ON "inscripcion_estados_estado_inscripcion" ("estado_inscripcion_id") `);
-        await queryRunner.query(`CREATE TABLE "permiso_rol" ("rol_id" uuid NOT NULL, "permiso_id" uuid NOT NULL, CONSTRAINT "PK_07920f7b540231876bdbe4d4bb9" PRIMARY KEY ("rol_id", "permiso_id"))`);
-        await queryRunner.query(`CREATE INDEX "IDX_4290a07dc825be022e52917539" ON "permiso_rol" ("rol_id") `);
-        await queryRunner.query(`CREATE INDEX "IDX_776cace331626993ed9eb00a91" ON "permiso_rol" ("permiso_id") `);
-        await queryRunner.query(`ALTER TABLE "asistente" ADD CONSTRAINT "FK_d6e3eba830820aba80aeb6e3907" FOREIGN KEY ("planilla_id") REFERENCES "planilla_asistencia"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "planilla_asistencia" ADD CONSTRAINT "FK_db6145a9003c942d3b0c41ec03a" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "espacio" ADD CONSTRAINT "FK_6a3de3defe8d550bcd4552e577d" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "turno_horario" ADD CONSTRAINT "FK_17e791d1acff7f5eddaf3a58b87" FOREIGN KEY ("espacio_id") REFERENCES "espacio"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "turno_horario" ADD CONSTRAINT "FK_9bc66ee2db5f76fe161900c76b8" FOREIGN KEY ("horario_id") REFERENCES "horario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "turno_horario" ADD CONSTRAINT "FK_4aeec815925b2495b4b418b57ae" FOREIGN KEY ("turno_actividad_id") REFERENCES "turno_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "turno_actividad" ADD CONSTRAINT "FK_bb92d9deebdb04174e336fbd32f" FOREIGN KEY ("actividad_id") REFERENCES "actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "turno_actividad" ADD CONSTRAINT "FK_a4ccd625c23ba1e5a63c86e3a76" FOREIGN KEY ("estado_id") REFERENCES "estado_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "tarifa" ADD CONSTRAINT "FK_b06f884c3434e1af9e2e3a1afce" FOREIGN KEY ("frecuencia_id") REFERENCES "frecuencia"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "tarifa" ADD CONSTRAINT "FK_c6a6a44cfbd2d6b838671a120e8" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "tarifa" ADD CONSTRAINT "FK_446cad18910630e508b24603927" FOREIGN KEY ("actividad_id") REFERENCES "actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "cuota" ADD CONSTRAINT "FK_f8a562b5fd43f2385d9ab06a214" FOREIGN KEY ("pago_id") REFERENCES "pago"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "cuota" ADD CONSTRAINT "FK_4bb28b940db8c0d16962f2ae12d" FOREIGN KEY ("tarifa_id") REFERENCES "tarifa"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "cuota" ADD CONSTRAINT "FK_e10d81dfbf5985caf0fe7afea5f" FOREIGN KEY ("inscripcion_id") REFERENCES "inscripcion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "inscripcion" ADD CONSTRAINT "FK_c8485c11a3bf9ebe307f7eb9dbe" FOREIGN KEY ("usuario_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "inscripcion" ADD CONSTRAINT "FK_7dababf3e39dedce175fba098e9" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "inscripcion" ADD CONSTRAINT "FK_55076560bc343b9d5be6394ab02" FOREIGN KEY ("turno_actividad_id") REFERENCES "turno_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "personal_organizacion" ADD CONSTRAINT "FK_c05ef84acdb6d330a7c49dd0143" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "personal_organizacion" ADD CONSTRAINT "FK_3b3b5729c4f29e166d5f43a1c66" FOREIGN KEY ("personal_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "personal_organizacion" ADD CONSTRAINT "FK_9aebfe94422df32e9f56f033933" FOREIGN KEY ("rol_id") REFERENCES "rol"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "notificacion_usuario" ADD CONSTRAINT "FK_7b53d37459209e8607bf53e5679" FOREIGN KEY ("destinatario_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "notificacion_usuario" ADD CONSTRAINT "FK_49cc66540e34e7239f672c1fc27" FOREIGN KEY ("notificacion_id") REFERENCES "notificacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "usuario" ADD CONSTRAINT "FK_7bce5750a27d1caf74356a0aa67" FOREIGN KEY ("domicilio_id") REFERENCES "domicilio"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "pago" ADD CONSTRAINT "FK_d5da378d5426650e44d86c51b5a" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "pago" ADD CONSTRAINT "FK_4c256437d8365b72e1bf1186697" FOREIGN KEY ("usuario_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "organizacion" ADD CONSTRAINT "FK_d4e85ea60a09bb1a7ca487475a1" FOREIGN KEY ("direccion_id") REFERENCES "domicilio"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "organizacion" ADD CONSTRAINT "FK_b6aa225c67ec3af211ec736bb68" FOREIGN KEY ("informacion_pago_id") REFERENCES "informacion_pago"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "organizacion" ADD CONSTRAINT "FK_a394bc37964a66683253ed1b6e3" FOREIGN KEY ("tipo_id") REFERENCES "tipo_organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "actividad" ADD CONSTRAINT "FK_c7f269780f72161503c6a6106d2" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "actividad" ADD CONSTRAINT "FK_b8e266ea93ac448e4b22121ad6a" FOREIGN KEY ("tipo_id") REFERENCES "tipo_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
-        await queryRunner.query(`ALTER TABLE "inscripcion_estados_estado_inscripcion" ADD CONSTRAINT "FK_0c373fc2181979ccf37929d9558" FOREIGN KEY ("inscripcion_id") REFERENCES "inscripcion"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
-        await queryRunner.query(`ALTER TABLE "inscripcion_estados_estado_inscripcion" ADD CONSTRAINT "FK_bf3459c1437606cc240d4c08f31" FOREIGN KEY ("estado_inscripcion_id") REFERENCES "estado_inscripcion"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
-        await queryRunner.query(`ALTER TABLE "permiso_rol" ADD CONSTRAINT "FK_4290a07dc825be022e529175393" FOREIGN KEY ("rol_id") REFERENCES "rol"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
-        await queryRunner.query(`ALTER TABLE "permiso_rol" ADD CONSTRAINT "FK_776cace331626993ed9eb00a91e" FOREIGN KEY ("permiso_id") REFERENCES "permiso"("id") ON DELETE CASCADE ON UPDATE CASCADE`);
-    }
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `CREATE TABLE "asistente" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "hora" TIME NOT NULL, "nombre" character varying NOT NULL, "apellido" character varying NOT NULL, "dni" integer NOT NULL, "id_usuario" character varying, "planilla_id" uuid NOT NULL, CONSTRAINT "PK_00b17598d32cea756432549b138" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "planilla_asistencia" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha" TIMESTAMP NOT NULL, "organizacion_id" uuid, CONSTRAINT "fechaOrganizacion" UNIQUE ("fecha", "organizacion_id"), CONSTRAINT "PK_ef27ea7dc2e08496c9a55055666" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "estado_actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "estado" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_9bb72bdc3c99ccc7dcc95e567e8" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "espacio" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "capacidad" integer NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid, CONSTRAINT "PK_5215162f1cedd62e2d253d3cb29" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "horario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "dia_semana" character varying NOT NULL, "hora_inicio" integer NOT NULL, "minutos_inicio" integer NOT NULL, "duracion" integer NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_3c89ff4250bf835ce1f861313c7" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "turno_horario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "espacio_id" uuid, "horario_id" uuid, "turno_actividad_id" uuid, CONSTRAINT "PK_fd744643f9854fe6cf8c5c0bb84" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "turno_actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "actividad_id" uuid, "estado_id" uuid, CONSTRAINT "PK_c6e9ee8d22896d323f22e078345" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "frecuencia" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "cant_dias" integer NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "UQ_56fe9d0257c88e27c288f14c45d" UNIQUE ("nombre"), CONSTRAINT "PK_36beda0d00f4f11199f2af2b1b0" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "tarifa" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "monto" integer NOT NULL, "es_opcional" boolean NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "frecuencia_id" uuid NOT NULL, "organizacion_id" uuid, "actividad_id" uuid, CONSTRAINT "PK_d213dfbdddef2bfd7b47b6c1e24" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "cuota" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "monto" integer NOT NULL, "periodo_inicio" TIMESTAMP NOT NULL, "periodo_fin" TIMESTAMP NOT NULL, "fecha_vencimiento" TIMESTAMP NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "pago_id" uuid, "tarifa_id" uuid, "inscripcion_id" uuid, CONSTRAINT "PK_21216e076b96f35b05898b34902" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "estado_inscripcion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_d23f22e75914d75b739440eb7d5" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "inscripcion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "usuario_id" uuid, "organizacion_id" uuid, "turno_actividad_id" uuid, CONSTRAINT "PK_bdff6201e066cec231d770912bb" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "permiso" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "modulo" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_8f675309c577bd8f4d826994e95" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "rol" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "descripcion" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "UQ_9792c580a992d554ee1621c5b45" UNIQUE ("nombre"), CONSTRAINT "PK_c93a22388638fac311781c7f2dd" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "personal_organizacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid NOT NULL, "personal_id" uuid NOT NULL, "rol_id" uuid NOT NULL, CONSTRAINT "PK_9f7b63b3811fb684d62bbaabb80" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "domicilio" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "calle" character varying NOT NULL, "numero" integer NOT NULL, "ciudad" character varying NOT NULL DEFAULT ' ', "provincia" character varying NOT NULL DEFAULT ' ', CONSTRAINT "PK_e0f4488f333668f8c221e2c10a4" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "notificacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "id_remitente" character varying NOT NULL, "nombre_remitente" character varying NOT NULL, "tipo_remitente" character varying NOT NULL, "tipo_destinatario" character varying NOT NULL, "titulo" character varying NOT NULL, "cuerpo" character varying NOT NULL, "fecha" TIMESTAMP NOT NULL, CONSTRAINT "PK_b4402a54386266ca21a86420f77" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "notificacion_usuario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_lectura" TIMESTAMP, "destinatario_id" uuid, "notificacion_id" uuid, CONSTRAINT "PK_6c7a40c0a97e2d62f07156c2943" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "usuario" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password" character varying NOT NULL, "nombre" character varying NOT NULL, "apellido" character varying NOT NULL, "dni" integer NOT NULL, "telefono" character varying, "verificado" boolean NOT NULL DEFAULT false, "fecha_nacimiento" TIMESTAMP NOT NULL, "foto_perfil" character varying NOT NULL DEFAULT 'uploads/profile.jpeg', "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "domicilio_id" uuid, CONSTRAINT "UQ_2863682842e688ca198eb25c124" UNIQUE ("email"), CONSTRAINT "REL_7bce5750a27d1caf74356a0aa6" UNIQUE ("domicilio_id"), CONSTRAINT "PK_a56c58e5cabaa04fb2c98d2d7e2" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "pago" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fecha_pago" TIMESTAMP NOT NULL, "numero_comprobante" character varying, "medio_de_pago" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid, "usuario_id" uuid, CONSTRAINT "PK_6be14be998d5e41f10e58c0e651" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "informacion_pago" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "access_token" character varying NOT NULL, "fecha_hasta" TIMESTAMP NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_65d2013a28d6f64625d67ee8b79" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "tipo_organizacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_411d8dcedf242080c714d65ce27" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "organizacion" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "logo" character varying NOT NULL DEFAULT 'uploads/placeholder.png', "descripcion" character varying NOT NULL, "telefono" character varying NOT NULL, "email" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "direccion_id" uuid, "informacion_pago_id" uuid, "tipo_id" uuid, CONSTRAINT "REL_d4e85ea60a09bb1a7ca487475a" UNIQUE ("direccion_id"), CONSTRAINT "PK_a02a7a5d4ac603d02ffc5db8fb8" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "tipo_actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tipo" character varying NOT NULL, "img_url" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "UQ_f62ddb1c594127c0f7c9200ae64" UNIQUE ("tipo"), CONSTRAINT "PK_70470b38790d4676ef3dd5bff25" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "actividad" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre" character varying NOT NULL, "descripcion" character varying NOT NULL, "cupo" integer NOT NULL, "img_url" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_actualizacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, "organizacion_id" uuid, "tipo_id" uuid, CONSTRAINT "PK_ae34007f8c81abaf44d8992662d" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "backup" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "nombre_archivo" character varying NOT NULL, "programado" boolean NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_a36efb941271c1c6cbbbcbd057d" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "admin" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "email" character varying NOT NULL, "password" character varying NOT NULL, "fecha_creacion" TIMESTAMP NOT NULL DEFAULT now(), "fecha_baja" TIMESTAMP, CONSTRAINT "PK_e032310bcef831fb83101899b10" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "inscripcion_estados_estado_inscripcion" ("inscripcion_id" uuid NOT NULL, "estado_inscripcion_id" uuid NOT NULL, CONSTRAINT "PK_f312c50c4c98d5a3eb251759aa0" PRIMARY KEY ("inscripcion_id", "estado_inscripcion_id"))`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_0c373fc2181979ccf37929d955" ON "inscripcion_estados_estado_inscripcion" ("inscripcion_id") `,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_bf3459c1437606cc240d4c08f3" ON "inscripcion_estados_estado_inscripcion" ("estado_inscripcion_id") `,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "permiso_rol" ("rol_id" uuid NOT NULL, "permiso_id" uuid NOT NULL, CONSTRAINT "PK_07920f7b540231876bdbe4d4bb9" PRIMARY KEY ("rol_id", "permiso_id"))`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_4290a07dc825be022e52917539" ON "permiso_rol" ("rol_id") `,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_776cace331626993ed9eb00a91" ON "permiso_rol" ("permiso_id") `,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "asistente" ADD CONSTRAINT "FK_d6e3eba830820aba80aeb6e3907" FOREIGN KEY ("planilla_id") REFERENCES "planilla_asistencia"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "planilla_asistencia" ADD CONSTRAINT "FK_db6145a9003c942d3b0c41ec03a" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "espacio" ADD CONSTRAINT "FK_6a3de3defe8d550bcd4552e577d" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_horario" ADD CONSTRAINT "FK_17e791d1acff7f5eddaf3a58b87" FOREIGN KEY ("espacio_id") REFERENCES "espacio"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_horario" ADD CONSTRAINT "FK_9bc66ee2db5f76fe161900c76b8" FOREIGN KEY ("horario_id") REFERENCES "horario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_horario" ADD CONSTRAINT "FK_4aeec815925b2495b4b418b57ae" FOREIGN KEY ("turno_actividad_id") REFERENCES "turno_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_actividad" ADD CONSTRAINT "FK_bb92d9deebdb04174e336fbd32f" FOREIGN KEY ("actividad_id") REFERENCES "actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_actividad" ADD CONSTRAINT "FK_a4ccd625c23ba1e5a63c86e3a76" FOREIGN KEY ("estado_id") REFERENCES "estado_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "tarifa" ADD CONSTRAINT "FK_b06f884c3434e1af9e2e3a1afce" FOREIGN KEY ("frecuencia_id") REFERENCES "frecuencia"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "tarifa" ADD CONSTRAINT "FK_c6a6a44cfbd2d6b838671a120e8" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "tarifa" ADD CONSTRAINT "FK_446cad18910630e508b24603927" FOREIGN KEY ("actividad_id") REFERENCES "actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cuota" ADD CONSTRAINT "FK_f8a562b5fd43f2385d9ab06a214" FOREIGN KEY ("pago_id") REFERENCES "pago"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cuota" ADD CONSTRAINT "FK_4bb28b940db8c0d16962f2ae12d" FOREIGN KEY ("tarifa_id") REFERENCES "tarifa"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cuota" ADD CONSTRAINT "FK_e10d81dfbf5985caf0fe7afea5f" FOREIGN KEY ("inscripcion_id") REFERENCES "inscripcion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion" ADD CONSTRAINT "FK_c8485c11a3bf9ebe307f7eb9dbe" FOREIGN KEY ("usuario_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion" ADD CONSTRAINT "FK_7dababf3e39dedce175fba098e9" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion" ADD CONSTRAINT "FK_55076560bc343b9d5be6394ab02" FOREIGN KEY ("turno_actividad_id") REFERENCES "turno_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "personal_organizacion" ADD CONSTRAINT "FK_c05ef84acdb6d330a7c49dd0143" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "personal_organizacion" ADD CONSTRAINT "FK_3b3b5729c4f29e166d5f43a1c66" FOREIGN KEY ("personal_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "personal_organizacion" ADD CONSTRAINT "FK_9aebfe94422df32e9f56f033933" FOREIGN KEY ("rol_id") REFERENCES "rol"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "notificacion_usuario" ADD CONSTRAINT "FK_7b53d37459209e8607bf53e5679" FOREIGN KEY ("destinatario_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "notificacion_usuario" ADD CONSTRAINT "FK_49cc66540e34e7239f672c1fc27" FOREIGN KEY ("notificacion_id") REFERENCES "notificacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "usuario" ADD CONSTRAINT "FK_7bce5750a27d1caf74356a0aa67" FOREIGN KEY ("domicilio_id") REFERENCES "domicilio"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "pago" ADD CONSTRAINT "FK_d5da378d5426650e44d86c51b5a" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "pago" ADD CONSTRAINT "FK_4c256437d8365b72e1bf1186697" FOREIGN KEY ("usuario_id") REFERENCES "usuario"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organizacion" ADD CONSTRAINT "FK_d4e85ea60a09bb1a7ca487475a1" FOREIGN KEY ("direccion_id") REFERENCES "domicilio"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organizacion" ADD CONSTRAINT "FK_b6aa225c67ec3af211ec736bb68" FOREIGN KEY ("informacion_pago_id") REFERENCES "informacion_pago"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organizacion" ADD CONSTRAINT "FK_a394bc37964a66683253ed1b6e3" FOREIGN KEY ("tipo_id") REFERENCES "tipo_organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "actividad" ADD CONSTRAINT "FK_c7f269780f72161503c6a6106d2" FOREIGN KEY ("organizacion_id") REFERENCES "organizacion"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "actividad" ADD CONSTRAINT "FK_b8e266ea93ac448e4b22121ad6a" FOREIGN KEY ("tipo_id") REFERENCES "tipo_actividad"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion_estados_estado_inscripcion" ADD CONSTRAINT "FK_0c373fc2181979ccf37929d9558" FOREIGN KEY ("inscripcion_id") REFERENCES "inscripcion"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion_estados_estado_inscripcion" ADD CONSTRAINT "FK_bf3459c1437606cc240d4c08f31" FOREIGN KEY ("estado_inscripcion_id") REFERENCES "estado_inscripcion"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "permiso_rol" ADD CONSTRAINT "FK_4290a07dc825be022e529175393" FOREIGN KEY ("rol_id") REFERENCES "rol"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "permiso_rol" ADD CONSTRAINT "FK_776cace331626993ed9eb00a91e" FOREIGN KEY ("permiso_id") REFERENCES "permiso"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "permiso_rol" DROP CONSTRAINT "FK_776cace331626993ed9eb00a91e"`);
-        await queryRunner.query(`ALTER TABLE "permiso_rol" DROP CONSTRAINT "FK_4290a07dc825be022e529175393"`);
-        await queryRunner.query(`ALTER TABLE "inscripcion_estados_estado_inscripcion" DROP CONSTRAINT "FK_bf3459c1437606cc240d4c08f31"`);
-        await queryRunner.query(`ALTER TABLE "inscripcion_estados_estado_inscripcion" DROP CONSTRAINT "FK_0c373fc2181979ccf37929d9558"`);
-        await queryRunner.query(`ALTER TABLE "actividad" DROP CONSTRAINT "FK_b8e266ea93ac448e4b22121ad6a"`);
-        await queryRunner.query(`ALTER TABLE "actividad" DROP CONSTRAINT "FK_c7f269780f72161503c6a6106d2"`);
-        await queryRunner.query(`ALTER TABLE "organizacion" DROP CONSTRAINT "FK_a394bc37964a66683253ed1b6e3"`);
-        await queryRunner.query(`ALTER TABLE "organizacion" DROP CONSTRAINT "FK_b6aa225c67ec3af211ec736bb68"`);
-        await queryRunner.query(`ALTER TABLE "organizacion" DROP CONSTRAINT "FK_d4e85ea60a09bb1a7ca487475a1"`);
-        await queryRunner.query(`ALTER TABLE "pago" DROP CONSTRAINT "FK_4c256437d8365b72e1bf1186697"`);
-        await queryRunner.query(`ALTER TABLE "pago" DROP CONSTRAINT "FK_d5da378d5426650e44d86c51b5a"`);
-        await queryRunner.query(`ALTER TABLE "usuario" DROP CONSTRAINT "FK_7bce5750a27d1caf74356a0aa67"`);
-        await queryRunner.query(`ALTER TABLE "notificacion_usuario" DROP CONSTRAINT "FK_49cc66540e34e7239f672c1fc27"`);
-        await queryRunner.query(`ALTER TABLE "notificacion_usuario" DROP CONSTRAINT "FK_7b53d37459209e8607bf53e5679"`);
-        await queryRunner.query(`ALTER TABLE "personal_organizacion" DROP CONSTRAINT "FK_9aebfe94422df32e9f56f033933"`);
-        await queryRunner.query(`ALTER TABLE "personal_organizacion" DROP CONSTRAINT "FK_3b3b5729c4f29e166d5f43a1c66"`);
-        await queryRunner.query(`ALTER TABLE "personal_organizacion" DROP CONSTRAINT "FK_c05ef84acdb6d330a7c49dd0143"`);
-        await queryRunner.query(`ALTER TABLE "inscripcion" DROP CONSTRAINT "FK_55076560bc343b9d5be6394ab02"`);
-        await queryRunner.query(`ALTER TABLE "inscripcion" DROP CONSTRAINT "FK_7dababf3e39dedce175fba098e9"`);
-        await queryRunner.query(`ALTER TABLE "inscripcion" DROP CONSTRAINT "FK_c8485c11a3bf9ebe307f7eb9dbe"`);
-        await queryRunner.query(`ALTER TABLE "cuota" DROP CONSTRAINT "FK_e10d81dfbf5985caf0fe7afea5f"`);
-        await queryRunner.query(`ALTER TABLE "cuota" DROP CONSTRAINT "FK_4bb28b940db8c0d16962f2ae12d"`);
-        await queryRunner.query(`ALTER TABLE "cuota" DROP CONSTRAINT "FK_f8a562b5fd43f2385d9ab06a214"`);
-        await queryRunner.query(`ALTER TABLE "tarifa" DROP CONSTRAINT "FK_446cad18910630e508b24603927"`);
-        await queryRunner.query(`ALTER TABLE "tarifa" DROP CONSTRAINT "FK_c6a6a44cfbd2d6b838671a120e8"`);
-        await queryRunner.query(`ALTER TABLE "tarifa" DROP CONSTRAINT "FK_b06f884c3434e1af9e2e3a1afce"`);
-        await queryRunner.query(`ALTER TABLE "turno_actividad" DROP CONSTRAINT "FK_a4ccd625c23ba1e5a63c86e3a76"`);
-        await queryRunner.query(`ALTER TABLE "turno_actividad" DROP CONSTRAINT "FK_bb92d9deebdb04174e336fbd32f"`);
-        await queryRunner.query(`ALTER TABLE "turno_horario" DROP CONSTRAINT "FK_4aeec815925b2495b4b418b57ae"`);
-        await queryRunner.query(`ALTER TABLE "turno_horario" DROP CONSTRAINT "FK_9bc66ee2db5f76fe161900c76b8"`);
-        await queryRunner.query(`ALTER TABLE "turno_horario" DROP CONSTRAINT "FK_17e791d1acff7f5eddaf3a58b87"`);
-        await queryRunner.query(`ALTER TABLE "espacio" DROP CONSTRAINT "FK_6a3de3defe8d550bcd4552e577d"`);
-        await queryRunner.query(`ALTER TABLE "planilla_asistencia" DROP CONSTRAINT "FK_db6145a9003c942d3b0c41ec03a"`);
-        await queryRunner.query(`ALTER TABLE "asistente" DROP CONSTRAINT "FK_d6e3eba830820aba80aeb6e3907"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_776cace331626993ed9eb00a91"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_4290a07dc825be022e52917539"`);
-        await queryRunner.query(`DROP TABLE "permiso_rol"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_bf3459c1437606cc240d4c08f3"`);
-        await queryRunner.query(`DROP INDEX "public"."IDX_0c373fc2181979ccf37929d955"`);
-        await queryRunner.query(`DROP TABLE "inscripcion_estados_estado_inscripcion"`);
-        await queryRunner.query(`DROP TABLE "admin"`);
-        await queryRunner.query(`DROP TABLE "backup"`);
-        await queryRunner.query(`DROP TABLE "actividad"`);
-        await queryRunner.query(`DROP TABLE "tipo_actividad"`);
-        await queryRunner.query(`DROP TABLE "organizacion"`);
-        await queryRunner.query(`DROP TABLE "tipo_organizacion"`);
-        await queryRunner.query(`DROP TABLE "informacion_pago"`);
-        await queryRunner.query(`DROP TABLE "pago"`);
-        await queryRunner.query(`DROP TABLE "usuario"`);
-        await queryRunner.query(`DROP TABLE "notificacion_usuario"`);
-        await queryRunner.query(`DROP TABLE "notificacion"`);
-        await queryRunner.query(`DROP TABLE "domicilio"`);
-        await queryRunner.query(`DROP TABLE "personal_organizacion"`);
-        await queryRunner.query(`DROP TABLE "rol"`);
-        await queryRunner.query(`DROP TABLE "permiso"`);
-        await queryRunner.query(`DROP TABLE "inscripcion"`);
-        await queryRunner.query(`DROP TABLE "estado_inscripcion"`);
-        await queryRunner.query(`DROP TABLE "cuota"`);
-        await queryRunner.query(`DROP TABLE "tarifa"`);
-        await queryRunner.query(`DROP TABLE "frecuencia"`);
-        await queryRunner.query(`DROP TABLE "turno_actividad"`);
-        await queryRunner.query(`DROP TABLE "turno_horario"`);
-        await queryRunner.query(`DROP TABLE "horario"`);
-        await queryRunner.query(`DROP TABLE "espacio"`);
-        await queryRunner.query(`DROP TABLE "estado_actividad"`);
-        await queryRunner.query(`DROP TABLE "planilla_asistencia"`);
-        await queryRunner.query(`DROP TABLE "asistente"`);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "permiso_rol" DROP CONSTRAINT "FK_776cace331626993ed9eb00a91e"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "permiso_rol" DROP CONSTRAINT "FK_4290a07dc825be022e529175393"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion_estados_estado_inscripcion" DROP CONSTRAINT "FK_bf3459c1437606cc240d4c08f31"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion_estados_estado_inscripcion" DROP CONSTRAINT "FK_0c373fc2181979ccf37929d9558"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "actividad" DROP CONSTRAINT "FK_b8e266ea93ac448e4b22121ad6a"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "actividad" DROP CONSTRAINT "FK_c7f269780f72161503c6a6106d2"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organizacion" DROP CONSTRAINT "FK_a394bc37964a66683253ed1b6e3"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organizacion" DROP CONSTRAINT "FK_b6aa225c67ec3af211ec736bb68"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "organizacion" DROP CONSTRAINT "FK_d4e85ea60a09bb1a7ca487475a1"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "pago" DROP CONSTRAINT "FK_4c256437d8365b72e1bf1186697"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "pago" DROP CONSTRAINT "FK_d5da378d5426650e44d86c51b5a"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "usuario" DROP CONSTRAINT "FK_7bce5750a27d1caf74356a0aa67"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "notificacion_usuario" DROP CONSTRAINT "FK_49cc66540e34e7239f672c1fc27"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "notificacion_usuario" DROP CONSTRAINT "FK_7b53d37459209e8607bf53e5679"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "personal_organizacion" DROP CONSTRAINT "FK_9aebfe94422df32e9f56f033933"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "personal_organizacion" DROP CONSTRAINT "FK_3b3b5729c4f29e166d5f43a1c66"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "personal_organizacion" DROP CONSTRAINT "FK_c05ef84acdb6d330a7c49dd0143"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion" DROP CONSTRAINT "FK_55076560bc343b9d5be6394ab02"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion" DROP CONSTRAINT "FK_7dababf3e39dedce175fba098e9"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "inscripcion" DROP CONSTRAINT "FK_c8485c11a3bf9ebe307f7eb9dbe"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cuota" DROP CONSTRAINT "FK_e10d81dfbf5985caf0fe7afea5f"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cuota" DROP CONSTRAINT "FK_4bb28b940db8c0d16962f2ae12d"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "cuota" DROP CONSTRAINT "FK_f8a562b5fd43f2385d9ab06a214"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "tarifa" DROP CONSTRAINT "FK_446cad18910630e508b24603927"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "tarifa" DROP CONSTRAINT "FK_c6a6a44cfbd2d6b838671a120e8"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "tarifa" DROP CONSTRAINT "FK_b06f884c3434e1af9e2e3a1afce"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_actividad" DROP CONSTRAINT "FK_a4ccd625c23ba1e5a63c86e3a76"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_actividad" DROP CONSTRAINT "FK_bb92d9deebdb04174e336fbd32f"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_horario" DROP CONSTRAINT "FK_4aeec815925b2495b4b418b57ae"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_horario" DROP CONSTRAINT "FK_9bc66ee2db5f76fe161900c76b8"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "turno_horario" DROP CONSTRAINT "FK_17e791d1acff7f5eddaf3a58b87"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "espacio" DROP CONSTRAINT "FK_6a3de3defe8d550bcd4552e577d"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "planilla_asistencia" DROP CONSTRAINT "FK_db6145a9003c942d3b0c41ec03a"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "asistente" DROP CONSTRAINT "FK_d6e3eba830820aba80aeb6e3907"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "public"."IDX_776cace331626993ed9eb00a91"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "public"."IDX_4290a07dc825be022e52917539"`,
+    );
+    await queryRunner.query(`DROP TABLE "permiso_rol"`);
+    await queryRunner.query(
+      `DROP INDEX "public"."IDX_bf3459c1437606cc240d4c08f3"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX "public"."IDX_0c373fc2181979ccf37929d955"`,
+    );
+    await queryRunner.query(
+      `DROP TABLE "inscripcion_estados_estado_inscripcion"`,
+    );
+    await queryRunner.query(`DROP TABLE "admin"`);
+    await queryRunner.query(`DROP TABLE "backup"`);
+    await queryRunner.query(`DROP TABLE "actividad"`);
+    await queryRunner.query(`DROP TABLE "tipo_actividad"`);
+    await queryRunner.query(`DROP TABLE "organizacion"`);
+    await queryRunner.query(`DROP TABLE "tipo_organizacion"`);
+    await queryRunner.query(`DROP TABLE "informacion_pago"`);
+    await queryRunner.query(`DROP TABLE "pago"`);
+    await queryRunner.query(`DROP TABLE "usuario"`);
+    await queryRunner.query(`DROP TABLE "notificacion_usuario"`);
+    await queryRunner.query(`DROP TABLE "notificacion"`);
+    await queryRunner.query(`DROP TABLE "domicilio"`);
+    await queryRunner.query(`DROP TABLE "personal_organizacion"`);
+    await queryRunner.query(`DROP TABLE "rol"`);
+    await queryRunner.query(`DROP TABLE "permiso"`);
+    await queryRunner.query(`DROP TABLE "inscripcion"`);
+    await queryRunner.query(`DROP TABLE "estado_inscripcion"`);
+    await queryRunner.query(`DROP TABLE "cuota"`);
+    await queryRunner.query(`DROP TABLE "tarifa"`);
+    await queryRunner.query(`DROP TABLE "frecuencia"`);
+    await queryRunner.query(`DROP TABLE "turno_actividad"`);
+    await queryRunner.query(`DROP TABLE "turno_horario"`);
+    await queryRunner.query(`DROP TABLE "horario"`);
+    await queryRunner.query(`DROP TABLE "espacio"`);
+    await queryRunner.query(`DROP TABLE "estado_actividad"`);
+    await queryRunner.query(`DROP TABLE "planilla_asistencia"`);
+    await queryRunner.query(`DROP TABLE "asistente"`);
+  }
 }

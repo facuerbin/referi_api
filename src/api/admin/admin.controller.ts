@@ -48,9 +48,14 @@ export class AdminController {
   async login(@Body() loginDto: LoginDto) {
     this.logger.log(`POST /login - Admin login attempt for ${loginDto.email}`);
     try {
-      const result = await this.adminService.adminLogin(loginDto.email, loginDto.password);
+      const result = await this.adminService.adminLogin(
+        loginDto.email,
+        loginDto.password,
+      );
       if (result === 'UNAUTHORIZED') {
-        this.logger.warn(`POST /login - Unauthorized login for ${loginDto.email}`);
+        this.logger.warn(
+          `POST /login - Unauthorized login for ${loginDto.email}`,
+        );
       }
       return result;
     } catch (error) {
@@ -90,7 +95,9 @@ export class AdminController {
     )
     file: Express.Multer.File,
   ) {
-    this.logger.log(`POST /restore - Uploading backup file: ${file.originalname} (${file.size} bytes)`);
+    this.logger.log(
+      `POST /restore - Uploading backup file: ${file.originalname} (${file.size} bytes)`,
+    );
     try {
       const result = this.adminService.restoreFromFile(file);
       this.logger.log(`POST /restore - File upload and restore initiated`);
@@ -143,10 +150,14 @@ export class AdminController {
         'Content-Type': 'application/sql',
         'Content-Disposition': `attachment; filename="${path}"`,
       });
-      this.logger.log(`GET /backups/:path - Backup file ready for download: ${path}`);
+      this.logger.log(
+        `GET /backups/:path - Backup file ready for download: ${path}`,
+      );
       return new StreamableFile(file);
     } catch (error) {
-      this.logger.error(`GET /backups/:path - Error reading backup: ${error.message}`);
+      this.logger.error(
+        `GET /backups/:path - Error reading backup: ${error.message}`,
+      );
       throw error;
     }
   }

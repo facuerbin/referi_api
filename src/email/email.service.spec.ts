@@ -59,11 +59,16 @@ describe('EmailService', () => {
   describe('validateConfirmationNumber', () => {
     it('returns false when there is no cache entry', async () => {
       cacheManager.get.mockResolvedValue(null);
-      expect(await service.validateConfirmationNumber('user-1', '1234')).toBe(false);
+      expect(await service.validateConfirmationNumber('user-1', '1234')).toBe(
+        false,
+      );
     });
 
     it('returns true and verifies the user email when the code matches', async () => {
-      cacheManager.get.mockResolvedValue({ number: 1234, attempts: 0 } as validateCache);
+      cacheManager.get.mockResolvedValue({
+        number: 1234,
+        attempts: 0,
+      } as validateCache);
 
       const result = await service.validateConfirmationNumber('user-1', '1234');
 
@@ -78,11 +83,17 @@ describe('EmailService', () => {
       const result = await service.validateConfirmationNumber('user-1', '9999');
 
       expect(result).toBe(false);
-      expect(cacheManager.set).toHaveBeenCalledWith('user-1', { number: 1234, attempts: 1 });
+      expect(cacheManager.set).toHaveBeenCalledWith('user-1', {
+        number: 1234,
+        attempts: 1,
+      });
     });
 
     it('keeps the entry in cache while attempts are within the 3-try limit', async () => {
-      cacheManager.get.mockResolvedValue({ number: 1234, attempts: 2 } as validateCache);
+      cacheManager.get.mockResolvedValue({
+        number: 1234,
+        attempts: 2,
+      } as validateCache);
 
       await service.validateConfirmationNumber('user-1', '9999');
 
@@ -91,7 +102,10 @@ describe('EmailService', () => {
     });
 
     it('deletes the cache entry after exceeding 3 failed attempts', async () => {
-      cacheManager.get.mockResolvedValue({ number: 1234, attempts: 3 } as validateCache);
+      cacheManager.get.mockResolvedValue({
+        number: 1234,
+        attempts: 3,
+      } as validateCache);
 
       await service.validateConfirmationNumber('user-1', '9999');
 

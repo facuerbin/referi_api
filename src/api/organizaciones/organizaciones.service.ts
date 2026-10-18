@@ -85,10 +85,13 @@ export class OrganizacionesService {
       }
     }
 
-    organizacion.direccion = {
-      id: organizacion.direccion.id,
-      ...updateOrganizacionDto.direccion,
-    };
+    // Merge: the DTO holds only the fields sent, so assigning it blanked the rest.
+    if (updateOrganizacionDto.direccion) {
+      organizacion.direccion = {
+        ...organizacion.direccion,
+        ...updateOrganizacionDto.direccion,
+      };
+    }
 
     return this.organizacionRepository.save(organizacion);
   }

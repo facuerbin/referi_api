@@ -7,19 +7,21 @@ import {
   Delete,
   Res,
   StreamableFile,
-  Query,
-  UseInterceptors,
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
-import { ApiBearerAuth, ApiProduces, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiProduces,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Inscripcion } from './entities/inscripcion.entity';
 import {
   ApiDataResponse,
   ApiErrorResponse,
 } from '../../common/swagger/api-data-response.decorator';
 import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
-import { DateQuery } from './dto/date.query.dto';
 import { ReporteInscriptosActividadMesDto } from './dto/reporte.inscriptos.actividad.mes.dto';
 
 @ApiBearerAuth()
@@ -86,7 +88,8 @@ export class SociosController {
   @Post('organizacion/:idOrganizacion/backup')
   @ApiDataResponse(Inscripcion, {
     isArray: true,
-    description: 'Restaura inscripciones desde un backup CSV previamente generado.',
+    description:
+      'Restaura inscripciones desde un backup CSV previamente generado.',
   })
   @ApiErrorResponse(400, 'CSV inválido u organización inexistente.')
   async restoreSocios(
@@ -108,7 +111,6 @@ export class SociosController {
     description:
       'Inscripciones con cuotas impagas vencidas. Es la fuente de destinatarios de las notificaciones a deudores.',
   })
-   
   findDeudoresByOrganizacion(
     @Param('idOrganizacion') idOrganizacion: string,
     @Res() res,
@@ -124,7 +126,6 @@ export class SociosController {
     isArray: true,
     description: 'Inscriptos a un turno de actividad.',
   })
-   
   findByTurnoActividad(
     @Param('idTurnoActividad') idTurnoActividad: string,
     @Res() res,
@@ -140,7 +141,6 @@ export class SociosController {
     isArray: true,
     description: 'Inscriptos a una actividad (todos sus turnos).',
   })
-   
   findByActividad(@Param('idActividad') idActividad: string, @Res() res) {
     this.sociosService
       .findByActividad(idActividad)
@@ -154,7 +154,6 @@ export class SociosController {
     description:
       'Inscripciones de un usuario, con el turno, la actividad, los horarios y la organización.',
   })
-   
   findBySocio(@Param('idUsuario') idUsuario: string, @Res() res) {
     this.sociosService
       .findByUser(idUsuario)

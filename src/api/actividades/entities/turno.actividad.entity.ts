@@ -1,4 +1,3 @@
-import { Espacio } from 'src/api/organizaciones/entities/espacio.entity';
 import { Inscripcion } from 'src/api/socios/entities/inscripcion.entity';
 import {
   Entity,

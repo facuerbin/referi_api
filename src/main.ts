@@ -13,7 +13,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
 
-  app.useGlobalPipes(new ValidationPipe());
+  // whitelist strips undeclared properties, so every request DTO must stay decorated.
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ErrorInterceptor(), new LoggingInterceptor());
 
   app.enableVersioning({

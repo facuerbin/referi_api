@@ -12,6 +12,7 @@ import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SelfGuard } from '../seguridad/jwt/self.guard';
+import { StaffOrSelfGuard } from '../seguridad/jwt/staff.or.self.guard';
 import { UsuarioResponseSchema } from './response/usuario.response.dto';
 import { UsuarioSinPasswordSchema } from '../seguridad/response/auth.response.dto';
 import {
@@ -25,28 +26,13 @@ import {
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-  @Get()
-  @ApiDataResponse(UsuarioSinPasswordSchema, {
-    isArray: true,
-    description: 'Lista de usuarios activos, sin el hash de contraseña.',
-  })
-  @ApiErrorResponse(400, 'Error al listar usuarios.')
-  findAll(@Res() res) {
-    this.usuariosService
-      .findAll()
-      .then((users) => {
-        const result = users.map(({ password, ...properties }) => properties);
-        return res.status(200).send({ data: result });
-      })
-      .catch((error) => {
-        return res.status(400).send({ error: error });
-      });
-  }
-
+  @UseGuards(StaffOrSelfGuard)
   @Get(':id')
   @ApiDataResponse(UsuarioSinPasswordSchema, {
-    description: 'Usuario por id, con su domicilio y sin el hash de contraseña.',
+    description:
+      'Usuario por id, con su domicilio y sin el hash de contraseña. Sólo el propio usuario, o personal con permiso SOCIOS en una organización a la que el usuario pertenece.',
   })
+  @ApiErrorResponse(403, 'No puede consultar los datos de otro usuario.')
   @ApiErrorResponse(401, 'Usuario inexistente o token inválido.')
   findOne(@Param('id') id: string, @Res() res) {
     this.usuariosService
@@ -54,24 +40,6 @@ export class UsuariosController {
       .then((result) => {
         delete result.password;
         return res.status(200).send({ data: result });
-      })
-      .catch((error) => res.status(401).send({ error: error }));
-  }
-
-  @Get('/email/:email')
-  @ApiResponse({
-    status: 200,
-    description:
-      'Usuario por email, sin el hash de contraseña. Responde sin envoltorio `data`, a diferencia del resto del módulo.',
-    type: UsuarioSinPasswordSchema,
-  })
-  @ApiErrorResponse(401, 'Usuario inexistente o token inválido.')
-  findByEmail(@Param('email') email: string, @Res() res) {
-    this.usuariosService
-      .findByEmail(email)
-      .then((result) => {
-        delete result.password;
-        return res.status(200).send(result);
       })
       .catch((error) => res.status(401).send({ error: error }));
   }

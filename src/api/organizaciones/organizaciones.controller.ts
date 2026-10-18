@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Res,
-  UseInterceptors,
 } from '@nestjs/common';
 import { OrganizacionesService } from './organizaciones.service';
 import { CreateOrganizacionDto } from './dto/create-organizacion.dto';
@@ -69,7 +68,6 @@ export class OrganizacionesController {
     isArray: true,
     description: 'Tipos de organización disponibles.',
   })
-   
   listTipos(@Res() res) {
     return this.organizacionesService
       .listTipos()
@@ -94,7 +92,6 @@ export class OrganizacionesController {
     isArray: true,
     description: 'Espacios físicos de una organización.',
   })
-   
   listEspaciosOrg(@Param('orgId') orgId: string, @Res() res) {
     return this.organizacionesService
       .listEspaciosOrg(orgId)
@@ -107,7 +104,6 @@ export class OrganizacionesController {
     isArray: true,
     description: 'Roles asignables al personal, con sus permisos.',
   })
-   
   listRoles(@Res() res) {
     this.organizacionesService
       .listRoles()
@@ -183,7 +179,6 @@ export class OrganizacionesController {
     description:
       'Organizaciones en las que un usuario es personal, con su rol. Lo usa el panel web para resolver la organización activa.',
   })
-   
   findEmployeeOrganization(@Param('id') id: string, @Res() res) {
     this.organizacionesService
       .listEmployeeOrganization(id)
@@ -196,7 +191,6 @@ export class OrganizacionesController {
     isArray: true,
     description: 'Personal de una organización, con usuario y rol.',
   })
-   
   listPersonalOrg(@Param('idOrg') idOrg: string, @Res() res) {
     this.organizacionesService
       .listPersonalOrganizacion(idOrg)

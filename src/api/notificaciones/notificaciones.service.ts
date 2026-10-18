@@ -28,7 +28,9 @@ export class NotificacionesService {
   ) {}
 
   findAllByUser(idUser) {
-    this.logger.debug(`[FIND_ALL] Fetching all notifications for user ${idUser}`);
+    this.logger.debug(
+      `[FIND_ALL] Fetching all notifications for user ${idUser}`,
+    );
     return this.notificacionUsuarioRepository.find({
       where: {
         destinatario: { id: idUser },
@@ -40,7 +42,9 @@ export class NotificacionesService {
   }
 
   getUnreadNotifications(idUser) {
-    this.logger.debug(`[UNREAD] Fetching unread notifications for user ${idUser}`);
+    this.logger.debug(
+      `[UNREAD] Fetching unread notifications for user ${idUser}`,
+    );
     return this.notificacionUsuarioRepository.find({
       where: {
         destinatario: { id: idUser },
@@ -55,20 +59,23 @@ export class NotificacionesService {
   async readNotification(id) {
     try {
       this.logger.log(`[READ] Marking notification ${id} as read`);
-      const userNotification = await this.notificacionUsuarioRepository.findOne({
-        where: {
-          id: id,
+      const userNotification = await this.notificacionUsuarioRepository.findOne(
+        {
+          where: {
+            id: id,
+          },
+          relations: {
+            notificacion: true,
+          },
         },
-        relations: {
-          notificacion: true,
-        },
-      });
+      );
       if (!userNotification) {
         this.logger.warn(`[READ] Notification ${id} not found`);
         throw new Error('Notification not found');
       }
       userNotification.fechaLectura = new Date();
-      const result = await this.notificacionUsuarioRepository.save(userNotification);
+      const result =
+        await this.notificacionUsuarioRepository.save(userNotification);
       this.logger.log(`[READ] Successfully marked notification ${id} as read`);
       return result;
     } catch (error) {
@@ -107,7 +114,9 @@ export class NotificacionesService {
       this.logger.log(
         `[DEUDORES] Sending notification to debtors of org ${dto.idRemitente}: "${dto.titulo}"`,
       );
-      const destinatarios = this.sociosService.findDeudoresByOrg(dto.idRemitente);
+      const destinatarios = this.sociosService.findDeudoresByOrg(
+        dto.idRemitente,
+      );
       const remitente = this.organizacionService.findOne(dto.idRemitente);
 
       return Promise.all([destinatarios, remitente])
@@ -207,7 +216,9 @@ export class NotificacionesService {
         `[ACTIVIDAD] Sending notification to activity ${dto.idDestinatario}: "${dto.titulo}"`,
       );
       const remitente = await this.organizacionService.findOne(dto.idRemitente);
-      const socios = await this.sociosService.findByActividad(dto.idDestinatario);
+      const socios = await this.sociosService.findByActividad(
+        dto.idDestinatario,
+      );
       const usuarios = socios.map((socio) => socio.usuario);
       const notif = await this.notificacionRepository.save({
         titulo: dto.titulo,

@@ -11,15 +11,29 @@ import { UsuariosService } from '../usuarios/usuarios.service';
 
 describe('OrganizacionesService', () => {
   let service: OrganizacionesService;
-  let orgRepo: { findOne: jest.Mock; find: jest.Mock; save: jest.Mock; softDelete: jest.Mock };
+  let orgRepo: {
+    findOne: jest.Mock;
+    find: jest.Mock;
+    save: jest.Mock;
+    softDelete: jest.Mock;
+  };
   let domicilioRepo: { save: jest.Mock };
   let tipoRepo: { findOne: jest.Mock; find: jest.Mock };
   let espacioRepo: { findOne: jest.Mock; find: jest.Mock; save: jest.Mock };
-  let personalRepo: { findOne: jest.Mock; find: jest.Mock; save: jest.Mock; softDelete: jest.Mock };
+  let personalRepo: {
+    findOne: jest.Mock;
+    find: jest.Mock;
+    save: jest.Mock;
+    softDelete: jest.Mock;
+  };
   let rolRepo: { findOne: jest.Mock; find: jest.Mock };
   let usuariosService: jest.Mocked<UsuariosService>;
 
-  const mockOrg = { id: 'org-1', nombre: 'Club Atlético', direccion: { id: 'dom-1' } } as any;
+  const mockOrg = {
+    id: 'org-1',
+    nombre: 'Club Atlético',
+    direccion: { id: 'dom-1' },
+  } as any;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,7 +41,12 @@ describe('OrganizacionesService', () => {
         OrganizacionesService,
         {
           provide: getRepositoryToken(Organizacion),
-          useValue: { findOne: jest.fn(), find: jest.fn(), save: jest.fn(), softDelete: jest.fn() },
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+            save: jest.fn(),
+            softDelete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Domicilio),
@@ -43,7 +62,12 @@ describe('OrganizacionesService', () => {
         },
         {
           provide: getRepositoryToken(PersonalOrganizacion),
-          useValue: { findOne: jest.fn(), find: jest.fn(), save: jest.fn(), softDelete: jest.fn() },
+          useValue: {
+            findOne: jest.fn(),
+            find: jest.fn(),
+            save: jest.fn(),
+            softDelete: jest.fn(),
+          },
         },
         {
           provide: getRepositoryToken(Rol),
@@ -77,32 +101,52 @@ describe('OrganizacionesService', () => {
       orgRepo.save.mockResolvedValue(mockOrg);
 
       const dto = {
-        nombre: 'Club', direccion: { calle: 'Av.', numero: 1, ciudad: 'BsAs', provincia: 'BsAs' },
-        tipoOrganizacion: 'Deportivo', logo: '', descripcion: '', telefono: '', email: '',
+        nombre: 'Club',
+        direccion: {
+          calle: 'Av.',
+          numero: 1,
+          ciudad: 'BsAs',
+          provincia: 'BsAs',
+        },
+        tipoOrganizacion: 'Deportivo',
+        logo: '',
+        descripcion: '',
+        telefono: '',
+        email: '',
       } as any;
 
       await service.create(dto);
 
       expect(domicilioRepo.save).toHaveBeenCalled();
-      expect(orgRepo.save).toHaveBeenCalledWith(expect.objectContaining({ direccion: savedDom }));
+      expect(orgRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ direccion: savedDom }),
+      );
     });
   });
 
   describe('createEspacio', () => {
     it('throws when the organization does not exist', async () => {
       orgRepo.findOne.mockResolvedValue(null);
-      await expect(service.createEspacio('missing', { nombre: 'SUM', capacidad: 50 }))
-        .rejects.toThrow('Organization not found');
+      await expect(
+        service.createEspacio('missing', { nombre: 'SUM', capacidad: 50 }),
+      ).rejects.toThrow('Organization not found');
     });
 
     it('saves the espacio linked to the organization', async () => {
       orgRepo.findOne.mockResolvedValue(mockOrg);
       espacioRepo.save.mockResolvedValue({ id: 'esp-1' });
 
-      await service.createEspacio('org-1', { nombre: 'Cancha', capacidad: 100 });
+      await service.createEspacio('org-1', {
+        nombre: 'Cancha',
+        capacidad: 100,
+      });
 
       expect(espacioRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ nombre: 'Cancha', capacidad: 100, organizacion: mockOrg }),
+        expect.objectContaining({
+          nombre: 'Cancha',
+          capacidad: 100,
+          organizacion: mockOrg,
+        }),
       );
     });
   });
@@ -118,7 +162,10 @@ describe('OrganizacionesService', () => {
       personalRepo.findOne.mockResolvedValue(existing);
       personalRepo.save.mockResolvedValue({ ...existing, rol: mockRol });
 
-      await service.createPersonal('org-1', { emailUsuario: 'a@b.com', rol: 'entrenador' });
+      await service.createPersonal('org-1', {
+        emailUsuario: 'a@b.com',
+        rol: 'entrenador',
+      });
 
       const saved = personalRepo.save.mock.calls[0][0];
       expect(saved.rol).toBe(mockRol);
@@ -133,10 +180,17 @@ describe('OrganizacionesService', () => {
       personalRepo.findOne.mockResolvedValue(null);
       personalRepo.save.mockResolvedValue({ id: 'pers-new' });
 
-      await service.createPersonal('org-1', { emailUsuario: 'a@b.com', rol: 'entrenador' });
+      await service.createPersonal('org-1', {
+        emailUsuario: 'a@b.com',
+        rol: 'entrenador',
+      });
 
       expect(personalRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ personal: mockUser, organizacion: mockOrg, rol: mockRol }),
+        expect.objectContaining({
+          personal: mockUser,
+          organizacion: mockOrg,
+          rol: mockRol,
+        }),
       );
     });
   });
@@ -161,7 +215,11 @@ describe('OrganizacionesService', () => {
       orgRepo.findOne.mockResolvedValue({ ...mockOrg });
       orgRepo.save.mockResolvedValue({});
 
-      await service.update('org-1', { id: 'hacked', fechaBaja: new Date(), nombre: 'X' } as any);
+      await service.update('org-1', {
+        id: 'hacked',
+        fechaBaja: new Date(),
+        nombre: 'X',
+      } as any);
 
       const saved = orgRepo.save.mock.calls[0][0];
       expect(saved.id).toBe('org-1');

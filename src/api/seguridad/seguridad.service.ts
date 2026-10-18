@@ -99,7 +99,11 @@ export class SeguridadService {
 
   async recoverPassword(recover: RecoverPasswordDto) {
     const user = await this.usersService.findByEmail(recover.email);
-    if (!user.email) throw new Error('Invalid email');
+    // Public endpoint: answering differently here would enumerate accounts.
+    if (!user) {
+      Logger.warn('Password recovery requested for an unknown email');
+      return true;
+    }
 
     const newPassword = this.generateRandomPassword();
     const hashed = await hash(newPassword, 10);

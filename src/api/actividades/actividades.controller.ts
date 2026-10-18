@@ -9,7 +9,7 @@ import {
   Res,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ActividadesService } from './actividades.service';
 import { Actividad } from './entities/actividad.entity';
 import { TipoActividad } from './entities/tipo.actividad.entity';
@@ -27,6 +27,7 @@ import { CreateTipoActividadDto } from './dto/create.tipo.actividad.dto';
 import { CreateTurnoActividadDto } from './dto/create.turno.actividad.dto';
 import { UpdateActividadDto } from './dto/update.actividad.dto';
 
+@ApiBearerAuth()
 @ApiTags('Actividades')
 @Controller({ path: 'actividades', version: '1' })
 export class ActividadesController {

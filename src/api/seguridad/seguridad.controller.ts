@@ -7,7 +7,7 @@ import {
   Param,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { SeguridadService } from './seguridad.service';
 import { RegisterDto } from './dto/register.dto';
@@ -22,6 +22,7 @@ import {
 } from './response/auth.response.dto';
 import { Inscripcion } from '../socios/entities/inscripcion.entity';
 import { ApiErrorResponse } from '../../common/swagger/api-data-response.decorator';
+import { Public } from './jwt/public.decorator';
 
 @ApiTags('Seguridad')
 @Controller({ path: 'auth', version: '1' })
@@ -31,6 +32,7 @@ export class SeguridadController {
     private emailService: EmailService,
   ) {}
 
+  @Public()
   @Post('login')
   @ApiResponse({
     status: 200,
@@ -46,6 +48,7 @@ export class SeguridadController {
     return res.status(200).send({ data });
   }
 
+  @Public()
   @Post('register')
   @ApiResponse({
     status: 201,
@@ -59,6 +62,7 @@ export class SeguridadController {
     return createdUser;
   }
 
+  @Public()
   @Post('verify')
   @ApiResponse({
     status: 201,
@@ -70,6 +74,7 @@ export class SeguridadController {
     return this.seguridadService.verifyEmail(verification);
   }
 
+  @Public()
   @Get('verify/:id')
   @ApiResponse({
     status: 200,
@@ -88,6 +93,7 @@ export class SeguridadController {
       });
   }
 
+  @Public()
   @Post('recover')
   @ApiResponse({
     status: 200,
@@ -111,6 +117,7 @@ export class SeguridadController {
       });
   }
 
+  @ApiBearerAuth()
   @Post('socio')
   @ApiResponse({
     status: 200,
@@ -130,6 +137,7 @@ export class SeguridadController {
       });
   }
 
+  @ApiBearerAuth()
   @Post('change_password')
   @ApiResponse({
     status: 200,

@@ -5,9 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.0] - 2026-10-17
 
 ### Security
+
+- **Auth is now deny-by-default.** `JwtAuthGuard` is registered as an `APP_GUARD` and
+  honours a new `@Public()` decorator, so **74 endpoints that required no
+  authentication at all are now protected** — the whole of `socios`, `actividades`,
+  `tarifas`, `pagos`, `notificaciones` and `asistencias`, 14 of 15 `organizaciones`
+  routes, plus `POST /auth/change_password`, `POST /auth/socio` and
+  `DELETE /uploads/:id`. Previously protection was opt-in per handler and most
+  handlers never opted in; there was no global guard at all. 86 endpoints are now
+  protected and 7 are explicitly public (the pre-auth `auth` routes, `admin/login`,
+  and `GET /uploads/:path`, which serves images to clients that cannot send headers).
+  The full per-endpoint matrix is in `API_AUDIT.md`.
+- Added `SelfGuard`, applied to `PATCH /v1/usuarios/:id` and
+  `DELETE /v1/usuarios/:id`. Both were behind `JwtAuthGuard`, which only proves the
+  token is valid — nothing compared the token's subject to the `:id` being acted on, so
+  any authenticated user could edit or delete any other account. Combined with
+  `POST /v1/auth/recover`, that was an account-takeover path: change a victim's email,
+  then have a fresh password mailed to the new address.
+- `GET /v1/usuarios/:id` is intentionally **not** covered: the web panel's
+  member-detail screen reads other users and self-only would break it. It needs a
+  staff-aware policy instead — see `API_AUDIT.md`.
 
 - `PATCH /v1/usuarios/:id` now clears `verificado` when the email address changes, so
   an account cannot be moved to an unconfirmed address while staying verified. A no-op

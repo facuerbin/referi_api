@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { PagosService } from './pagos.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RegistrarPagoDto } from './dto/registrar.pago.dto';
 import { Pago } from './entities/pago.entity';
 import { Cuota } from './entities/cuota.entity';
@@ -19,6 +19,7 @@ import {
   ApiErrorResponse,
 } from '../../common/swagger/api-data-response.decorator';
 
+@ApiBearerAuth()
 @ApiTags('Pagos')
 @Controller({ path: 'pagos', version: '1' })
 export class PagosController {

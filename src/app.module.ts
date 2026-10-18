@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './api/seguridad/jwt/jwt.auth.guard';
 import { CacheModule } from '@nestjs/cache-manager';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeguridadModule } from './api/seguridad/seguridad.module';
@@ -106,6 +108,8 @@ import { Admin } from './api/admin/entities/admin.entity';
     ImagesModule,
     AdminModule,
   ],
-  providers: [EmailService],
+  // Auth is deny-by-default: every route requires a valid JWT unless marked
+  // @Public(). Previously each handler opted in, and most never did.
+  providers: [EmailService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

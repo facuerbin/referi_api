@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Res,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { OrganizacionesService } from './organizaciones.service';
@@ -25,8 +24,8 @@ import {
 } from '../../common/swagger/api-data-response.decorator';
 import { CreateEspacioDto } from './dto/create.espacio.dto';
 import { CreatePersonalDto } from './dto/create.personal.dto';
-import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 
+@ApiBearerAuth()
 @ApiTags('Organizaciones')
 @Controller({ path: 'organizaciones', version: '1' })
 export class OrganizacionesController {
@@ -128,7 +127,6 @@ export class OrganizacionesController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiDataResponse(Organizacion, { description: 'Organización actualizada.' })
   @ApiErrorResponse(400, 'Datos inválidos u organización inexistente.')

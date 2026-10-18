@@ -11,7 +11,7 @@ import {
 import { UsuariosService } from './usuarios.service';
 import { UpdateUsuarioDto } from './dto/update.usuario.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
+import { SelfGuard } from '../seguridad/jwt/self.guard';
 import { UsuarioResponseSchema } from './response/usuario.response.dto';
 import { UsuarioSinPasswordSchema } from '../seguridad/response/auth.response.dto';
 import {
@@ -25,7 +25,6 @@ import {
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   @ApiDataResponse(UsuarioSinPasswordSchema, {
     isArray: true,
@@ -44,7 +43,6 @@ export class UsuariosController {
       });
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiDataResponse(UsuarioSinPasswordSchema, {
     description: 'Usuario por id, con su domicilio y sin el hash de contraseña.',
@@ -60,7 +58,6 @@ export class UsuariosController {
       .catch((error) => res.status(401).send({ error: error }));
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('/email/:email')
   @ApiResponse({
     status: 200,
@@ -79,8 +76,9 @@ export class UsuariosController {
       .catch((error) => res.status(401).send({ error: error }));
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(SelfGuard)
   @Patch(':id')
+  @ApiErrorResponse(403, 'Sólo el propio usuario puede editar sus datos.')
   @ApiResponse({
     status: 200,
     description:
@@ -101,8 +99,9 @@ export class UsuariosController {
       .catch((error) => res.status(400).send({ error: error }));
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(SelfGuard)
   @Delete(':id')
+  @ApiErrorResponse(403, 'Sólo el propio usuario puede dar de baja su cuenta.')
   @ApiResponse({
     status: 200,
     description: 'Da de baja al usuario (borrado lógico).',

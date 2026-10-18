@@ -9,7 +9,6 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   StreamableFile,
-  UseGuards,
   Body,
   Logger,
 } from '@nestjs/common';
@@ -23,13 +22,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Backup } from './entities/backup.entity';
+import { Public } from '../seguridad/jwt/public.decorator';
 import { ApiErrorResponse } from '../../common/swagger/api-data-response.decorator';
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { AdminService } from './admin.service';
 import type { Response } from 'express';
 import { FileUploadDto } from '../images/dto/file.upload.dto';
-import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
 import { LoginDto } from '../seguridad/dto/login.dto';
 
 @ApiTags('Admin')
@@ -39,6 +38,7 @@ export class AdminController {
 
   constructor(private readonly adminService: AdminService) {}
 
+  @Public()
   @Post('login')
   @ApiResponse({
     status: 201,
@@ -65,7 +65,6 @@ export class AdminController {
     description: 'Archivo de imagen',
     type: FileUploadDto,
   })
-  @UseGuards(JwtAuthGuard)
   @Post('restore')
   @ApiResponse({
     status: 201,
@@ -103,7 +102,6 @@ export class AdminController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Post('backup')
   @ApiProduces('application/sql')
   @ApiResponse({
@@ -128,7 +126,6 @@ export class AdminController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('backups/:path')
   @ApiProduces('application/sql')
   @ApiResponse({
@@ -155,7 +152,6 @@ export class AdminController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('backups')
   @ApiResponse({
     status: 200,

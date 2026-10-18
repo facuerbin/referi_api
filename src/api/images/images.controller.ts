@@ -9,7 +9,6 @@ import {
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
-  UseGuards,
   StreamableFile,
   Req,
 } from '@nestjs/common';
@@ -25,7 +24,7 @@ import {
 import { ApiErrorResponse } from '../../common/swagger/api-data-response.decorator';
 import { createReadStream, existsSync, unlink } from 'fs';
 import { join } from 'path';
-import { JwtAuthGuard } from '../seguridad/jwt/jwt.auth.guard';
+import { Public } from '../seguridad/jwt/public.decorator';
 import { FileUploadDto } from './dto/file.upload.dto';
 import { saveImageOptions } from './helpers/save.image.helper';
 import type { Response } from 'express';
@@ -37,7 +36,6 @@ import { UsuariosService } from '../usuarios/usuarios.service';
 export class ImagesController {
   constructor(private usuarioService: UsuariosService) {}
 
-  @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Archivo de imagen',
@@ -65,7 +63,6 @@ export class ImagesController {
     return file;
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Archivo de imagen',
@@ -99,6 +96,8 @@ export class ImagesController {
     return file;
   }
 
+  // Images are loaded by <img>/NetworkImage, which send no Authorization header.
+  @Public()
   @Get(':path')
   @ApiProduces('image/jpeg', 'image/png')
   @ApiResponse({

@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param, Res, Query } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AsistenciasService } from './asistencias.service';
 import { Asistente } from './entities/asistente.entity';
 import { PlanillaAsistencia } from './entities/planilla.asistencia.entity';
@@ -11,6 +11,7 @@ import { AppAsistenciaDto } from './dto/app.asistencia.dto';
 import { CreateAsistenciaDto } from './dto/create-asistencia.dto';
 import { ListPlanillaDto } from './dto/list.planilla.dto';
 
+@ApiBearerAuth()
 @ApiTags('Asistencias')
 @Controller({ path: 'asistencias', version: '1' })
 export class AsistenciasController {

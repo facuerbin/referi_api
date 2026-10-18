@@ -9,7 +9,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { NotificacionesService } from './notificaciones.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EnviarNotificacionDto } from './dto/enviar.notificacion.dto';
 import { Notificacion, TipoDestinatario } from './entities/notificacion.entity';
 import { NotificationResponseSchema } from './response/notification.response.dto';
@@ -19,6 +19,7 @@ import {
   ApiErrorResponse,
 } from '../../common/swagger/api-data-response.decorator';
 
+@ApiBearerAuth()
 @ApiTags('Notificaciones')
 @Controller({ path: 'notificaciones', version: '1' })
 export class NotificacionesController {

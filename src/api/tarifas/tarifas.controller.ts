@@ -12,7 +12,7 @@ import {
 import { TarifasService } from './tarifas.service';
 import { CreateTarifaDto } from './dto/create-tarifa.dto';
 import { UpdateTarifaDto } from './dto/update-tarifa.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateFrecuenciaDto } from './dto/create.frecuencia.dto';
 import { Tarifa } from './entities/tarifa.entity';
 import { Frecuencia } from './entities/frecuencia.entity';
@@ -21,6 +21,7 @@ import {
   ApiErrorResponse,
 } from '../../common/swagger/api-data-response.decorator';
 
+@ApiBearerAuth()
 @ApiTags('Tarifas')
 @Controller({ path: 'tarifas', version: '1' })
 export class TarifasController {

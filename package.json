@@ -1,6 +1,6 @@
 {
   "name": "referi-api",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Sistema de Gestión de Clubes y Socios",
   "author": "Facundo Erbin",
   "private": true,

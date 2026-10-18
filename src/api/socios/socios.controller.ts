@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { SociosService } from './socios.service';
 import { CreateSocioDto } from './dto/create.socio.dto';
-import { ApiProduces, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiProduces, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Inscripcion } from './entities/inscripcion.entity';
 import {
   ApiDataResponse,
@@ -22,6 +22,7 @@ import { ReporteInscriptosMesDto } from './dto/reporte.inscriptos.mes.dto';
 import { DateQuery } from './dto/date.query.dto';
 import { ReporteInscriptosActividadMesDto } from './dto/reporte.inscriptos.actividad.mes.dto';
 
+@ApiBearerAuth()
 @ApiTags('Socios')
 @Controller({ path: 'socios', version: '1' })
 export class SociosController {
